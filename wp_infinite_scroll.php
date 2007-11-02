@@ -7,6 +7,16 @@ Plugin URI: http://www.tinyways.com
 Description: Infinite scroll using AJAX based on Javascript code by <a href="http://aurgasm.us">Paul Irish</a>. Wordpress plugin integration by <a href="http://www.tinyways.com">dirkhaim</a>.
 Author: dirkhaim & Paul Irish
 Author URI: http://www.tinyways.com
+
+
+
+TODO:
+ - Use css selector for the NEXT PAGE link in the js (and attr('href') )
+	- Add support for defining css selector for the NEXT PAGE link in options
+ - User can define css selector of #content div
+ - Link to jquery file hosted on code.google.com
+ 
+
 */
 
 // constants for enables/disabled
