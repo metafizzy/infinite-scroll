@@ -15,6 +15,9 @@ TODO:
 	- Add support for defining css selector for the NEXT PAGE link in options
  - User can define css selector of #content div
  - Link to jquery file hosted on code.google.com
+ - Allow to customize the loading image
+ - Be able to handle different perma links addresses
+ - Allow to customize the param of the fadeOut effect (or maybe even choose a different effect)
  
 
 */
