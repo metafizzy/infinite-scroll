@@ -12,8 +12,7 @@ Author URI: http://www.tinyways.com
 
 TODO:
  - Use css selector for the NEXT PAGE link in the js (and attr('href') )
- - Link to jquery file hosted on code.google.com
- - Be able to handle different perma links addresses
+ 	- Be able to handle different perma links addresses (will be covered by parent task)
  - Allow to customize the param of the fadeOut effect (or maybe even choose a different effect)
 
 */
@@ -247,7 +246,7 @@ function wp_inf_scroll_add()
 	
 $js_string = <<<EOT
 	
-		<script type="text/javascript" src="$plugin_dir/jquery-1.2.1.js"></script>
+		<script type="text/javascript" src="http://jqueryjs.googlecode.com/files/jquery-1.2.1.min.js"></script>
 		<script type="text/javascript" src="$plugin_dir/dimensions.js"></script>
 		<script type="text/javascript" >
 		// infinite scroll code
