@@ -12,7 +12,7 @@ Author URI: http://www.tinyways.com
 
 TODO:
  - Use css selector for the NEXT PAGE link in the js (and attr('href') )
- 	- Be able to handle different perma links addresses (will be covered by parent task)
+ 	 - Be able to handle different perma links addresses (will be covered by parent task)
  - Allow to customize the param of the fadeOut effect (or maybe even choose a different effect)
 
 */
@@ -26,24 +26,28 @@ define('key_infscr_state'		, 'infscr_state');
 define('key_infscr_maintenance_state'	, 'infscr_maintenance_state');
 define('key_infscr_js_calls'		, 'infscr_js_calls');
 define('key_infscr_image'		, 'infscr_image');
-define('key_infscr_content_selector'		, 'infscr_content_div');
-define('key_infscr_nav_selector'		, 'infscr_nav_class');
+define('key_infscr_content_selector'		, 'infscr_content_selector');
+define('key_infscr_nav_selector'		, 'infscr_nav_selector');
+define('key_infscr_post_selector'		, 'infscr_post_selector');
 
 // defaults
 define('infscr_state_default', infscr_disabled);
 define('infscr_maintenance_state_default', infscr_disabled);
 define('infscr_js_calls_default', '');
 define('infscr_image_default', '');
-define('infscr_content_div_default', '#content');
-define('infscr_nav_class_default', '.navigation');
+define('infscr_content_selector_default', '#content');
+define('infscr_nav_selector_default', '.navigation');
+define('key_infscr_post_selector_default', '#content > *');
+
 
 // add options
 add_option(key_infscr_state		, infscr_state_default			, 'If InfiniteScroll is turned on or off');
 add_option(key_infscr_maintenance_state	, infscr_maintenance_state_default	, 'If maintenance state is turned on or off');
 add_option(key_infscr_js_calls		, infscr_js_calls_default		, 'Javascript to execute when new content loads in');
 add_option(key_infscr_image		, infscr_image_default			, 'Loading image');
-add_option(key_infscr_content_selector	, infscr_content_div_default		, 'Content css selector');
-add_option(key_infscr_nav_selector 	, infscr_nav_class_default		, 'Navigation link css selector');
+add_option(key_infscr_content_selector	, infscr_content_selector_default		, 'Content css selector');
+add_option(key_infscr_nav_selector 	, infscr_nav_selector_default		, 'Navigation link css selector');
+add_option(key_infscr_post_selector 	, key_infscr_post_selector_default		, 'Post css selector');
 
 // adding actions
 add_action('wp_footer', 'wp_inf_scroll_add');
@@ -82,13 +86,19 @@ function wp_inf_scroll_options_page()
 		$infscr_image = $_POST[key_infscr_image];
 		update_option(key_infscr_image, $infscr_image);
 
-		// update content div id
+		// update content selector
 		$content_div = $_POST[key_infscr_content_selector];
 		update_option(key_infscr_content_selector, $content_div);
 
-		// update the navigation div class
+		// update the navigation selector
 		$nav_class = $_POST[key_infscr_nav_selector];
 		update_option(key_infscr_nav_selector, $nav_class);
+
+		// update the post selector
+		$post_selector = $_POST[key_infscr_post_selector];
+		update_option(key_infscr_post_selector, $post_selector);
+
+
 
 		// update notification
 		echo "<div class='updated'><p><strong>InfiniteScroll options updated</strong></p></div>";
@@ -191,6 +201,20 @@ function wp_inf_scroll_options_page()
 				<p style="margin: 5px 10px;">The class of the navigation ID (the one that includes the back and forward links).</p>
 				</td>
 			<tr>			
+			  			<tr>
+				<th width="30%" valign="top" style="padding-top: 10px;">
+					<label for="<?php echo key_infscr_post_selector; ?>">Post CSS Selector:</label>
+				</th>
+				<td>
+					<?php
+						echo "<input name='".key_infscr_post_selector."' id='".key_infscr_post_selector."' value='".get_option(key_infscr_post_selector)."' size='30' type='text'>\n";
+					?>
+				<p style="margin: 5px 10px;">The selector of the post block (e.g. <em>#content > *</em> or <em>#content div.post</em>).</p>
+				</td>
+			<tr>			
+			  
+			  
+			  
 			<tr>
 				<th width="30%" valign="top" style="padding-top: 10px;">
 					<label for="<?php echo key_infscr_js_calls; ?>">Javascript which will be called after the data is fetched:</label>
