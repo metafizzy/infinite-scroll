@@ -2,7 +2,7 @@
 
 /*
 Plugin Name: WP-InfiniteScroll
-Version: 0.2
+Version: 0.4
 Plugin URI: http://www.tinyways.com
 Description: Infinite scroll using AJAX based on Javascript code by <a href="http://aurgasm.us">Paul Irish</a>. Wordpress plugin integration by <a href="http://www.tinyways.com">dirkhaim</a>.
 Author: dirkhaim & Paul Irish
@@ -18,26 +18,26 @@ TODO:
 */
 
 // constants for enables/disabled
-define('infscr_enabled', 'enabled');
-define('infscr_disabled', 'disabled');
+define('infscr_enabled'		, 'enabled');
+define('infscr_disabled'	, 'disabled');
 
 // options keys constants
-define('key_infscr_state'		, 'infscr_state');
-define('key_infscr_maintenance_state'	, 'infscr_maintenance_state');
-define('key_infscr_js_calls'		, 'infscr_js_calls');
-define('key_infscr_image'		, 'infscr_image');
+define('key_infscr_state'			, 'infscr_state');
+define('key_infscr_maintenance_state'		, 'infscr_maintenance_state');
+define('key_infscr_js_calls'			, 'infscr_js_calls');
+define('key_infscr_image'			, 'infscr_image');
 define('key_infscr_content_selector'		, 'infscr_content_selector');
 define('key_infscr_nav_selector'		, 'infscr_nav_selector');
 define('key_infscr_post_selector'		, 'infscr_post_selector');
 
 // defaults
-define('infscr_state_default', infscr_disabled);
-define('infscr_maintenance_state_default', infscr_disabled);
-define('infscr_js_calls_default', '');
-define('infscr_image_default', '');
-define('infscr_content_selector_default', '#content');
-define('infscr_nav_selector_default', '.navigation');
-define('key_infscr_post_selector_default', '#content > *');
+define('infscr_state_default'			, infscr_disabled);
+define('infscr_maintenance_state_default'	, infscr_disabled);
+define('infscr_js_calls_default'		, '');
+define('infscr_image_default'			, '');
+define('infscr_content_selector_default'	, '#content');
+define('infscr_nav_selector_default'		, '.navigation');
+define('infscr_post_selector_default'		, '#content > *');
 
 
 // add options
@@ -45,13 +45,13 @@ add_option(key_infscr_state		, infscr_state_default			, 'If InfiniteScroll is tu
 add_option(key_infscr_maintenance_state	, infscr_maintenance_state_default	, 'If maintenance state is turned on or off');
 add_option(key_infscr_js_calls		, infscr_js_calls_default		, 'Javascript to execute when new content loads in');
 add_option(key_infscr_image		, infscr_image_default			, 'Loading image');
-add_option(key_infscr_content_selector	, infscr_content_selector_default		, 'Content css selector');
+add_option(key_infscr_content_selector	, infscr_content_selector_default	, 'Content css selector');
 add_option(key_infscr_nav_selector 	, infscr_nav_selector_default		, 'Navigation link css selector');
-add_option(key_infscr_post_selector 	, key_infscr_post_selector_default		, 'Post css selector');
+add_option(key_infscr_post_selector 	, infscr_post_selector_default		, 'Post css selector');
 
 // adding actions
-add_action('wp_footer', 'wp_inf_scroll_add');
-add_action('admin_menu', 'add_wp_inf_scroll_options_page');
+add_action('wp_footer'		, 'wp_inf_scroll_add');
+add_action('admin_menu'		, 'add_wp_inf_scroll_options_page');
 
 function add_wp_inf_scroll_options_page() 
 {
@@ -260,11 +260,11 @@ function wp_inf_scroll_add()
 		return;
 	}
 	
-	$plugin_dir 		= get_option('home').'/wp-content/plugins/wp_infinite_scroll';
+	$plugin_dir 		= get_option('home').'/wp-content/plugins/wp-infinite-scroll';
 	$js_calls		= get_option(key_infscr_js_calls);
 	$loading_image		= get_option(key_infscr_image);
-	$content_selector		= get_option(key_infscr_content_selector);
-	$navigation_selector		= get_option(key_infscr_nav_selector);
+	$content_selector	= get_option(key_infscr_content_selector);
+	$navigation_selector	= get_option(key_infscr_nav_selector);
 	$post_selector		= get_option(key_infscr_post_selector);
 	
 	if ($loading_image == '')
