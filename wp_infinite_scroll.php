@@ -11,10 +11,9 @@ Author URI: http://www.tinyways.com
 
 
 TODO:
- - Use css selector for the NEXT PAGE link in the js (and attr('href') )
- 	 - Be able to handle different perma links addresses (will be covered by parent task)
  - Allow to customize the param of the fadeOut effect (or maybe even choose a different effect)
 
+   
 */
 
 // constants for enables/disabled
@@ -29,6 +28,7 @@ define('key_infscr_image'			, 'infscr_image');
 define('key_infscr_content_selector'		, 'infscr_content_selector');
 define('key_infscr_nav_selector'		, 'infscr_nav_selector');
 define('key_infscr_post_selector'		, 'infscr_post_selector');
+define('key_infscr_next_selector'		, 'infscr_next_selector');
 
 // defaults
 define('infscr_state_default'			, infscr_disabled);
@@ -36,8 +36,9 @@ define('infscr_maintenance_state_default'	, infscr_disabled);
 define('infscr_js_calls_default'		, '');
 define('infscr_image_default'			, '');
 define('infscr_content_selector_default'	, '#content');
-define('infscr_nav_selector_default'		, '.navigation');
+define('infscr_nav_selector_default'		, 'div.navigation');
 define('infscr_post_selector_default'		, '#content > *');
+define('infscr_next_selector_default', 'div.navigation a:first');
 
 
 // add options
@@ -48,6 +49,8 @@ add_option(key_infscr_image		, infscr_image_default			, 'Loading image');
 add_option(key_infscr_content_selector	, infscr_content_selector_default	, 'Content css selector');
 add_option(key_infscr_nav_selector 	, infscr_nav_selector_default		, 'Navigation link css selector');
 add_option(key_infscr_post_selector 	, infscr_post_selector_default		, 'Post css selector');
+add_option(key_infscr_next_selector 	, infscr_next_selector_default		, 'Next page css selector');
+
 
 // adding actions
 add_action('wp_footer'		, 'wp_inf_scroll_add');
@@ -87,16 +90,20 @@ function wp_inf_scroll_options_page()
 		update_option(key_infscr_image, $infscr_image);
 
 		// update content selector
-		$content_div = $_POST[key_infscr_content_selector];
-		update_option(key_infscr_content_selector, $content_div);
+		$content_selector = $_POST[key_infscr_content_selector];
+		update_option(key_infscr_content_selector, $content_selector);
 
 		// update the navigation selector
-		$nav_class = $_POST[key_infscr_nav_selector];
-		update_option(key_infscr_nav_selector, $nav_class);
+		$navigation_selector = $_POST[key_infscr_nav_selector];
+		update_option(key_infscr_nav_selector, $navigation_selector);
 
 		// update the post selector
 		$post_selector = $_POST[key_infscr_post_selector];
 		update_option(key_infscr_post_selector, $post_selector);
+
+		// update the next selector
+		$next_selector = $_POST[key_infscr_next_selector];
+		update_option(key_infscr_next_selector, $next_selector);
 
 
 
@@ -158,6 +165,7 @@ function wp_inf_scroll_options_page()
 	</fieldset>
 	<fieldset class='options'>
 		<legend>Advanced Options</legend>
+		<p>All CSS selectors are found with the jQuery javascript library. See the <a href="http://docs.jquery.com/Selectors">jQuery CSS Selector documentation</a> for an overview of all possibilities.
 		<table class="editform" cellspacing="2" cellpadding="5" width="100%">
 			<tr>
 				<th width="30%" valign="top" style="padding-top: 10px;">
@@ -187,21 +195,11 @@ function wp_inf_scroll_options_page()
 					<?php
 						echo "<input name='".key_infscr_content_selector."' id='".key_infscr_content_selector."' value='".get_option(key_infscr_content_selector)."' size='30' type='text'>\n";
 					?>
-				<p style="margin: 5px 10px;">The ID of the div that holds the content on the main page.</p>
+				<p style="margin: 5px 10px;">The selector of the content div on the main page.</p>
 				</td>
+			</tr>
+			  
 			<tr>
-			<tr>
-				<th width="30%" valign="top" style="padding-top: 10px;">
-					<label for="<?php echo key_infscr_nav_selector; ?>">Navigation Links CSS Selector:</label>
-				</th>
-				<td>
-					<?php
-						echo "<input name='".key_infscr_nav_selector."' id='".key_infscr_nav_selector."' value='".get_option(key_infscr_nav_selector)."' size='30' type='text'>\n";
-					?>
-				<p style="margin: 5px 10px;">The class of the navigation ID (the one that includes the back and forward links).</p>
-				</td>
-			<tr>			
-			  			<tr>
 				<th width="30%" valign="top" style="padding-top: 10px;">
 					<label for="<?php echo key_infscr_post_selector; ?>">Post CSS Selector:</label>
 				</th>
@@ -211,17 +209,40 @@ function wp_inf_scroll_options_page()
 					?>
 				<p style="margin: 5px 10px;">The selector of the post block (e.g. <em>#content > *</em> or <em>#content div.post</em>).</p>
 				</td>
-			<tr>			
+			</tr>
 			  
+			<tr>
+				<th width="30%" valign="top" style="padding-top: 10px;">
+					<label for="<?php echo key_infscr_nav_selector; ?>">Navigation Links CSS Selector:</label>
+				</th>
+				<td>
+					<?php
+						echo "<input name='".key_infscr_nav_selector."' id='".key_infscr_nav_selector."' value='".get_option(key_infscr_nav_selector)."' size='30' type='text'>\n";
+					?>
+				<p style="margin: 5px 10px;">The selector of the navigation div (the one that includes the next and previous links).</p>
+				</td>
+			</tr>			
+
+			<tr>
+				<th width="30%" valign="top" style="padding-top: 10px;">
+					<label for="<?php echo key_infscr_next_selector; ?>">Previous posts CSS Selector:</label>
+				</th>
+				<td>
+					<?php
+						echo "<input name='".key_infscr_next_selector."' id='".key_infscr_next_selector."' value='".get_option(key_infscr_next_selector)."' size='30' type='text'>\n";
+					?>
+				<p style="margin: 5px 10px;">The selector of the previous posts (next page) A tag (e.g. <em>div.navigation a:first</em> or <em>div.navigation a:contains("Previous")</em>).</p>
+				</td>
+			</tr>			
 			  
 			  
 			<tr>
 				<th width="30%" valign="top" style="padding-top: 10px;">
-					<label for="<?php echo key_infscr_js_calls; ?>">Javascript which will be called after the data is fetched:</label>
+					<label for="<?php echo key_infscr_js_calls; ?>">Javascript to be called after the next posts are fetched:</label>
 				</th>
 				<td>
 					<?php
-						echo "<textarea name='".key_infscr_js_calls."' rows='15' cols='50' style='width: 95%;'>\n";
+						echo "<textarea name='".key_infscr_js_calls."' rows='2'  style='width: 95%;'>\n";
 						echo get_option(key_infscr_js_calls);
 						echo "</textarea>\n";
 					?>
@@ -266,6 +287,7 @@ function wp_inf_scroll_add()
 	$content_selector	= get_option(key_infscr_content_selector);
 	$navigation_selector	= get_option(key_infscr_nav_selector);
 	$post_selector		= get_option(key_infscr_post_selector);
+	$next_selector		= get_option(key_infscr_next_selector);
 	
 	if ($loading_image == '')
 		$loading_image	= "$plugin_dir/ajax-loader.gif";
@@ -275,33 +297,48 @@ $js_string = <<<EOT
 		<script type="text/javascript" src="http://jqueryjs.googlecode.com/files/jquery-1.2.1.min.js"></script>
 		<script type="text/javascript" src="$plugin_dir/dimensions.js"></script>
 		<script type="text/javascript" >
-		// infinite scroll code
+
+function parseUri(str){var o=parseUri.options,m=o.parser["loose"].exec(str),uri={},i=14;while(i--)uri[o.key[i]]=m[i]||"";uri[o.q.name]={};uri[o.key[12]].replace(o.q.parser,function($0,$1,$2){if($1)uri[o.q.name][$1]=$2});return uri};parseUri.options={key:["source","protocol","authority","userInfo","user","password","host","port","relative","path","directory","file","query","anchor"],q:{name:"queryKey",parser:/(?:^|&)([^&=]*)=?([^&]*)/g},parser:{loose:/^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/}};
+
+
+
+		// infinite scroll code'
 		// copyright Paul Irish
 		// license: cc-wrapped GPL
 		jQuery.noConflict();
-
-		var pgRetrived = 1;
-		var duringajax = false;
+  
+  		var   pgRetrived  = 1,
+  		      next        = jQuery('$next_selector').attr('href'), 
+  		      path        = parseUri(next).path,
+  		      loadingMsg  = jQuery('<div class="loading" style="text-align: center;"><img style="float:none;" alt="loading..." src="$loading_image" /><br /><em>Loading the next set of posts</em></div>'),
+  		      duringajax  = false;
+  		      
+      if (path.split('2').length == 2) // there is a 2 in the next url, e.g. /page/2/
+        path = path.split('2');
+      else
+        alert('Sorry, we couldn\'t parse your Previous Posts URL.');
+		      
 			jQuery(window).scroll(function(){
-			       if (duringajax) 
-		             return; 
-	
-	       		//so now, we're looking at the homepage and not in an ajax request.
-			if ( jQuery(document).height() - jQuery(document).scrollTop() - jQuery(window).height()  < 200){
-			
-				duringajax = true; // we dont want to fire this multiple times.
-				var loading = jQuery('<div class="loading" style="text-align: center;"><img style="float:none;" alt="loading..." src="$loading_image" /><br /><em>Loading the next set of posts</em></div>')
-						.appendTo('$content_selector');
-		
-				jQuery('$content_selector .$navigation_selector').remove(); // take out the previous/next links
-				pgRetrived++;
-				jQuery('<div>').appendTo('$content_selector').load('/page/'+ pgRetrived +'/ $post_selector',null,function(){
-					loading.fadeOut('normal');
-					duringajax = false; // once the call is done, we can allow it again.
-					$js_calls
-				});
-			}
-		});
+          if (duringajax) return; 
+    
+    	   	//so now, we're looking at the homepage and not in an ajax request.
+    			if ( jQuery(document).height() - jQuery(document).scrollTop() - jQuery(window).height()  < 200){
+    			
+    				duringajax = true; // we dont want to fire the ajax multiple times
+    				loadingMsg.appendTo('$content_selector');
+    				jQuery('$navigation_selector').remove(); // take out the previous/next links
+    				pgRetrived++;
+    				
+    				jQuery('<div>')
+    				  .appendTo('$content_selector')
+    				  .load( path.join(pgRetrived) + ' $post_selector',null,function(){
+        					loadingMsg.fadeOut('normal');
+        					duringajax = false; // once the call is done, we can allow it again.
+        					$js_calls
+      				});
+    				
+    			} 
+  	  });
 		</script>
 	
 EOT;
