@@ -1,10 +1,10 @@
 <?php
 
 /*
-Plugin Name: WP-InfiniteScroll
+Plugin Name: WP-Infinite-Scroll
 Version: 0.4
 Plugin URI: http://www.tinyways.com
-Description: Infinite scroll using AJAX based on Javascript code by <a href="http://aurgasm.us">Paul Irish</a>. Wordpress plugin integration by <a href="http://www.tinyways.com">dirkhaim</a>.
+Description: Automatically loads the next page of posts into the bottom of the initial page. 
 Author: dirkhaim & Paul Irish
 Author URI: http://www.tinyways.com
 
@@ -59,7 +59,7 @@ add_action('admin_menu'		, 'add_wp_inf_scroll_options_page');
 function add_wp_inf_scroll_options_page() 
 {
 	global $wpdb;
-	add_options_page('InfiniteScroll Options', 'InfiniteScroll', 8, basename(__FILE__), 'wp_inf_scroll_options_page');
+	add_options_page('Infinite-Scroll Options', 'Infinite-Scroll', 8, basename(__FILE__), 'wp_inf_scroll_options_page');
 }
 
 function wp_inf_scroll_options_page()
@@ -106,9 +106,8 @@ function wp_inf_scroll_options_page()
 		update_option(key_infscr_next_selector, $next_selector);
 
 
-
 		// update notification
-		echo "<div class='updated'><p><strong>InfiniteScroll options updated</strong></p></div>";
+		echo "<div class='updated'><p><strong>Infinite-Scroll options updated</strong></p></div>";
 	}
 
 	// output the options page
@@ -118,21 +117,31 @@ function wp_inf_scroll_options_page()
 	<div class="wrap">
 <?php if (get_option(key_infscr_state) == infscr_disabled) { ?>
 	<div style="margin:10px auto; border:3px #f00 solid; background-color: #fdd; color: #000; padding: 10px; text-align: center;">
-	InfiniteScroll plugin is <strong>disabled</strong>.
+	Infinite-Scroll plugin is <strong>disabled</strong>.
 	</div>
 <?php } ?>
-<?php if (get_option(key_infscr_state) != infscr_disabled && get_option(key_infscr_js_calls) == '') { ?>
+<?php if ( false && get_option(key_infscr_state) != infscr_disabled && get_option(key_infscr_js_calls) == '') {  // disabled for now?>
 	<div style="margin:10px auto; border:1px #f00 solid; background-color:#fdd; color:#000; padding:10px; text-align:center;">
 	No Javascript calls will be made after the content is added. This might cause errors in newly added content.
 	</div>
 <?php } ?>
-	<h2>InfiniteScroll Options</h2>
+		  
+  <style type="text/css">
+    table.infscroll-opttable { width: 100%;}
+    table.infscroll-opttable td, table.infscroll-opttable th { vertical-align: top; padding: 9px 4px; }
+    table.infscroll-opttable th { padding-top: 13px;}
+    table.infscroll-opttable td p { margin: 0;}
+    table.infscroll-opttable dl { font-size: 90%; color: #666; margin-top: 5px; }
+    table.infscroll-opttable dd { margin-bottom: 0 }
+  </style>
+  
+	<h2>Infinite-Scroll Options</h2>
 	<fieldset class='options'>
 		<legend>Basic Options</legend>
-		<table class="editform" cellspacing="2" cellpadding="5" width="100%">
+		<table class="editform infscroll-opttable" cellspacing="0" >
 			<tr>
-				<th width="30%" valign="top" style="padding-top: 10px;">
-					<label for="<?php echo key_infscr_state; ?>">InfiniteScroll state is:</label>
+				<th width="30%" >
+					<label for="<?php echo key_infscr_state; ?>">Infinite-Scroll state is:</label>
 				</th>
 				<td>
 					<?php
@@ -148,28 +157,33 @@ function wp_inf_scroll_options_page()
 						echo "</select>";
 					?>
 				</td>
+	      <td width="50%">
+        </td>
 			</tr>
 			<tr>
-				<th width="30%" valign="top" style="padding-top: 10px;">
+				<th>
 					<label for="<?php echo key_infscr_image; ?>">Loading image:</label>
 				</th>
 				<td>
 					<?php
-						echo "<input name='".key_infscr_image."' id='".key_infscr_image."' value='".get_option(key_infscr_image)."' size='70' type='text'>\n";
+						echo "<input name='".key_infscr_image."' id='".key_infscr_image."' value='".get_option(key_infscr_image)."' size='30' type='text'>\n";
 					?>
-					<p style="margin: 5px 10px;">The image that will be displayed while content is being loaded. If empty, the plugin's default will be used.</p>
-				<td>
-
-
+				</td>
+        <td>
+      	  <p>URL of image that will be displayed while content is being loaded. If empty, the plugin's default will be used.</p>
+      	</td>
+  	  </tr>
 		</table>
 	</fieldset>
+	
 	<fieldset class='options'>
 		<legend>Advanced Options</legend>
 		<p>All CSS selectors are found with the jQuery javascript library. See the <a href="http://docs.jquery.com/Selectors">jQuery CSS Selector documentation</a> for an overview of all possibilities.
-		<table class="editform" cellspacing="2" cellpadding="5" width="100%">
+
+		<table class="editform infscroll-opttable" cellspacing="0">
 			<tr>
-				<th width="30%" valign="top" style="padding-top: 10px;">
-					<label for="<?php echo key_infscr_maintenance_state; ?>">InfiniteScroll maintenance state is:</label>
+				<th width="30%" >
+					<label for="<?php echo key_infscr_maintenance_state; ?>">Infinite-Scroll maintenance state is:</label>
 				</th>
 				<td>
 					<?php
@@ -184,60 +198,82 @@ function wp_inf_scroll_options_page()
 						echo ">Disabled</option>\n";
 						echo "</select>";
 					?>
-					<p style="margin: 5px 10px;">In maintenance mode the plugin will be disabled for users with a level 8 and higher. This is meant to spare the administrator from constant data fetching when customizing, while allowing users to have the feature enabled. Your user level is <?php global $user_level; echo $user_level; ?>.</p>
+				</td>
+				<td width="50%">
+				  <p>In maintenance mode the plugin will be disabled for users with a level 8 and higher. This is meant to spare the administrator from constant data fetching when customizing, while allowing users to have the feature enabled. Your user level is <?php global $user_level; echo $user_level; ?>.</p>
 				</td>
 			</tr>
 			<tr>
-				<th width="30%" valign="top" style="padding-top: 10px;">
+				<th>
 					<label for="<?php echo key_infscr_content_selector; ?>">Content CSS Selector:</label>
 				</th>
 				<td>
 					<?php
 						echo "<input name='".key_infscr_content_selector."' id='".key_infscr_content_selector."' value='".get_option(key_infscr_content_selector)."' size='30' type='text'>\n";
 					?>
-				<p style="margin: 5px 10px;">The selector of the content div on the main page.</p>
-				</td>
+  			</td>
+  			<td>
+  			  <p>The selector of the content div on the main page.</p>
+			  </td>
 			</tr>
 			  
 			<tr>
-				<th width="30%" valign="top" style="padding-top: 10px;">
+				<th >
 					<label for="<?php echo key_infscr_post_selector; ?>">Post CSS Selector:</label>
 				</th>
 				<td>
 					<?php
 						echo "<input name='".key_infscr_post_selector."' id='".key_infscr_post_selector."' value='".get_option(key_infscr_post_selector)."' size='30' type='text'>\n";
 					?>
-				<p style="margin: 5px 10px;">The selector of the post block (e.g. <em>#content > *</em> or <em>#content div.post</em>).</p>
 				</td>
+				<td>
+				  <p>The selector of the post block.</p>
+				  <dl>
+				    <dt>Examples:</dt>
+				    <dd>#content > *</dd>
+				    <dd>#content div.post</dd>
+				    <dd>div.primary div.entry</dd>
+			    </dl>
+			  </td>
 			</tr>
 			  
 			<tr>
-				<th width="30%" valign="top" style="padding-top: 10px;">
+				<th>
 					<label for="<?php echo key_infscr_nav_selector; ?>">Navigation Links CSS Selector:</label>
 				</th>
 				<td>
 					<?php
 						echo "<input name='".key_infscr_nav_selector."' id='".key_infscr_nav_selector."' value='".get_option(key_infscr_nav_selector)."' size='30' type='text'>\n";
 					?>
-				<p style="margin: 5px 10px;">The selector of the navigation div (the one that includes the next and previous links).</p>
+			
 				</td>
+				<td>
+			  	<p>The selector of the navigation div (the one that includes the next and previous links).</p>
+			  </td>
 			</tr>			
 
 			<tr>
-				<th width="30%" valign="top" style="padding-top: 10px;">
+				<th>
 					<label for="<?php echo key_infscr_next_selector; ?>">Previous posts CSS Selector:</label>
 				</th>
 				<td>
 					<?php
 						echo "<input name='".key_infscr_next_selector."' id='".key_infscr_next_selector."' value='".get_option(key_infscr_next_selector)."' size='30' type='text'>\n";
 					?>
-				<p style="margin: 5px 10px;">The selector of the previous posts (next page) A tag (e.g. <em>div.navigation a:first</em> or <em>div.navigation a:contains("Previous")</em>).</p>
 				</td>
+				<td>
+				  <p>The selector of the previous posts (next page) A tag.</p>
+				  <dl>
+				    <dt>Examples:</dt>
+				    <dd>div.navigation a:first</dd>
+				    <dd>div.navigation a:contains("Previous")</dd>
+			    </dl>
+			  </td>
 			</tr>			
 			  
 			  
 			<tr>
-				<th width="30%" valign="top" style="padding-top: 10px;">
+				<th>
 					<label for="<?php echo key_infscr_js_calls; ?>">Javascript to be called after the next posts are fetched:</label>
 				</th>
 				<td>
@@ -247,6 +283,9 @@ function wp_inf_scroll_options_page()
 						echo "</textarea>\n";
 					?>
 				</td>
+				<td>
+				  <p>Any functions that are applied to the post contents on page load will need to be executed when the new content comes in.</p>
+		    </td>
 			</tr>
 		</table>
 	</fieldset>
@@ -294,17 +333,19 @@ function wp_inf_scroll_add()
 	
 $js_string = <<<EOT
 	
-		<script type="text/javascript" src="http://jqueryjs.googlecode.com/files/jquery-1.2.1.min.js"></script>
-		<script type="text/javascript" src="$plugin_dir/dimensions.js"></script>
-		<script type="text/javascript" >
+<script type="text/javascript" src="http://jqueryjs.googlecode.com/files/jquery-1.2.1.min.js"></script>
+<script type="text/javascript" src="$plugin_dir/dimensions.js"></script>
+<script type="text/javascript" >
 
+//parseUri() by Steven Levithan. MIT License. http://blog.stevenlevithan.com/archives/parseuri
 function parseUri(str){var o=parseUri.options,m=o.parser["loose"].exec(str),uri={},i=14;while(i--)uri[o.key[i]]=m[i]||"";uri[o.q.name]={};uri[o.key[12]].replace(o.q.parser,function($0,$1,$2){if($1)uri[o.q.name][$1]=$2});return uri};parseUri.options={key:["source","protocol","authority","userInfo","user","password","host","port","relative","path","directory","file","query","anchor"],q:{name:"queryKey",parser:/(?:^|&)([^&=]*)=?([^&]*)/g},parser:{loose:/^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/}};
 
 
 
-		// infinite scroll code'
-		// copyright Paul Irish
+		// WP-Infinite-Scroll plugin
+		// copyright Paul Irish & dirkhaim
 		// license: cc-wrapped GPL
+		
 		jQuery.noConflict();
   
   		var   pgRetrived  = 1,
