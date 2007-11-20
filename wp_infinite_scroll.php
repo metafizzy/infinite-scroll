@@ -320,7 +320,7 @@ function wp_inf_scroll_add()
 		return;
 	}
 	
-	$plugin_dir 		= get_option('home').'/wp-content/plugins/wp_infinite_scroll';
+	$plugin_dir 		= get_option('home').'/wp-content/plugins/wp-infinite-scroll';
 	$js_calls		= get_option(key_infscr_js_calls);
 	$loading_image		= get_option(key_infscr_image);
 	$content_selector	= get_option(key_infscr_content_selector);
