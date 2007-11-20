@@ -320,7 +320,7 @@ function wp_inf_scroll_add()
 		return;
 	}
 	
-	$plugin_dir 		= get_option('home').'/wp-content/plugins/wp-infinite-scroll';
+	$plugin_dir 		= get_option('home').'/wp-content/plugins/wp_infinite_scroll';
 	$js_calls		= get_option(key_infscr_js_calls);
 	$loading_image		= get_option(key_infscr_image);
 	$content_selector	= get_option(key_infscr_content_selector);
@@ -334,11 +334,10 @@ function wp_inf_scroll_add()
 $js_string = <<<EOT
 	
 <script type="text/javascript" src="http://jqueryjs.googlecode.com/files/jquery-1.2.1.min.js"></script>
-<script type="text/javascript" src="$plugin_dir/dimensions.js"></script>
+<script type="text/javascript" src="$plugin_dir/common.js"></script>
 <script type="text/javascript" >
 
-//parseUri() by Steven Levithan. MIT License. http://blog.stevenlevithan.com/archives/parseuri
-function parseUri(str){var o=parseUri.options,m=o.parser["loose"].exec(str),uri={},i=14;while(i--)uri[o.key[i]]=m[i]||"";uri[o.q.name]={};uri[o.key[12]].replace(o.q.parser,function($0,$1,$2){if($1)uri[o.q.name][$1]=$2});return uri};parseUri.options={key:["source","protocol","authority","userInfo","user","password","host","port","relative","path","directory","file","query","anchor"],q:{name:"queryKey",parser:/(?:^|&)([^&=]*)=?([^&]*)/g},parser:{loose:/^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/}};
+
 
 
 
