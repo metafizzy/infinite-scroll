@@ -12,7 +12,8 @@ Author URI: http://www.tinyways.com
 
 TODO:
  - Allow to customize the param of the fadeOut effect (or maybe even choose a different effect)
-
+ - Set the pixel height from the bottom to be a customizable option
+     - or the user gives the element for the footer and we'll calculate the pixel height..
    
 */
 
@@ -346,39 +347,49 @@ $js_string = <<<EOT
 		// license: cc-wrapped GPL
 		
 		jQuery.noConflict();
+     
+	  var INFSCR = {
+		      next        : jQuery('$next_selector').attr('href'), 
+		      path        : parseUri(next).path,
+		      loadingMsg  : jQuery('<div class="loading" style="text-align: center;"><img style="float:none;" alt="loading..." src="$loading_image" /><br /><em>Loading the next set of posts</em></div>'),
+		      isDuringAjax  : false
+    };
+				      
+    INFSCR.loadResults = function(){
+      
+        if (INFSCR.isDuringAjax) return; 
   
-  		var   pgRetrived  = 1,
-  		      next        = jQuery('$next_selector').attr('href'), 
-  		      path        = parseUri(next).path,
-  		      loadingMsg  = jQuery('<div class="loading" style="text-align: center;"><img style="float:none;" alt="loading..." src="$loading_image" /><br /><em>Loading the next set of posts</em></div>'),
-  		      duringajax  = false;
-  		      
-      if (path.split('2').length == 2) // there is a 2 in the next url, e.g. /page/2/
-        path = path.split('2');
-      else
-        alert('Sorry, we couldn\'t parse your Previous Posts URL.');
-		      
-			jQuery(window).scroll(function(){
-          if (duringajax) return; 
+  	   	//so now, we're looking at the homepage and not in an ajax request.
+  			if ( jQuery(document).height() - jQuery(document).scrollTop() - jQuery(window).height()  < 200){
+  			
+  				INFSCR.isDuringAjax = true; // we dont want to fire the ajax multiple times
+  				INFSCR.loadingMsg.appendTo('$content_selector');
+  				jQuery('$navigation_selector').remove(); // take out the previous/next links
+  				INFSCR.pgRetrived++;
+  				
+  				jQuery('<div>')
+  				  .appendTo('$content_selector')
+  				  .load( INFSCR.path.join( INFSCR.pgRetrived ) + ' $post_selector',null,function(){
+      					INFSCR.loadingMsg.fadeOut('normal');
+      					INFSCR.isDuringAjax = false; // once the call is done, we can allow it again.
+      					$js_calls
+    				});
+  				
+  			}   
+    };
     
-    	   	//so now, we're looking at the homepage and not in an ajax request.
-    			if ( jQuery(document).height() - jQuery(document).scrollTop() - jQuery(window).height()  < 200){
-    			
-    				duringajax = true; // we dont want to fire the ajax multiple times
-    				loadingMsg.appendTo('$content_selector');
-    				jQuery('$navigation_selector').remove(); // take out the previous/next links
-    				pgRetrived++;
-    				
-    				jQuery('<div>')
-    				  .appendTo('$content_selector')
-    				  .load( path.join(pgRetrived) + ' $post_selector',null,function(){
-        					loadingMsg.fadeOut('normal');
-        					duringajax = false; // once the call is done, we can allow it again.
-        					$js_calls
-      				});
-    				
-    			} 
-  	  });
+    if (INFSCR.path.split('2').length == 2){ // there is a 2 in the next url, e.g. /page/2/
+      INFSCR.path = INFSCR.path.split('2');
+      INFSCR.pgRetrived = 1; // TODO: get this 2 to be dynamic to work on the /page/2 permalink page.. pgRetrieved will then be the n-1
+    }
+    else {
+      if (console)
+          console.log('Sorry, we couldn\'t parse your Previous Posts URL.');
+      INFSCR.isDuringAjax = true;  //hack to prevent it from running on this page.
+    }
+      
+		jQuery(window).scroll( INFSCR.loadResults ); // hook up the function to the window scroll event.
+		
 		</script>
 	
 EOT;
