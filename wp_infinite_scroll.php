@@ -231,7 +231,7 @@ function wp_inf_scroll_options_page()
 				  <p>The selector of the post block.</p>
 				  <dl>
 				    <dt>Examples:</dt>
-				    <dd>#content > *</dd>
+				    <dd>#content &gt; *</dd>
 				    <dd>#content div.post</dd>
 				    <dd>div.primary div.entry</dd>
 			    </dl>
@@ -309,7 +309,7 @@ function wp_inf_scroll_add()
 	if (get_option(key_infscr_state) == infscr_disabled)
 		return;
 
-	if (!is_home())
+	if (!is_home() || is_paged())
 	{
 		echo '<!-- InfiniteScroll not added for this page (not home) -->';
 		return;
