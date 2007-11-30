@@ -346,31 +346,37 @@ $js_string = <<<EOT
 		// copyright Paul Irish & dirkhaim
 		// license: cc-wrapped GPL
 		
-		jQuery.noConflict();
+		
+		
+		var jQis = jQuery.noConflict(); // held separately to avoid collisions
      
 	  var INFSCR = {
-		      next        : jQuery('$next_selector').attr('href'), 
-		      path        : parseUri(next).path,
-		      loadingMsg  : jQuery('<div class="loading" style="text-align: center;"><img style="float:none;" alt="loading..." src="$loading_image" /><br /><em>Loading the next set of posts</em></div>'),
-		      isDuringAjax  : false
+		      path          : parseUri( jQis('$next_selector').attr('href') ).path, 
+		      loadingMsg    : jQis('<div class="loading" style="text-align: center;"><img style="float:none;" alt="Loading..." src="$loading_image" /><br /><em>Loading the next set of posts</em></div>'),
+		      pgRetrived    : 1,
+		      scrollDelta   : jQis(document).height() - jQis('$navigation_selector').offset().top, //cached because it's expensive
+		      isDuringAjax  : false,
+		      isInvalidPage : false,
+		      preload       : new Image()
     };
+    INFSCR.preload.src   = '$loading_image';
 				      
     INFSCR.loadResults = function(){
       
-        if (INFSCR.isDuringAjax) return; 
+        if (INFSCR.isDuringAjax || INFSCR.isInvalidPage) return; 
   
-  	   	//so now, we're looking at the homepage and not in an ajax request.
-  			if ( jQuery(document).height() - jQuery(document).scrollTop() - jQuery(window).height()  < 200){
+  	   	// the math is: docheight - distancetotopofwindow - height of window < docheight - distance of nav element to the top. [go algebra!]
+  			if (  jQis(document).height() - jQis(document).scrollTop() - jQis(window).height()  <  INFSCR.scrollDelta){ 
   			
   				INFSCR.isDuringAjax = true; // we dont want to fire the ajax multiple times
   				INFSCR.loadingMsg.appendTo('$content_selector');
-  				jQuery('$navigation_selector').remove(); // take out the previous/next links
+  				jQis('$navigation_selector').hide(); // take out the previous/next links
   				INFSCR.pgRetrived++;
   				
-  				jQuery('<div>')
+  				jQis('<div>')
   				  .appendTo('$content_selector')
   				  .load( INFSCR.path.join( INFSCR.pgRetrived ) + ' $post_selector',null,function(){
-      					INFSCR.loadingMsg.fadeOut('normal');
+        			  INFSCR.loadingMsg.fadeOut('normal');        			  
       					INFSCR.isDuringAjax = false; // once the call is done, we can allow it again.
       					$js_calls
     				});
@@ -380,16 +386,14 @@ $js_string = <<<EOT
     
     if (INFSCR.path.split('2').length == 2){ // there is a 2 in the next url, e.g. /page/2/
       INFSCR.path = INFSCR.path.split('2');
-      INFSCR.pgRetrived = 1; // TODO: get this 2 to be dynamic to work on the /page/2 permalink page.. pgRetrieved will then be the n-1
     }
     else {
-      if (console)
-          console.log('Sorry, we couldn\'t parse your Previous Posts URL.');
-      INFSCR.isDuringAjax = true;  //hack to prevent it from running on this page.
+      alert('Sorry, we couldn\'t parse your Previous Posts URL. Verify your Previous Posts css selector points to the A tag. If you still get this error: yell, scream, and kindly ask for help.');
+      INFSCR.isInvalidPage = true;  //prevent it from running on this page.
     }
       
-		jQuery(window).scroll( INFSCR.loadResults ); // hook up the function to the window scroll event.
-		
+		jQis(window).scroll( INFSCR.loadResults ); // hook up the function to the window scroll event.
+	
 		</script>
 	
 EOT;
