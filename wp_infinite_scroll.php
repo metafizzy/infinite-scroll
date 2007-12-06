@@ -369,7 +369,7 @@ $js_string = <<<EOT
   			if (  jQis(document).height() - jQis(document).scrollTop() - jQis(window).height()  <  INFSCR.scrollDelta){ 
   			
   				INFSCR.isDuringAjax = true; // we dont want to fire the ajax multiple times
-  				INFSCR.loadingMsg.appendTo('$content_selector');
+  				INFSCR.loadingMsg.appendTo('$content_selector').show();
   				jQis('$navigation_selector').hide(); // take out the previous/next links
   				INFSCR.pgRetrived++;
   				
