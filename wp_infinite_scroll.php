@@ -47,10 +47,10 @@ add_option(key_infscr_state		, infscr_state_default			, 'If InfiniteScroll is tu
 add_option(key_infscr_maintenance_state	, infscr_maintenance_state_default	, 'If maintenance state is turned on or off');
 add_option(key_infscr_js_calls		, infscr_js_calls_default		, 'Javascript to execute when new content loads in');
 add_option(key_infscr_image		, infscr_image_default			, 'Loading image');
-add_option(key_infscr_content_selector	, infscr_content_selector_default	, 'Content css selector');
-add_option(key_infscr_nav_selector 	, infscr_nav_selector_default		, 'Navigation link css selector');
-add_option(key_infscr_post_selector 	, infscr_post_selector_default		, 'Post css selector');
-add_option(key_infscr_next_selector 	, infscr_next_selector_default		, 'Next page css selector');
+add_option(key_infscr_content_selector	, infscr_content_selector_default	, 'Content Div css selector');
+add_option(key_infscr_nav_selector 	, infscr_nav_selector_default		, 'Navigation Div css selector');
+add_option(key_infscr_post_selector 	, infscr_post_selector_default		, 'Post Div css selector');
+add_option(key_infscr_next_selector 	, infscr_next_selector_default		, 'Next page Anchor css selector');
 
 
 // adding actions
