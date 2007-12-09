@@ -3,17 +3,19 @@
 /*
 Plugin Name: WP-Infinite-Scroll
 Version: 0.4
-Plugin URI: http://www.tinyways.com
+Plugin URI: http://www.infinite-scroll.net
 Description: Automatically loads the next page of posts into the bottom of the initial page. 
 Author: dirkhaim & Paul Irish
-Author URI: http://www.tinyways.com
+Author URI: http://www.infinite-scroll.net
 
 
 
 TODO:
  - Allow to customize the param of the fadeOut effect (or maybe even choose a different effect)
- - Set the pixel height from the bottom to be a customizable option
-     - or the user gives the element for the footer and we'll calculate the pixel height..
+ - Add some assertions:
+    - Check that all css selectors resolve to ONE element
+    - Check that the navigation element is "close" to the bottom
+ - What error handling do we need?
    
 */
 
