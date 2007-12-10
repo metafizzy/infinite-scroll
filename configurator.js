@@ -3,7 +3,7 @@ if (! jQis) var jQis = jQuery.noConflict();
 
 var config = {
   
-  postcount : 10, // TODO: read the database value for how many posts appear on a page
+  postcount : 10, // TODO: use get_option('posts_per_page') 
   postselector : null,
   containerselector : null,
   nextlink : null,
@@ -16,6 +16,7 @@ var config = {
     var classes = {};
     
     // POST SELECTOR
+    console.time('posts');
     jQis('div').each(function(){  // document all the classes in use.
       var eachclass = jQis(this).attr('class');
       if (!eachclass) return true;
@@ -30,12 +31,15 @@ var config = {
         console.log(jQis(config.postselector));
       }
     }
-  
+    console.timeEnd('posts');
+    
     //CONTAINER SELECTOR
-    config.containerselector = jQis(config.postselector).parent();
+    config.containerselector = jQis(config.postselector).parent().get(0);
     console.log('container selector is...');
     console.log(config.containerselector);
 
+    console.time('previous posts');
+    
     
     //PREVIOUS POSTS 
     config.nextlink = jQis('div[class~=pag],div[class~=nav],div[id~=pag],div[id~=nav]')
@@ -48,20 +52,32 @@ var config = {
     console.log('prev posts is this guy...');
     console.log(config.nextlink.get(0));
     
-    //NAV LINKS SELECTOR
-    console.log('nav links could be...');
+    console.timeEnd('previous posts');
     
-    // special treatment for div.navigation #navigation #pagination .pagination !
-    // what if there isnt a parent?? just an A hanging out...
+    
+    
+    //NAV LINKS SELECTOR
+    
+    //check the obvious
+    config.navigation = jQis('div[class~=pagingation],div[class~=navigation],div[id~=pagingation],div[id~=navigation]');
+    if (! config.nextlink.length){ // not found with above..
+
+      // if parent parent is same as post container, its only the parent    
+      if (config.nextlink.parent().parent().get(0) == config.containerselector){
+        config.navigation = config.nextlink.parent().get(0);
+      }
+      else if ( ){
+        // what if there isnt a parent?? just an A hanging out...
+      }
+      else if ( ){
+        // if there is no next link and NO navlinks.. then.. GUESS and ignore the hiding?
+      }
+    }
     console.log(config.nextlink.parent().get(0));
     console.log(config.nextlink.parent().parent().get(0));  // but not if == content container
     
-    
-    
-    // if there is no next link and NO navlinks.. then.. GUESS and ignore the hiding?
-    
   
-  } // end of init()
+  }, // end of init()
 
 
   discoverselector : function(el){
