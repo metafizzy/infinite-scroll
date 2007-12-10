@@ -63,6 +63,15 @@ var config = {
   
   } // end of init()
 
+
+  discoverselector : function(el){
+    // does el have an id?
+    
+    // go up the chain of el's parents and grab the first one with an ID
+        // won't work
+        
+    
+  }
 }
 
 config.init();
