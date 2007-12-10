@@ -16,6 +16,15 @@ TODO:
     - Check that all css selectors resolve to ONE element
     - Check that the navigation element is "close" to the bottom
  - What error handling do we need?
+ - Add link to ajaxload.info for users to customize spinner
+ - Mention div#infscr-loading so users can customize look more.
+ - Selectors all need stripslashes() on the output, both the <input> values and when they're used in the JS.
+ - Only doublequotes are allowed in the selectors. Singlequotes are eaten.
+
+
+Troubleshooting:
+ - Your posts need to be wrapped in divs all next to eachother.
+
    
 */
 
@@ -354,7 +363,7 @@ $js_string = <<<EOT
      
 	  var INFSCR = {
 		      path          : parseUri( jQis('$next_selector').attr('href') ).path, 
-		      loadingMsg    : jQis('<div class="loading" style="text-align: center;"><img style="float:none;" alt="Loading..." src="$loading_image" /><br /><em>Loading the next set of posts</em></div>'),
+		      loadingMsg    : jQis('<div id="infscr-loading" style="text-align: center;"><img style="float:none;" alt="Loading..." src="$loading_image" /><br /><em>Loading the next set of posts</em></div>'),
 		      pgRetrived    : 1,
 		      scrollDelta   : jQis(document).height() - jQis('$navigation_selector').offset().top, //cached because it's expensive
 		      isDuringAjax  : false,
