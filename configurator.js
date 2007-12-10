@@ -38,7 +38,7 @@ var config = {
 
     
     //PREVIOUS POSTS 
-    config.nextlink = jQis('div[class~=pag],div[class~=nav]')
+    config.nextlink = jQis('div[class~=pag],div[class~=nav],div[id~=pag],div[id~=nav]')
       .find('a:contains("Older"),a:contains("Previous"),a:contains("Next"),a:contains("older"),a:contains("previous"),a:contains("next")');
     if (! config.nextlink.length) // not found with above..
       config.nextlink = jQis('a:contains("Older"),a:contains("Previous"),a:contains("Next"),a:contains("older"),a:contains("previous"),a:contains("next")'); // TODO: prompt user to pick.
@@ -51,11 +51,14 @@ var config = {
     //NAV LINKS SELECTOR
     console.log('nav links could be...');
     
-    // special treatment for div.navigation !
+    // special treatment for div.navigation #navigation #pagination .pagination !
     // what if there isnt a parent?? just an A hanging out...
     console.log(config.nextlink.parent().get(0));
     console.log(config.nextlink.parent().parent().get(0));  // but not if == content container
     
+    
+    
+    // if there is no next link and NO navlinks.. then.. GUESS and ignore the hiding?
     
   
   } // end of init()

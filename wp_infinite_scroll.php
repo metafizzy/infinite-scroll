@@ -9,6 +9,9 @@ Author: dirkhaim & Paul Irish
 Author URI: http://www.infinite-scroll.net
 
 
+BUGS:
+
+ - javascript insertion doesnt work on themes: qwiilm!, craving4green, Lush, no limits, stripedplus
 
 TODO:
  - Allow to customize the param of the fadeOut effect (or maybe even choose a different effect)
@@ -24,6 +27,7 @@ TODO:
 
 Troubleshooting:
  - Your posts need to be wrapped in divs all next to eachother.
+ - you need a link on your page to the NEXT PAGE OF POSTS.
 
    
 */
