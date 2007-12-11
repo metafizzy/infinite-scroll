@@ -366,7 +366,7 @@ $js_string = <<<EOT
 		var jQis = jQuery.noConflict(); // held separately to avoid collisions
      
 	  var INFSCR = {
-		      path          : parseUri( jQis('$next_selector').attr('href') ).path, 
+		      path          : parseUri( jQis('$next_selector').attr('href') ).relative, 
 		      loadingMsg    : jQis('<div id="infscr-loading" style="text-align: center;"><img style="float:none;" alt="Loading..." src="$loading_image" /><br /><em>Loading the next set of posts</em></div>'),
 		      pgRetrived    : 1,
 		      scrollDelta   : jQis(document).height() - jQis('$navigation_selector').offset().top, //cached because it's expensive
