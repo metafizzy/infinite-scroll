@@ -19,10 +19,7 @@ TODO:
     - Check that all css selectors resolve to ONE element
     - Check that the navigation element is "close" to the bottom
  - What error handling do we need?
- - Add link to ajaxload.info for users to customize spinner
  - Mention div#infscr-loading so users can customize look more.
- - Selectors all need stripslashes() on the output, both the <input> values and when they're used in the JS.
- - Only doublequotes are allowed in the selectors. Singlequotes are eaten.
 
 
 Troubleshooting:
@@ -152,9 +149,11 @@ function wp_inf_scroll_options_page()
   </style>
   
 	<h2>Infinite-Scroll Options</h2>
-	<fieldset class='options'>
-		<legend>Basic Options</legend>
+
+	  <p>All CSS selectors are found with the jQuery javascript library. See the <a href="http://docs.jquery.com/Selectors">jQuery CSS Selector documentation</a> for an overview of all possibilities. Single-quotes are not allowed&mdash;only double-quotes may be used.
+
 		<table class="editform infscroll-opttable" cellspacing="0" >
+		  <tbody>
 			<tr>
 				<th width="30%" >
 					<label for="<?php echo key_infscr_state; ?>">Infinite-Scroll state is:</label>
@@ -182,21 +181,15 @@ function wp_inf_scroll_options_page()
 				</th>
 				<td>
 					<?php
-						echo "<input name='".key_infscr_image."' id='".key_infscr_image."' value='".get_option(key_infscr_image)."' size='30' type='text'>\n";
+						echo "<input name='".key_infscr_image."' id='".key_infscr_image."' value='".stripslashes(get_option(key_infscr_image))."' size='30' type='text'>\n";
 					?>
 				</td>
         <td>
-      	  <p>URL of image that will be displayed while content is being loaded. If empty, the plugin's default will be used.</p>
+      	  <p>URL of image that will be displayed while content is being loaded. If empty, the plugin's default will be used. Visit <a href="http://www.ajaxload.info" target="_blank">www.ajaxload.info</a> to customize your own loading spinner.</p>
       	</td>
   	  </tr>
-		</table>
-	</fieldset>
-	
-	<fieldset class='options'>
-		<legend>Advanced Options</legend>
-		<p>All CSS selectors are found with the jQuery javascript library. See the <a href="http://docs.jquery.com/Selectors">jQuery CSS Selector documentation</a> for an overview of all possibilities.
-
-		<table class="editform infscroll-opttable" cellspacing="0">
+		</tbody>
+		<tbody>
 			<tr>
 				<th width="30%" >
 					<label for="<?php echo key_infscr_maintenance_state; ?>">Infinite-Scroll maintenance state is:</label>
@@ -225,7 +218,7 @@ function wp_inf_scroll_options_page()
 				</th>
 				<td>
 					<?php
-						echo "<input name='".key_infscr_content_selector."' id='".key_infscr_content_selector."' value='".get_option(key_infscr_content_selector)."' size='30' type='text'>\n";
+						echo "<input name='".key_infscr_content_selector."' id='".key_infscr_content_selector."' value='".stripslashes(get_option(key_infscr_content_selector))."' size='30' type='text'>\n";
 					?>
   			</td>
   			<td>
@@ -239,7 +232,7 @@ function wp_inf_scroll_options_page()
 				</th>
 				<td>
 					<?php
-						echo "<input name='".key_infscr_post_selector."' id='".key_infscr_post_selector."' value='".get_option(key_infscr_post_selector)."' size='30' type='text'>\n";
+						echo "<input name='".key_infscr_post_selector."' id='".key_infscr_post_selector."' value='".stripslashes(get_option(key_infscr_post_selector))."' size='30' type='text'>\n";
 					?>
 				</td>
 				<td>
@@ -259,7 +252,7 @@ function wp_inf_scroll_options_page()
 				</th>
 				<td>
 					<?php
-						echo "<input name='".key_infscr_nav_selector."' id='".key_infscr_nav_selector."' value='".get_option(key_infscr_nav_selector)."' size='30' type='text'>\n";
+						echo "<input name='".key_infscr_nav_selector."' id='".key_infscr_nav_selector."' value='".stripslashes(get_option(key_infscr_nav_selector))."' size='30' type='text'>\n";
 					?>
 			
 				</td>
@@ -274,7 +267,7 @@ function wp_inf_scroll_options_page()
 				</th>
 				<td>
 					<?php
-						echo "<input name='".key_infscr_next_selector."' id='".key_infscr_next_selector."' value='".get_option(key_infscr_next_selector)."' size='30' type='text'>\n";
+						echo "<input name='".key_infscr_next_selector."' id='".key_infscr_next_selector."' value='".stripslashes(get_option(key_infscr_next_selector))."' size='30' type='text'>\n";
 					?>
 				</td>
 				<td>
@@ -295,7 +288,7 @@ function wp_inf_scroll_options_page()
 				<td>
 					<?php
 						echo "<textarea name='".key_infscr_js_calls."' rows='2'  style='width: 95%;'>\n";
-						echo get_option(key_infscr_js_calls);
+						echo stripslashes(get_option(key_infscr_js_calls));
 						echo "</textarea>\n";
 					?>
 				</td>
@@ -303,10 +296,8 @@ function wp_inf_scroll_options_page()
 				  <p>Any functions that are applied to the post contents on page load will need to be executed when the new content comes in.</p>
 		    </td>
 			</tr>
+			</tbody>
 		</table>
-	</fieldset>
-
-
 			
 	<p class="submit">
 		<input type='submit' name='info_update' value='Update Options' />
@@ -337,12 +328,12 @@ function wp_inf_scroll_add()
 	}
 	
 	$plugin_dir 		= get_option('home').'/wp-content/plugins/wp-infinite-scroll';
-	$js_calls		= get_option(key_infscr_js_calls);
-	$loading_image		= get_option(key_infscr_image);
-	$content_selector	= get_option(key_infscr_content_selector);
-	$navigation_selector	= get_option(key_infscr_nav_selector);
-	$post_selector		= get_option(key_infscr_post_selector);
-	$next_selector		= get_option(key_infscr_next_selector);
+	$js_calls		= stripslashes(get_option(key_infscr_js_calls));
+	$loading_image		= stripslashes(get_option(key_infscr_image));
+	$content_selector	= stripslashes(get_option(key_infscr_content_selector));
+	$navigation_selector	= stripslashes(get_option(key_infscr_nav_selector));
+	$post_selector		= stripslashes(get_option(key_infscr_post_selector));
+	$next_selector		= stripslashes(get_option(key_infscr_next_selector));
 	
 	if ($loading_image == '')
 		$loading_image	= "$plugin_dir/ajax-loader.gif";
