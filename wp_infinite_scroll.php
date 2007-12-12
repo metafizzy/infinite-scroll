@@ -14,10 +14,9 @@ BUGS:
  - javascript insertion doesnt work on themes: qwiilm!, craving4green, Lush, no limits, stripedplus
 
 TODO:
- - Allow to customize the param of the fadeOut effect (or maybe even choose a different effect)
- - Add some assertions:
-    - Check that all css selectors resolve to ONE element
-    - Check that the navigation element is "close" to the bottom
+ - Allow to customize the speed of the fadeOut effect (or maybe even choose a different effect like hide..)
+    - deal with the IE6 + opacity + cleartype + <em> issue.
+
  - What error handling do we need?
  - Mention div#infscr-loading so users can customize look more.
 
@@ -32,10 +31,12 @@ Troubleshooting:
 // constants for enables/disabled
 define('infscr_enabled'		, 'enabled');
 define('infscr_disabled'	, 'disabled');
+define('infscr_maint'	, 'disabledforadmins');
+
 
 // options keys constants
 define('key_infscr_state'			, 'infscr_state');
-define('key_infscr_maintenance_state'		, 'infscr_maintenance_state');
+//MAINT define('key_infscr_maintenance_state'		, 'infscr_maintenance_state');
 define('key_infscr_js_calls'			, 'infscr_js_calls');
 define('key_infscr_image'			, 'infscr_image');
 define('key_infscr_content_selector'		, 'infscr_content_selector');
@@ -44,8 +45,8 @@ define('key_infscr_post_selector'		, 'infscr_post_selector');
 define('key_infscr_next_selector'		, 'infscr_next_selector');
 
 // defaults
-define('infscr_state_default'			, infscr_disabled);
-define('infscr_maintenance_state_default'	, infscr_disabled);
+define('infscr_state_default'			, infscr_maint);
+//MAINT define('infscr_maintenance_state_default'	, infscr_disabled);
 define('infscr_js_calls_default'		, '');
 define('infscr_image_default'			, '');
 define('infscr_content_selector_default'	, '#content');
@@ -55,8 +56,8 @@ define('infscr_next_selector_default', 'div.navigation a:first');
 
 
 // add options
-add_option(key_infscr_state		, infscr_state_default			, 'If InfiniteScroll is turned on or off');
-add_option(key_infscr_maintenance_state	, infscr_maintenance_state_default	, 'If maintenance state is turned on or off');
+add_option(key_infscr_state		, infscr_state_default			, 'If InfiniteScroll is turned on, off, or in maintenance');
+//MAINT add_option(key_infscr_maintenance_state	, infscr_maintenance_state_default	, 'If maintenance state is turned on or off');
 add_option(key_infscr_js_calls		, infscr_js_calls_default		, 'Javascript to execute when new content loads in');
 add_option(key_infscr_image		, infscr_image_default			, 'Loading image');
 add_option(key_infscr_content_selector	, infscr_content_selector_default	, 'Content Div css selector');
@@ -88,11 +89,11 @@ function wp_inf_scroll_options_page()
 			$infscr_state = infscr_state_default;
 		update_option(key_infscr_state, $infscr_state);
 
-		// update maintenance mode
-		$infscr_maint = $_POST[key_infscr_maintenance_state];
-		if ($infscr_maint != infscr_enabled && $infscr_state != infscr_disabled)
-			$infscr_maint = infscr_maintenance_state_default;
-		update_option(key_infscr_maintenance_state, $infscr_maint);
+//MAINT 		// update maintenance mode
+//MAINT 		$infscr_maint = $_POST[key_infscr_maintenance_state];
+//MAINT 		if ($infscr_maint != infscr_enabled && $infscr_state != infscr_disabled)
+//MAINT 			$infscr_maint = infscr_maintenance_state_default;
+//MAINT 		update_option(key_infscr_maintenance_state, $infscr_maint);
 
 		// update js calls field
 		$infscr_js_calls = $_POST[key_infscr_js_calls];
@@ -169,10 +170,15 @@ function wp_inf_scroll_options_page()
 						if (get_option(key_infscr_state) == infscr_disabled)
 							echo "selected='selected'";
 						echo ">Disabled</option>\n";
+            echo "<option value='".infscr_maint."'";
+						if (get_option(key_infscr_state) == infscr_maint)
+							echo "selected='selected'";
+						echo ">Disabled for admins only</option>\n";
 						echo "</select>";
 					?>
 				</td>
 	      <td width="50%">
+	        "Disable for admins" is useful for administrators when developing and customizing the blog. Infinit scroll will be disabled for them, but still enabled for any visitors. <small>(Your user level is <?php global $user_level; echo $user_level; ?>.)</small>
         </td>
 			</tr>
 			<tr>
@@ -190,6 +196,8 @@ function wp_inf_scroll_options_page()
   	  </tr>
 		</tbody>
 		<tbody>
+		  <?php
+		  /*
 			<tr>
 				<th width="30%" >
 					<label for="<?php echo key_infscr_maintenance_state; ?>">Infinite-Scroll maintenance state is:</label>
@@ -209,9 +217,11 @@ function wp_inf_scroll_options_page()
 					?>
 				</td>
 				<td width="50%">
-				  <p>In maintenance mode the plugin will be disabled for users with a level 8 and higher. This is meant to spare the administrator from constant data fetching when customizing, while allowing users to have the feature enabled. Your user level is <?php global $user_level; echo $user_level; ?>.</p>
+				  <p>.</p>
 				</td>
 			</tr>
+			*/
+			?>
 			<tr>
 				<th>
 					<label for="<?php echo key_infscr_content_selector; ?>">Content CSS Selector:</label>
@@ -321,11 +331,12 @@ function wp_inf_scroll_add()
 		return;
 	}
 
-	if (get_option(key_infscr_maintenance_state) == infscr_enabled && $user_level >= 8)
-	{
-		echo '<!-- InfiniteScroll not added for administrator (maintenance state) -->';
-		return;
-	}
+  if (get_option(key_infscr_state) == infscr_maint && $user_level >= 8)
+  {
+    echo '<!-- InfiniteScroll not added for administrator (maintenance state) -->';
+    return;
+  }
+  
 	
 	$plugin_dir 		= get_option('home').'/wp-content/plugins/wp-infinite-scroll';
 	$js_calls		= stripslashes(get_option(key_infscr_js_calls));
@@ -358,11 +369,12 @@ $js_string = <<<EOT
      
 	  var INFSCR = {
 		      path          : parseUri( jQis('$next_selector').attr('href') ).relative, 
-		      loadingMsg    : jQis('<div id="infscr-loading" style="text-align: center;"><img style="float:none;" alt="Loading..." src="$loading_image" /><br /><em>Loading the next set of posts</em></div>'),
+		      loadingMsg    : jQis('<div id="infscr-loading" style="text-align: center;"><img style="float:none;" alt="Loading..." src="$loading_image" /><br /><em>Loading the next set of posts...</em></div>'),
 		      pgRetrived    : 1,
-		      scrollDelta   : jQis(document).height() - jQis('$navigation_selector').offset().top, //cached because it's expensive
+		      scrollDelta   : jQis(document).height() - jQis('$navigation_selector').offset().top, //distance from nav links to bottom of page
 		      isDuringAjax  : false,
 		      isInvalidPage : false,
+		      isIE6         : (jQis.browser.msie && jQis.browser.version < 7),
 		      preload       : new Image()
     };
     INFSCR.preload.src   = '$loading_image';
@@ -382,7 +394,7 @@ $js_string = <<<EOT
   				jQis('<div>')
   				  .appendTo('$content_selector')
   				  .load( INFSCR.path.join( INFSCR.pgRetrived ) + ' $post_selector',null,function(){
-        			  INFSCR.loadingMsg.fadeOut('normal');        			  
+				        INFSCR.loadingMsg.fadeOut('normal' ); // currently makes the <em>'d text ugly in IE6
       					INFSCR.isDuringAjax = false; // once the call is done, we can allow it again.
       					$js_calls
     				});
