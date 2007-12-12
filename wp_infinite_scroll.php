@@ -183,21 +183,7 @@ function wp_inf_scroll_options_page()
 	        "Enabled for admins only" will enable the plugin code only for logged-in administrators&mdash;visitors will not be affected while you configure the plugin. "Disabled for admins only" is useful for administrators when customizing the blog&mdash;infinite scroll will be disabled for them, but still enabled for any visitors. 
         </td>
 			</tr>
-			<tr>
-				<th>
-					<label for="<?php echo key_infscr_image; ?>">Loading image:</label>
-				</th>
-				<td>
-					<?php
-						echo "<input name='".key_infscr_image."' id='".key_infscr_image."' value='".stripslashes(get_option(key_infscr_image))."' size='30' type='text'>\n";
-					?>
-				</td>
-        <td>
-      	  <p>URL of image that will be displayed while content is being loaded. Visit <a href="http://www.ajaxload.info" target="_blank">www.ajaxload.info</a> to customize your own loading spinner.</p>
-      	</td>
-  	  </tr>
-		</tbody>
-		<tbody>
+
 		
 			<tr>
 				<th>
@@ -283,6 +269,21 @@ function wp_inf_scroll_options_page()
 				  <p>Any functions that are applied to the post contents on page load will need to be executed when the new content comes in.</p>
 		    </td>
 			</tr>
+
+			<tr>
+				<th>
+					<label for="<?php echo key_infscr_image; ?>">Loading image:</label>
+				</th>
+				<td>
+					<?php
+						echo "<input name='".key_infscr_image."' id='".key_infscr_image."' value='".stripslashes(get_option(key_infscr_image))."' size='30' type='text'>\n";
+					?>
+				</td>
+        <td>
+      	  <p>URL of image that will be displayed while content is being loaded. Visit <a href="http://www.ajaxload.info" target="_blank">www.ajaxload.info</a> to customize your own loading spinner.</p>
+      	</td>
+  	  </tr>
+
 			</tbody>
 		</table>
 			
