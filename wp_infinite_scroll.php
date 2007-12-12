@@ -32,11 +32,11 @@ Troubleshooting:
 define('infscr_enabled'		, 'enabled');
 define('infscr_disabled'	, 'disabled');
 define('infscr_maint'	, 'disabledforadmins');
+define('infscr_config'	, 'enabledforadmins');
 
 
 // options keys constants
 define('key_infscr_state'			, 'infscr_state');
-//MAINT define('key_infscr_maintenance_state'		, 'infscr_maintenance_state');
 define('key_infscr_js_calls'			, 'infscr_js_calls');
 define('key_infscr_image'			, 'infscr_image');
 define('key_infscr_content_selector'		, 'infscr_content_selector');
@@ -44,20 +44,21 @@ define('key_infscr_nav_selector'		, 'infscr_nav_selector');
 define('key_infscr_post_selector'		, 'infscr_post_selector');
 define('key_infscr_next_selector'		, 'infscr_next_selector');
 
+
 // defaults
-define('infscr_state_default'			, infscr_maint);
-//MAINT define('infscr_maintenance_state_default'	, infscr_disabled);
+define('infscr_state_default'			, infscr_config); 
 define('infscr_js_calls_default'		, '');
-define('infscr_image_default'			, '');
+
+$image_path = get_option('home').'/wp-content/plugins/wp-infinite-scroll'.'/ajax-loader.gif';
+define('infscr_image_default'			, $image_path);
 define('infscr_content_selector_default'	, '#content');
+define('infscr_post_selector_default'		, '#content > div.post');
 define('infscr_nav_selector_default'		, 'div.navigation');
-define('infscr_post_selector_default'		, '#content > *');
 define('infscr_next_selector_default', 'div.navigation a:first');
 
 
 // add options
 add_option(key_infscr_state		, infscr_state_default			, 'If InfiniteScroll is turned on, off, or in maintenance');
-//MAINT add_option(key_infscr_maintenance_state	, infscr_maintenance_state_default	, 'If maintenance state is turned on or off');
 add_option(key_infscr_js_calls		, infscr_js_calls_default		, 'Javascript to execute when new content loads in');
 add_option(key_infscr_image		, infscr_image_default			, 'Loading image');
 add_option(key_infscr_content_selector	, infscr_content_selector_default	, 'Content Div css selector');
@@ -85,15 +86,9 @@ function wp_inf_scroll_options_page()
 
 		// update state
 		$infscr_state = $_POST[key_infscr_state];
-		if ($infscr_state != infscr_enabled && $infscr_state != infscr_disabled)
+		if ($infscr_state != infscr_enabled && $infscr_state != infscr_disabled && $infscr_state != infscr_maint && $infscr_state != infscr_config)
 			$infscr_state = infscr_state_default;
 		update_option(key_infscr_state, $infscr_state);
-
-//MAINT 		// update maintenance mode
-//MAINT 		$infscr_maint = $_POST[key_infscr_maintenance_state];
-//MAINT 		if ($infscr_maint != infscr_enabled && $infscr_state != infscr_disabled)
-//MAINT 			$infscr_maint = infscr_maintenance_state_default;
-//MAINT 		update_option(key_infscr_maintenance_state, $infscr_maint);
 
 		// update js calls field
 		$infscr_js_calls = $_POST[key_infscr_js_calls];
@@ -166,10 +161,17 @@ function wp_inf_scroll_options_page()
 						if (get_option(key_infscr_state) == infscr_enabled)
 							echo "selected='selected'";
 						echo ">Enabled</option>\n";
+						
 						echo "<option value='".infscr_disabled."'";
 						if (get_option(key_infscr_state) == infscr_disabled)
 							echo "selected='selected'";
 						echo ">Disabled</option>\n";
+						
+						echo "<option value='".infscr_config."'";
+						if (get_option(key_infscr_state) == infscr_config)
+							echo "selected='selected'";
+						echo ">Enabled for admins only</option>\n";
+						
             echo "<option value='".infscr_maint."'";
 						if (get_option(key_infscr_state) == infscr_maint)
 							echo "selected='selected'";
@@ -178,7 +180,7 @@ function wp_inf_scroll_options_page()
 					?>
 				</td>
 	      <td width="50%">
-	        "Disable for admins" is useful for administrators when developing and customizing the blog. Infinit scroll will be disabled for them, but still enabled for any visitors. <small>(Your user level is <?php global $user_level; echo $user_level; ?>.)</small>
+	        "Enabled for admins only" will enable the plugin code only for logged-in administrators&mdash;visitors will not be affected while you configure the plugin. "Disabled for admins only" is useful for administrators when customizing the blog&mdash;infinite scroll will be disabled for them, but still enabled for any visitors. 
         </td>
 			</tr>
 			<tr>
@@ -191,37 +193,12 @@ function wp_inf_scroll_options_page()
 					?>
 				</td>
         <td>
-      	  <p>URL of image that will be displayed while content is being loaded. If empty, the plugin's default will be used. Visit <a href="http://www.ajaxload.info" target="_blank">www.ajaxload.info</a> to customize your own loading spinner.</p>
+      	  <p>URL of image that will be displayed while content is being loaded. Visit <a href="http://www.ajaxload.info" target="_blank">www.ajaxload.info</a> to customize your own loading spinner.</p>
       	</td>
   	  </tr>
 		</tbody>
 		<tbody>
-		  <?php
-		  /*
-			<tr>
-				<th width="30%" >
-					<label for="<?php echo key_infscr_maintenance_state; ?>">Infinite-Scroll maintenance state is:</label>
-				</th>
-				<td>
-					<?php
-						echo "<select name='".key_infscr_maintenance_state."' id='".key_infscr_maintenance_state."'>\n";
-						echo "<option value='".infscr_enabled."'";
-						if (get_option(key_infscr_maintenance_state) == infscr_enabled)
-							echo "selected='selected'";
-						echo ">Enabled</option>\n";
-						echo "<option value='".infscr_disabled."'";
-						if (get_option(key_infscr_maintenance_state) == infscr_disabled)
-							echo "selected='selected'";
-						echo ">Disabled</option>\n";
-						echo "</select>";
-					?>
-				</td>
-				<td width="50%">
-				  <p>.</p>
-				</td>
-			</tr>
-			*/
-			?>
+		
 			<tr>
 				<th>
 					<label for="<?php echo key_infscr_content_selector; ?>">Content CSS Selector:</label>
@@ -327,16 +304,21 @@ function wp_inf_scroll_add()
 
 	if (!is_home() || is_paged())
 	{
-		echo '<!-- InfiniteScroll not added for this page (not home) -->';
+		echo '<!-- Infinite-Scroll not added for this page (not home) -->';
 		return;
 	}
 
   if (get_option(key_infscr_state) == infscr_maint && $user_level >= 8)
   {
-    echo '<!-- InfiniteScroll not added for administrator (maintenance state) -->';
+    echo '<!-- Infinite-Scroll not added for administrator (maintenance state) -->';
     return;
   }
-  
+
+  if (get_option(key_infscr_state) == infscr_config && $user_level <= 8)
+  {
+    echo '<!-- Infinite-Scroll not added for visitors (configuration state) -->';
+    return;
+  }  
 	
 	$plugin_dir 		= get_option('home').'/wp-content/plugins/wp-infinite-scroll';
 	$js_calls		= stripslashes(get_option(key_infscr_js_calls));
@@ -345,10 +327,7 @@ function wp_inf_scroll_add()
 	$navigation_selector	= stripslashes(get_option(key_infscr_nav_selector));
 	$post_selector		= stripslashes(get_option(key_infscr_post_selector));
 	$next_selector		= stripslashes(get_option(key_infscr_next_selector));
-	
-	if ($loading_image == '')
-		$loading_image	= "$plugin_dir/ajax-loader.gif";
-	
+
 $js_string = <<<EOT
 	
 <script type="text/javascript" src="http://jqueryjs.googlecode.com/files/jquery-1.2.1.min.js"></script>
