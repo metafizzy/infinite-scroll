@@ -19,6 +19,7 @@ TODO:
 
  - What error handling do we need?
  - Mention div#infscr-loading so users can customize look more.
+ - Tell user to go to options page after activating.
 
 
 Troubleshooting:
