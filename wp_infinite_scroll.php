@@ -26,6 +26,9 @@ Troubleshooting:
  - Your posts need to be wrapped in divs all next to eachother.
  - you need a link on your page to the NEXT PAGE OF POSTS.
 
+Notes:
+ - <div class="infscr-pages" id="infscr-page-2"> will contain the page 2 content, etc
+   
    
 */
 
@@ -373,7 +376,8 @@ $js_string = <<<EOT
   				INFSCR.pgRetrived++;
   				
   				jQis('<div/>')
-  				  .attr('id','page-'+INFSCR.pgRetrived)
+  				  .attr('id','infscr-page-'+INFSCR.pgRetrived)
+  				  .attr('class','infscr-pages')
   				  .appendTo('$content_selector')
   				  .load( INFSCR.path.join( INFSCR.pgRetrived ) + ' $post_selector',null,function(){
 				        INFSCR.loadingMsg.fadeOut('normal' ); // currently makes the <em>'d text ugly in IE6
