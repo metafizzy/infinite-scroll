@@ -372,7 +372,8 @@ $js_string = <<<EOT
   				jQis('$navigation_selector').hide(); // take out the previous/next links
   				INFSCR.pgRetrived++;
   				
-  				jQis('<div>')
+  				jQis('<div/>')
+  				  .attr('id','page-'+INFSCR.pgRetrived)
   				  .appendTo('$content_selector')
   				  .load( INFSCR.path.join( INFSCR.pgRetrived ) + ' $post_selector',null,function(){
 				        INFSCR.loadingMsg.fadeOut('normal' ); // currently makes the <em>'d text ugly in IE6
