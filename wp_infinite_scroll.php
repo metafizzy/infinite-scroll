@@ -307,7 +307,7 @@ function wp_inf_scroll_add()
 	if (get_option(key_infscr_state) == infscr_disabled)
 		return;
 
-	if (!is_home() || is_paged())
+	if (!is_home() || is_paged() || is_single())
 	{
 		echo '<!-- Infinite-Scroll not added for this page (not home) -->';
 		return;
