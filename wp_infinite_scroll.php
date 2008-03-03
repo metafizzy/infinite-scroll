@@ -23,6 +23,7 @@ TODO:
  - option for changing loading text.
  - reports of it crashing safari on os x
  - Tell user to go to options page after activating.
+ - friendlier way of handling last page -- "oops looks like that's it!"
 
 Troubleshooting:
  - Your posts need to be wrapped in divs all next to eachother.
@@ -78,6 +79,22 @@ add_option(key_infscr_next_selector 	, infscr_next_selector_default		, 'Next pag
 // adding actions
 add_action('wp_footer'		, 'wp_inf_scroll_add');
 add_action('admin_menu'		, 'add_wp_inf_scroll_options_page');
+
+
+/*
+// used because wordpress doesnt like to tell us for sure what the homepage is.
+// removed because it doesnt quite work..
+function is_frontpage()
+{
+	global $post; 
+	$id = $post->ID;
+	$show_on_front = get_option('show_on_front');
+	$page_on_front = get_option('page_on_front');
+
+	if ($show_on_front == 'page' && $page_on_front == $id ) { return true; 	} 
+	else { 	return false; 	}
+}
+*/
 
 function add_wp_inf_scroll_options_page() 
 {
@@ -316,6 +333,14 @@ function wp_inf_scroll_add()
 		echo '<!-- Infinite-Scroll not added for this page (not home) -->';
 		return;
 	}
+	
+	/* see commented section above. line ~84
+		if ( is_frontpage() )
+	{
+		echo '<!-- Infinite-Scroll not added for this page (frontpage) -->';
+		return;
+	}
+*/
 
   if (get_option(key_infscr_state) == infscr_maint && $user_level >= 8)
   {
@@ -362,6 +387,7 @@ $js_string = <<<EOT
 		      scrollDelta   : jQis(document).height() - jQis('$navigation_selector').offset().top, //distance from nav links to bottom of page
 		      isDuringAjax  : false,
 		      isInvalidPage : false,
+		      isDone        : false,  // for when it goes all the way through the archive.
 		      isIE6         : (jQis.browser.msie && jQis.browser.version < 7),
 		      preload       : new Image()
     };
@@ -369,7 +395,7 @@ $js_string = <<<EOT
 				      
     INFSCR.loadResults = function(){
       
-        if (INFSCR.isDuringAjax || INFSCR.isInvalidPage) return; 
+        if (INFSCR.isDuringAjax || INFSCR.isInvalidPage || INFSCR.isDone) return; 
   
   	   	// the math is: docheight - distancetotopofwindow - height of window < docheight - distance of nav element to the top. [go algebra!]
   			if (  jQis(document).height() - jQis(document).scrollTop() - jQis(window).height()  <  INFSCR.scrollDelta){ 
@@ -399,6 +425,12 @@ $js_string = <<<EOT
       alert('Sorry, we couldn\'t parse your Previous Posts URL. Verify your Previous Posts css selector points to the A tag. If you still get this error: yell, scream, and kindly ask for help.');
       INFSCR.isInvalidPage = true;  //prevent it from running on this page.
     }
+    
+    jQis(document).ajaxError(function(e,xhr,opt){
+      if (xhr.status == 404){
+         INFSCR.isDone = true;
+      }
+    });
       
 		jQis(window).scroll( INFSCR.loadResults ); // hook up the function to the window scroll event.
 	
