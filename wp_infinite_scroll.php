@@ -10,21 +10,16 @@ Author URI: http://www.infinite-scroll.net
 
 
 BUGS:
-
  - javascript insertion doesnt work on themes: qwiilm!, craving4green, Lush, no limits, stripedplus
 
 TODO:
- - Do we really need to ask for the content div? Is it not always the direct parent of the posts?
  - Allow to customize the speed of the fadeOut effect (or maybe even choose a different effect like hide..)
     - deal with the IE6 + opacity + cleartype + <em> issue.
-
  - What error handling do we need?
  - Mention div#infscr-loading so users can customize look more.
  - option for changing loading text.
  - reports of it crashing safari on os x
- - Tell user to go to options page after activating.
- - friendlier way of handling last page -- "oops looks like that's it!"
- - external script + jquery plugin!
+ - jquery plugin!
  - prompt the user better to go to config... wordpress.com stats and akismet do this nicely.
  - WTF? link and a pause button?
 

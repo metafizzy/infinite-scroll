@@ -77,7 +77,8 @@ INFSCR.loadResults = function(){
 		}   
 };
 
-INFSCR.init = function(){
+(function(){
+  //this would be the init() function.
   
   delete INFSCR_cfg; // remove the global
   
@@ -100,4 +101,4 @@ INFSCR.init = function(){
     
   jQis(window).scroll( INFSCR.loadResults ); // hook up the function to the window scroll event.
 
-}
+}();
