@@ -366,99 +366,25 @@ function wp_inf_scroll_add()
 	$next_selector		= stripslashes(get_option(key_infscr_next_selector));
 
 $js_string = <<<EOT
-	
-<script type="text/javascript" src="$plugin_dir/hotness.js"></script>
-<script type="text/javascript" >
 
+<script type="text/javascript" >
 
 		// WP-Infinite-Scroll plugin
 		// copyright Paul Irish & dirkhaim
 		// license: cc-wrapped GPL : http://creativecommons.org/licenses/GPL/2.0/
 		
-		INFSCR.config = {
+		var INFSCR_cfg = {
 		  nextSelector    : "$next_selector",
 		  loadingImg      : "$loading_image",
 		  navSelector     : "$navigation_selector",
 		  contentSelector : "$content_selector",
-		  postSelector    : "$post_selector"
-		  jsCalls         : function(){ $js_calls };
+		  postSelector    : "$post_selector",
+		  jsCalls         : function(){ $js_calls }
 		}
 		
-		
-		
-		
-		
-		
+</script>	
+<script type="text/javascript" src="$plugin_dir/hotness.js"></script>
 
-
-
-
-		// WP-Infinite-Scroll plugin
-		// copyright Paul Irish & dirkhaim
-		// license: cc-wrapped GPL : http://creativecommons.org/licenses/GPL/2.0/
-		
-		var jQis = jQuery.noConflict(); // held separately to avoid collisions
-     
-	  var INFSCR = {
-		      path          : parseUri( jQis('$next_selector').attr('href') ).relative, 
-		      loadingMsg    : jQis('<div id="infscr-loading" style="text-align: center;"><img style="float:none;" alt="Loading..." src="$loading_image" /><br /><em>Loading the next set of posts...</em></div>'),
-		      pgRetrived    : 1,
-		      scrollDelta   : jQis(document).height() - jQis('$navigation_selector').offset().top, //distance from nav links to bottom of page
-		      isDuringAjax  : false,
-		      isInvalidPage : false,
-		      isDone        : false,  // for when it goes all the way through the archive.
-		      isIE6         : (jQis.browser.msie && jQis.browser.version < 7),
-		      preload       : new Image()
-    };
-    INFSCR.preload.src   = '$loading_image';
-				      
-    INFSCR.loadResults = function(){
-      
-        if (INFSCR.isDuringAjax || INFSCR.isInvalidPage || INFSCR.isDone) return; 
-  
-  	   	// the math is: docheight - distancetotopofwindow - height of window < docheight - distance of nav element to the top. [go algebra!]
-  			if (  jQis(document).height() - jQis(document).scrollTop() - jQis(window).height()  <  INFSCR.scrollDelta){ 
-  			
-  				INFSCR.isDuringAjax = true; // we dont want to fire the ajax multiple times
-  				INFSCR.loadingMsg.appendTo('$content_selector').show();
-  				jQis('$navigation_selector').hide(); // take out the previous/next links
-  				INFSCR.pgRetrived++;
-  				
-  				jQis('<div/>')
-  				  .attr('id','infscr-page-'+INFSCR.pgRetrived)
-  				  .attr('class','infscr-pages')
-  				  .appendTo('$content_selector')
-  				  .load( INFSCR.path.join( INFSCR.pgRetrived ) + ' $post_selector',null,function(){
-				        INFSCR.loadingMsg.fadeOut('normal' ); // currently makes the <em>'d text ugly in IE6
-      					INFSCR.isDuringAjax = false; // once the call is done, we can allow it again.
-      					$js_calls
-    				});
-  				
-  			}   
-    };
-    
-    if (INFSCR.path.split('2').length == 2){ // there is a 2 in the next url, e.g. /page/2/
-      INFSCR.path = INFSCR.path.split('2');
-    }
-    else {
-      alert('Sorry, we couldn\'t parse your Previous Posts URL. Verify your Previous Posts css selector points to the A tag. If you still get this error: yell, scream, and kindly ask for help.');
-      INFSCR.isInvalidPage = true;  //prevent it from running on this page.
-    }
-    
-    jQis(document).ajaxError(function(e,xhr,opt){
-      if (xhr.status == 404){
-         INFSCR.isDone = true;
-      }
-    });
-      
-		jQis(window).scroll( INFSCR.loadResults ); // hook up the function to the window scroll event.
-	
-		
-		
-		
-		
-		
-		</script>
 	
 EOT;
 
