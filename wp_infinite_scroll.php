@@ -367,19 +367,35 @@ function wp_inf_scroll_add()
 
 $js_string = <<<EOT
 	
-<script type="text/javascript" src="http://jqueryjs.googlecode.com/files/jquery-1.2.1.min.js"></script>
-<script type="text/javascript" src="$plugin_dir/common.js"></script>
+<script type="text/javascript" src="$plugin_dir/hotness.js"></script>
 <script type="text/javascript" >
 
+
+		// WP-Infinite-Scroll plugin
+		// copyright Paul Irish & dirkhaim
+		// license: cc-wrapped GPL : http://creativecommons.org/licenses/GPL/2.0/
+		
+		INFSCR.config = {
+		  nextSelector    : "$next_selector",
+		  loadingImg      : "$loading_image",
+		  navSelector     : "$navigation_selector",
+		  contentSelector : "$content_selector",
+		  postSelector    : "$post_selector"
+		  jsCalls         : function(){ $js_calls };
+		}
+		
+		
+		
+		
+		
+		
 
 
 
 
 		// WP-Infinite-Scroll plugin
 		// copyright Paul Irish & dirkhaim
-		// license: cc-wrapped GPL
-		
-		
+		// license: cc-wrapped GPL : http://creativecommons.org/licenses/GPL/2.0/
 		
 		var jQis = jQuery.noConflict(); // held separately to avoid collisions
      
@@ -437,6 +453,11 @@ $js_string = <<<EOT
       
 		jQis(window).scroll( INFSCR.loadResults ); // hook up the function to the window scroll event.
 	
+		
+		
+		
+		
+		
 		</script>
 	
 EOT;
