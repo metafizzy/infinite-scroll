@@ -101,4 +101,4 @@ INFSCR.loadResults = function(){
     
   jQis(window).scroll( INFSCR.loadResults ); // hook up the function to the window scroll event.
 
-}();
+})();
