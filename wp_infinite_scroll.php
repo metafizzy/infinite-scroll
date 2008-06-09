@@ -22,6 +22,7 @@ TODO:
  - jquery plugin!
  - prompt the user better to go to config... wordpress.com stats and akismet do this nicely.
  - WTF? link and a pause button?
+ - when in admin-enabled mode, "If its working, enable it for all users" reminder.
 
 Troubleshooting:
  - Your posts need to be wrapped in divs all next to eachother.
