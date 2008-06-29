@@ -58,12 +58,16 @@ var INFSCR = {      // more configuration set in init()
       preload       : (new Image()).src  = INFSCR.cfg.loadingImg;
 };
 
-INFSCR.loadResults = function(){
+INFSCR.isNearBottom = function(){
+    return (  jQis(document).height() - jQis(document).scrollTop() - jQis(window).height()  <  INFSCR.scrollDelta);    
+}
+
+INFSCR.setup = function(){
   
     if (INFSCR.isDuringAjax || INFSCR.isInvalidPage || INFSCR.isDone) return; 
 
    	// the math is: docheight - distancetotopofwindow - height of window < docheight - distance of nav element to the top. [go algebra!]
-		if (  jQis(document).height() - jQis(document).scrollTop() - jQis(window).height()  <  INFSCR.scrollDelta){ 
+		if (  INFSCR.isNearBottom() ){ 
 		
 			INFSCR.isDuringAjax = true; // we dont want to fire the ajax multiple times
 			INFSCR.loadingMsg.appendTo( INFSCR.cfg.contentSelector ).show();
@@ -83,8 +87,7 @@ INFSCR.loadResults = function(){
 		}   
 };
 
-(function(){
-  //this would be the init() function.
+(INFSCR.init = function(){
   
   delete INFSCR_cfg; // remove the global
   
@@ -104,6 +107,6 @@ INFSCR.loadResults = function(){
     if (xhr.status == 404){ INFSCR.isDone = true; } // die if we're out of pages.
   });
     
-  jQis(window).scroll( INFSCR.loadResults ); // hook up the function to the window scroll event.
+  jQis(window).scroll( INFSCR.setup ); // hook up the function to the window scroll event.
 
 })();

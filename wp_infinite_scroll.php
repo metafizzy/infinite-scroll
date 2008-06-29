@@ -20,19 +20,10 @@ TODO:
  - option for changing loading text.
  - reports of it crashing safari on os x
  - jquery plugin!
- - prompt the user better to go to config... wordpress.com stats and akismet do this nicely.
- - WTF? link and a pause button?
+  - WTF? link and a pause button?
  - when in admin-enabled mode, "If its working, enable it for all users" reminder.
 
-Troubleshooting:
- - Your posts need to be wrapped in divs all next to eachother.
- - you need a link on your page to the NEXT PAGE OF POSTS.
 
-FAQ:
- - change number of posts loaded? 
-Notes:
- - <div class="infscr-pages" id="infscr-page-2"> will contain the page 2 content, etc
-   
    
 */
 
@@ -80,6 +71,9 @@ add_action('wp_footer'		, 'wp_inf_scroll_add');
 add_action('admin_menu'		, 'add_wp_inf_scroll_options_page');
 
 
+
+
+
 /*
 // used because wordpress doesnt like to tell us for sure what the homepage is.
 // removed because it doesnt quite work..
@@ -95,10 +89,23 @@ function is_frontpage()
 }
 */
 
+
+
+if ( get_option(key_infscr_state) == infscr_state_default && !isset($_POST['submit']) ) {
+	function setup_warning() {
+		echo "
+		<div id='infinitescroll-warning' class='updated fade'><p><strong>".__('Infinite Scroll is almost ready.')."</strong> ".sprintf(__('Please <a href="%1$s">review the configuration and set the state to enabled</a>.'), "options-general.php?page=wp_infinite_scroll.php")."</p></div>
+		";
+	}
+	add_action('admin_notices', 'setup_warning');
+	return;
+}
+
+
 function add_wp_inf_scroll_options_page() 
 {
 	global $wpdb;
-	add_options_page('Infinite-Scroll Options', 'Infinite-Scroll', 8, basename(__FILE__), 'wp_inf_scroll_options_page');
+	add_options_page('Infinite Scroll Options', 'Infinite Scroll', 8, basename(__FILE__), 'wp_inf_scroll_options_page');
 }
 
 function wp_inf_scroll_options_page()
@@ -140,7 +147,7 @@ function wp_inf_scroll_options_page()
 
 
 		// update notification
-		echo "<div class='updated'><p><strong>Infinite-Scroll options updated</strong></p></div>";
+		echo "<div class='updated'><p><strong>Infinite Scroll options updated</strong></p></div>";
 	}
 
 	// output the options page
@@ -150,7 +157,7 @@ function wp_inf_scroll_options_page()
 	<div class="wrap">
 <?php if (get_option(key_infscr_state) == infscr_disabled) { ?>
 	<div style="margin:10px auto; border:3px #f00 solid; background-color: #fdd; color: #000; padding: 10px; text-align: center;">
-	Infinite-Scroll plugin is <strong>disabled</strong>.
+	Infinite Scroll plugin is <strong>disabled</strong>.
 	</div>
 <?php } ?>
 <?php if ( false && get_option(key_infscr_state) != infscr_disabled && get_option(key_infscr_js_calls) == '') {  // disabled for now?>
@@ -168,7 +175,7 @@ function wp_inf_scroll_options_page()
     table.infscroll-opttable dd { margin-bottom: 0 }
   </style>
   
-	<h2>Infinite-Scroll Options</h2>
+	<h2>Infinite Scroll Options</h2>
 
 	  <p>All CSS selectors are found with the jQuery javascript library. See the <a href="http://docs.jquery.com/Selectors">jQuery CSS Selector documentation</a> for an overview of all possibilities. Single-quotes are not allowed&mdash;only double-quotes may be used.
 
@@ -176,7 +183,7 @@ function wp_inf_scroll_options_page()
 		  <tbody>
 			<tr>
 				<th width="30%" >
-					<label for="<?php echo key_infscr_state; ?>">Infinite-Scroll state is:</label>
+					<label for="<?php echo key_infscr_state; ?>">Infinite Scroll state is:</label>
 				</th>
 				<td>
 					<?php

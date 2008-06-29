@@ -1,11 +1,4 @@
-the pattern
-changelog
-installation
-troubleshooting
-who
-contact
-aknowledgements
-greasemonkey - autopagerize
+
 
 
 
@@ -16,6 +9,14 @@ jquery plugin
 wp-cats
 
 itunes rails
-
+sociallogic.org
 friends UI.
 
+
+
+
+
+<span class="wp_cats_ajaxify"><span class="wp_cats_post_id">73</span><a rel="category tag" title="View all posts in hacks" href="http://paulirish.com/category/hacks/">hacks</a></span>
+
+
+<a rel="category tag" title="View all posts in hacks" href="http://paulirish.com/category/hacks/">hacks</a>
