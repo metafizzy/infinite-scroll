@@ -1,4 +1,10 @@
 
+
+// infinite scroll code is at the bottom.
+
+
+
+
 /*
  * jQuery 1.2.3 - New Wave Javascript
  *
@@ -45,11 +51,11 @@ var jQis = jQuery.noConflict(); // held separately to avoid collisions
  
 var INFSCR = {      // more configuration set in init()
       cfg           : INFSCR_cfg, // defined in the php
-      pgRetrived    : 1,
+      currPage    : 1,
       isDuringAjax  : false,
       isInvalidPage : false,
       isDone        : false,  // for when it goes all the way through the archive.
-      preload       : new Image()
+      preload       : (new Image()).src  = INFSCR.cfg.loadingImg;
 };
 
 INFSCR.loadResults = function(){
@@ -62,13 +68,13 @@ INFSCR.loadResults = function(){
 			INFSCR.isDuringAjax = true; // we dont want to fire the ajax multiple times
 			INFSCR.loadingMsg.appendTo( INFSCR.cfg.contentSelector ).show();
 			jQis( INFSCR.cfg.navSelector ).hide(); // take out the previous/next links
-			INFSCR.pgRetrived++;
+			INFSCR.currPage++;
 			
 			jQis('<div/>')
-			  .attr('id','infscr-page-'+INFSCR.pgRetrived)
+			  .attr('id','infscr-page-'+INFSCR.currPage)
 			  .attr('class','infscr-pages')
 			  .appendTo( INFSCR.cfg.contentSelector )
-			  .load( INFSCR.path.join( INFSCR.pgRetrived ) + ' ' + INFSCR.cfg.postSelector,null,function(){
+			  .load( INFSCR.path.join( INFSCR.currPage ) + ' ' + INFSCR.cfg.postSelector,null,function(){
 		        INFSCR.loadingMsg.fadeOut('normal' ); // currently makes the <em>'d text ugly in IE6
   					INFSCR.isDuringAjax = false; // once the call is done, we can allow it again.
   					INFSCR.cfg.jsCalls();
@@ -85,7 +91,6 @@ INFSCR.loadResults = function(){
   INFSCR.path          = parseUri( jQis(INFSCR.cfg.nextSelector).attr('href') ).relative;
   INFSCR.loadingMsg    = jQis('<div id="infscr-loading" style="text-align: center;"><img style="float:none;" alt="Loading..." src="'+INFSCR.cfg.loadingImg+'" /><br /><em>Loading the next set of posts...</em></div>');
   INFSCR.scrollDelta   = jQis(document).height() - jQis(INFSCR.cfg.navSelector).offset().top; //distance from nav links to bottom of page
-  INFSCR.preload.src   = INFSCR.cfg.loadingImg;
 		      
   if (INFSCR.path.split('2').length == 2){ // there is a 2 in the next url, e.g. /page/2/
     INFSCR.path = INFSCR.path.split('2');
