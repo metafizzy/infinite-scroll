@@ -80,10 +80,14 @@ INFSCR.setup = function(){
 			  .attr('class','infscr-pages')
 			  .appendTo( INFSCR.cfg.contentSelector )
 			  .load( INFSCR.path.join( INFSCR.currPage ) + ' ' + INFSCR.cfg.postSelector,null,function(){
-		        INFSCR.loadingMsg.fadeOut('normal' ); // currently makes the <em>'d text ugly in IE6
-  					INFSCR.isDuringAjax = false; // once the call is done, we can allow it again.
-  					INFSCR.cfg.jsCalls();
-				});
+			        if (INFSCR.isDone){ // if we've hit the last page...
+    			        INFSCR.loadingMsg.find('img').hide().parent().find('span').html(INFSCR.cfg.donetext).animate({opacity: 1},2000).fadeOut('normal');
+		            } else {
+    		            INFSCR.loadingMsg.fadeOut('normal' ); // currently makes the <em>'d text ugly in IE6
+                        INFSCR.isDuringAjax = false; // once the call is done, we can allow it again.
+                        INFSCR.cfg.jsCalls();
+		            }
+			    });
 			
 		}   
 };
@@ -93,7 +97,7 @@ INFSCR.setup = function(){
   delete INFSCR_cfg; // remove the global
   
   INFSCR.path          = parseUri( jQis(INFSCR.cfg.nextSelector).attr('href') ).relative;
-  INFSCR.loadingMsg    = jQis('<div id="infscr-loading" style="text-align: center;"><img style="float:none;" alt="Loading..." src="'+INFSCR.cfg.loadingImg+'" /><br /><em>'+INFSCR.cfg.text+'</em></div>');
+  INFSCR.loadingMsg    = jQis('<div id="infscr-loading" style="text-align: center;"><img style="float:none;" alt="Loading..." src="'+INFSCR.cfg.loadingImg+'" /><br /><span>'+INFSCR.cfg.text+'</span></div>');
   INFSCR.scrollDelta   = jQis(document).height() - jQis(INFSCR.cfg.navSelector).offset().top; //distance from nav links to bottom of page
 		      
   if (INFSCR.path.split('2').length == 2){ // there is a 2 in the next url, e.g. /page/2/

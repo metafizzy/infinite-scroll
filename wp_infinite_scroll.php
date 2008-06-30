@@ -34,6 +34,7 @@ define('key_infscr_state'			, 'infscr_state');
 define('key_infscr_js_calls'			, 'infscr_js_calls');
 define('key_infscr_image'			, 'infscr_image');
 define('key_infscr_text'			, 'infscr_text');
+define('key_infscr_donetext'			, 'infscr_donetext');
 define('key_infscr_content_selector'		, 'infscr_content_selector');
 define('key_infscr_nav_selector'		, 'infscr_nav_selector');
 define('key_infscr_post_selector'		, 'infscr_post_selector');
@@ -46,7 +47,8 @@ define('infscr_js_calls_default'		, '');
 
 $image_path = get_option('home').'/wp-content/plugins/wp-infinite-scroll'.'/ajax-loader.gif';
 define('infscr_image_default'			, $image_path);
-define('infscr_text_default'			, 'Loading the next set of posts...');
+define('infscr_text_default'			, '<em>Loading the next set of posts...</em>');
+define('infscr_donetext_default'			, '<em>Congratulations, you\'ve reached the end of the internet.</em>');
 define('infscr_content_selector_default'	, '#content');
 define('infscr_post_selector_default'		, '#content > div.post');
 define('infscr_nav_selector_default'		, 'div.navigation');
@@ -58,6 +60,7 @@ add_option(key_infscr_state		, infscr_state_default			, 'If InfiniteScroll is tu
 add_option(key_infscr_js_calls		, infscr_js_calls_default		, 'Javascript to execute when new content loads in');
 add_option(key_infscr_image		, infscr_image_default			, 'Loading image');
 add_option(key_infscr_text		, infscr_text_default			, 'Loading text');
+add_option(key_infscr_donetext		, infscr_donetext_default			, 'Completed text');
 add_option(key_infscr_content_selector	, infscr_content_selector_default	, 'Content Div css selector');
 add_option(key_infscr_nav_selector 	, infscr_nav_selector_default		, 'Navigation Div css selector');
 add_option(key_infscr_post_selector 	, infscr_post_selector_default		, 'Post Div css selector');
@@ -127,9 +130,13 @@ function wp_inf_scroll_options_page()
 		$infscr_image = $_POST[key_infscr_image];
 		update_option(key_infscr_image, $infscr_image);
 		
-	    // update image 
+	    // update text 
 		$infscr_text = $_POST[key_infscr_text];
 		update_option(key_infscr_text, $infscr_text);
+		
+		// update done text 
+		$infscr_donetext = $_POST[key_infscr_donetext];
+		update_option(key_infscr_donetext, $infscr_donetext);
 
 		// update content selector
 		$content_selector = $_POST[key_infscr_content_selector];
@@ -171,7 +178,7 @@ function wp_inf_scroll_options_page()
   <style type="text/css">
     table.infscroll-opttable { width: 100%;}
     table.infscroll-opttable td, table.infscroll-opttable th { vertical-align: top; padding: 9px 4px; }
-    table.infscroll-opttable th { padding-top: 13px;}
+    table.infscroll-opttable th { padding-top: 13px; text-align: right;}
     table.infscroll-opttable td p { margin: 0;}
     table.infscroll-opttable dl { font-size: 90%; color: #666; margin-top: 5px; }
     table.infscroll-opttable dd { margin-bottom: 0 }
@@ -281,7 +288,7 @@ function wp_inf_scroll_options_page()
 				  <dl>
 				    <dt>Examples:</dt>
 				    <dd>div.navigation a:first</dd>
-				    <dd>div.navigation a:contains("Previous")</dd>
+				    <dd>div.navigation a:contains(Previous)</dd>
 			    </dl>
 			  </td>
 			</tr>			
@@ -327,7 +334,21 @@ function wp_inf_scroll_options_page()
 					?>
 				</td>
                 <td>
-              	  <p>Text will be displayed while content is being loaded.</p>
+              	  <p>Text will be displayed while content is being loaded. <small><acronym>HTML</acrynom> allowed.</small></p>
+              	</td>
+  	          </tr>
+
+	<tr>
+				<th>
+					<label for="<?php echo key_infscr_donetext; ?>">"You've reached the end" text:</label>
+				</th>
+				<td>
+					<?php
+						echo '<input name="'.key_infscr_donetext.'" id="'.key_infscr_donetext.'" value="'.stripslashes(get_option(key_infscr_donetext)).'" size="30" type="text">';
+					?>
+				</td>
+                <td>
+              	  <p>Text will be displayed when all entries have already been retrieved. The plugin will show this message, fade it out, and cease working. <small><acronym>HTML</acrynom> allowed.</small></p>
               	</td>
   	          </tr>
 
@@ -380,6 +401,7 @@ function wp_inf_scroll_add()
 	$js_calls		= stripslashes(get_option(key_infscr_js_calls));
 	$loading_image		= stripslashes(get_option(key_infscr_image));
 	$loading_text		= stripslashes(get_option(key_infscr_text));
+	$donetext		= stripslashes(get_option(key_infscr_donetext));
 	$content_selector	= stripslashes(get_option(key_infscr_content_selector));
 	$navigation_selector	= stripslashes(get_option(key_infscr_nav_selector));
 	$post_selector		= stripslashes(get_option(key_infscr_post_selector));
@@ -397,6 +419,7 @@ $js_string = <<<EOT
 		  nextSelector    : "$next_selector",
 		  loadingImg      : "$loading_image",
 	      text            : "$loading_text",
+	      donetext        : "$donetext",
 		  navSelector     : "$navigation_selector",
 		  contentSelector : "$content_selector",
 		  postSelector    : "$post_selector",
