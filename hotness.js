@@ -54,8 +54,7 @@ var INFSCR = {      // more configuration set in init()
       currPage    : 1,
       isDuringAjax  : false,
       isInvalidPage : false,
-      isDone        : false,  // for when it goes all the way through the archive.
-      preload       : (new Image()).src  = INFSCR.cfg.loadingImg;
+      isDone        : false  // for when it goes all the way through the archive.
 };
 
 INFSCR.isNearBottom = function(){
@@ -64,6 +63,8 @@ INFSCR.isNearBottom = function(){
 
 INFSCR.setup = function(){
   
+    (new Image()).src = INFSCR.cfg.loadingImg; // preload the image.
+    
     if (INFSCR.isDuringAjax || INFSCR.isInvalidPage || INFSCR.isDone) return; 
 
    	// the math is: docheight - distancetotopofwindow - height of window < docheight - distance of nav element to the top. [go algebra!]
@@ -92,7 +93,7 @@ INFSCR.setup = function(){
   delete INFSCR_cfg; // remove the global
   
   INFSCR.path          = parseUri( jQis(INFSCR.cfg.nextSelector).attr('href') ).relative;
-  INFSCR.loadingMsg    = jQis('<div id="infscr-loading" style="text-align: center;"><img style="float:none;" alt="Loading..." src="'+INFSCR.cfg.loadingImg+'" /><br /><em>Loading the next set of posts...</em></div>');
+  INFSCR.loadingMsg    = jQis('<div id="infscr-loading" style="text-align: center;"><img style="float:none;" alt="Loading..." src="'+INFSCR.cfg.loadingImg+'" /><br /><em>'+INFSCR.cfg.text+'</em></div>');
   INFSCR.scrollDelta   = jQis(document).height() - jQis(INFSCR.cfg.navSelector).offset().top; //distance from nav links to bottom of page
 		      
   if (INFSCR.path.split('2').length == 2){ // there is a 2 in the next url, e.g. /page/2/

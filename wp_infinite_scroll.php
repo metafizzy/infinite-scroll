@@ -2,11 +2,11 @@
 
 /*
 Plugin Name: Infinite Scroll
-Version: 0.5
-Plugin URI: http://www.infinite-scroll.net
+Version: 1.0
+Plugin URI: http://www.infinite-scroll.com
 Description: Automatically loads the next page of posts into the bottom of the initial page. 
 Author: dirkhaim & Paul Irish
-Author URI: http://www.infinite-scroll.net
+Author URI: http://www.infinite-scroll.com
 
 
 BUGS:
@@ -18,12 +18,7 @@ TODO:
  - What error handling do we need?
  - Mention div#infscr-loading so users can customize look more.
  - option for changing loading text.
- - reports of it crashing safari on os x
- - jquery plugin!
-  - WTF? link and a pause button?
- - when in admin-enabled mode, "If its working, enable it for all users" reminder.
-
-
+ - WTF? link and a pause button?
    
 */
 
@@ -38,6 +33,7 @@ define('infscr_config'	, 'enabledforadmins');
 define('key_infscr_state'			, 'infscr_state');
 define('key_infscr_js_calls'			, 'infscr_js_calls');
 define('key_infscr_image'			, 'infscr_image');
+define('key_infscr_text'			, 'infscr_text');
 define('key_infscr_content_selector'		, 'infscr_content_selector');
 define('key_infscr_nav_selector'		, 'infscr_nav_selector');
 define('key_infscr_post_selector'		, 'infscr_post_selector');
@@ -50,6 +46,7 @@ define('infscr_js_calls_default'		, '');
 
 $image_path = get_option('home').'/wp-content/plugins/wp-infinite-scroll'.'/ajax-loader.gif';
 define('infscr_image_default'			, $image_path);
+define('infscr_text_default'			, 'Loading the next set of posts...');
 define('infscr_content_selector_default'	, '#content');
 define('infscr_post_selector_default'		, '#content > div.post');
 define('infscr_nav_selector_default'		, 'div.navigation');
@@ -60,6 +57,7 @@ define('infscr_next_selector_default', 'div.navigation a:first');
 add_option(key_infscr_state		, infscr_state_default			, 'If InfiniteScroll is turned on, off, or in maintenance');
 add_option(key_infscr_js_calls		, infscr_js_calls_default		, 'Javascript to execute when new content loads in');
 add_option(key_infscr_image		, infscr_image_default			, 'Loading image');
+add_option(key_infscr_text		, infscr_text_default			, 'Loading text');
 add_option(key_infscr_content_selector	, infscr_content_selector_default	, 'Content Div css selector');
 add_option(key_infscr_nav_selector 	, infscr_nav_selector_default		, 'Navigation Div css selector');
 add_option(key_infscr_post_selector 	, infscr_post_selector_default		, 'Post Div css selector');
@@ -94,7 +92,7 @@ function is_frontpage()
 if ( get_option(key_infscr_state) == infscr_state_default && !isset($_POST['submit']) ) {
 	function setup_warning() {
 		echo "
-		<div id='infinitescroll-warning' class='updated fade'><p><strong>".__('Infinite Scroll is almost ready.')."</strong> ".sprintf(__('Please <a href="%1$s">review the configuration and set the state to enabled</a>.'), "options-general.php?page=wp_infinite_scroll.php")."</p></div>
+		<div id='infinitescroll-warning' class='updated fade'><p><strong>".__('Infinite Scroll is almost ready.')."</strong> ".sprintf(__('Please <a href="%1$s">review the configuration and set the state to enabled for all users</a>.'), "options-general.php?page=wp_infinite_scroll.php")."</p></div>
 		";
 	}
 	add_action('admin_notices', 'setup_warning');
@@ -128,6 +126,10 @@ function wp_inf_scroll_options_page()
 		// update image
 		$infscr_image = $_POST[key_infscr_image];
 		update_option(key_infscr_image, $infscr_image);
+		
+	    // update image 
+		$infscr_text = $_POST[key_infscr_text];
+		update_option(key_infscr_text, $infscr_text);
 
 		// update content selector
 		$content_selector = $_POST[key_infscr_content_selector];
@@ -191,12 +193,12 @@ function wp_inf_scroll_options_page()
 						echo "<option value='".infscr_enabled."'";
 						if (get_option(key_infscr_state) == infscr_enabled)
 							echo "selected='selected'";
-						echo ">Enabled</option>\n";
+						echo ">Enabled for all users</option>\n";
 						
 						echo "<option value='".infscr_disabled."'";
 						if (get_option(key_infscr_state) == infscr_disabled)
 							echo "selected='selected'";
-						echo ">Disabled</option>\n";
+						echo ">Disabled for all users</option>\n";
 						
 						echo "<option value='".infscr_config."'";
 						if (get_option(key_infscr_state) == infscr_config)
@@ -310,10 +312,24 @@ function wp_inf_scroll_options_page()
 						echo "<input name='".key_infscr_image."' id='".key_infscr_image."' value='".stripslashes(get_option(key_infscr_image))."' size='30' type='text'>\n";
 					?>
 				</td>
-        <td>
-      	  <p>URL of image that will be displayed while content is being loaded. Visit <a href="http://www.ajaxload.info" target="_blank">www.ajaxload.info</a> to customize your own loading spinner.</p>
-      	</td>
-  	  </tr>
+                <td>
+              	  <p>URL of image that will be displayed while content is being loaded. Visit <a href="http://www.ajaxload.info" target="_blank">www.ajaxload.info</a> to customize your own loading spinner.</p>
+              	</td>
+  	          </tr>
+  	  
+  	  			<tr>
+				<th>
+					<label for="<?php echo key_infscr_text; ?>">Loading text:</label>
+				</th>
+				<td>
+					<?php
+						echo "<input name='".key_infscr_text."' id='".key_infscr_text."' value='".stripslashes(get_option(key_infscr_text))."' size='30' type='text'>\n";
+					?>
+				</td>
+                <td>
+              	  <p>Text will be displayed while content is being loaded.</p>
+              	</td>
+  	          </tr>
 
 			</tbody>
 		</table>
@@ -363,6 +379,7 @@ function wp_inf_scroll_add()
 	$plugin_dir 		= get_option('home').'/wp-content/plugins/wp-infinite-scroll';
 	$js_calls		= stripslashes(get_option(key_infscr_js_calls));
 	$loading_image		= stripslashes(get_option(key_infscr_image));
+	$loading_text		= stripslashes(get_option(key_infscr_text));
 	$content_selector	= stripslashes(get_option(key_infscr_content_selector));
 	$navigation_selector	= stripslashes(get_option(key_infscr_nav_selector));
 	$post_selector		= stripslashes(get_option(key_infscr_post_selector));
@@ -379,6 +396,7 @@ $js_string = <<<EOT
 		var INFSCR_cfg = {
 		  nextSelector    : "$next_selector",
 		  loadingImg      : "$loading_image",
+	      text            : "$loading_text",
 		  navSelector     : "$navigation_selector",
 		  contentSelector : "$content_selector",
 		  postSelector    : "$post_selector",
