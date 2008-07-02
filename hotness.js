@@ -104,7 +104,9 @@ INFSCR.setup = function(){
     INFSCR.path = INFSCR.path.split('2');
   }
   else {
-    alert('Sorry, we couldn\'t parse your Previous Posts URL. Verify your Previous Posts css selector points to the A tag. If you still get this error: yell, scream, and kindly ask for help.');
+    if (INFSCR.isAdmin){
+        alert('Sorry, we couldn\'t parse your Previous Posts URL. Verify your Previous Posts css selector points to the A tag. If you still get this error: yell, scream, and kindly ask for help.');    
+    }
     INFSCR.isInvalidPage = true;  //prevent it from running on this page.
   }
   

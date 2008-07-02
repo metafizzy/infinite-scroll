@@ -371,19 +371,20 @@ function wp_inf_scroll_add()
 	if (get_option(key_infscr_state) == infscr_disabled)
 		return;
 
-	if (!is_home() || is_paged() || is_single())
+	if (is_page() || is_single() ) /* single posts/pages dont get it */
 	{
-		echo '<!-- Infinite-Scroll not added for this page (not home) -->';
+		echo '<!-- Infinite-Scroll not added for this page (single post/page) -->';
 		return;
 	}
 	
-	/* see commented section above. line ~84
-		if ( is_frontpage() )
+	/*
+	if (! is_paged() ) non-paged dont get it 
 	{
-		echo '<!-- Infinite-Scroll not added for this page (frontpage) -->';
+		echo '<!-- Infinite-Scroll not added for this page (not paged) -->';
 		return;
 	}
-*/
+	*/
+	 /* !is_home() || !is_paged() ||  paged (archive, tags, categories) and home do. */
 
   if (get_option(key_infscr_state) == infscr_maint && $user_level >= 8)
   {
@@ -406,6 +407,7 @@ function wp_inf_scroll_add()
 	$navigation_selector	= stripslashes(get_option(key_infscr_nav_selector));
 	$post_selector		= stripslashes(get_option(key_infscr_post_selector));
 	$next_selector		= stripslashes(get_option(key_infscr_next_selector));
+	if ($user_level >= 8) {$isAdmin = "true"; }else {$isAdmin = "false";}
 
 $js_string = <<<EOT
 
@@ -416,6 +418,7 @@ $js_string = <<<EOT
 		// license: cc-wrapped GPL : http://creativecommons.org/licenses/GPL/2.0/
 		
 		var INFSCR_cfg = {
+		  isAdmin    : $isAdmin,
 		  nextSelector    : "$next_selector",
 		  loadingImg      : "$loading_image",
 	      text            : "$loading_text",
