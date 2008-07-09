@@ -72,4 +72,7 @@ INFSCR.setup = function(){
     
   jQis(window).scroll( INFSCR.setup ); // hook up the function to the window scroll event.
 
+  $(INFSCR.setup); // check short pages to see if they should go
+  
+
 })();

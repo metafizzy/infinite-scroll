@@ -17,8 +17,7 @@ TODO:
     - deal with the IE6 + opacity + cleartype + <em> issue.
  - What error handling do we need?
  - Mention div#infscr-loading so users can customize look more.
- - option for changing loading text.
- - WTF? link and a pause button?
+
    
 */
 
