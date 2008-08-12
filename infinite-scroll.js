@@ -39,8 +39,12 @@ INFSCR.setup = function(){
     			        INFSCR.loadingMsg.find('img').hide().parent().find('span').html(INFSCR.cfg.donetext).animate({opacity: 1},2000).fadeOut('normal');
 		            } else {
     		            INFSCR.loadingMsg.fadeOut('normal' ); // currently makes the <em>'d text ugly in IE6
-                        INFSCR.isDuringAjax = false; // once the call is done, we can allow it again.
-                        INFSCR.cfg.jsCalls();
+
+                    var scrollTo = jQuery(window).scrollTop() + jQuery('#infscr-loading').height() + 150 + 'px';
+                    jQuery('html,body').animate({scrollTop: scrollTo}, 800); // smooth scroll to ease in the new content
+
+    		            INFSCR.isDuringAjax = false; // once the call is done, we can allow it again.
+                    INFSCR.cfg.jsCalls();
 		            }
 			    });
 			
