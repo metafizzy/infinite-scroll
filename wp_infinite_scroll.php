@@ -17,7 +17,7 @@ TODO:
     - deal with the IE6 + opacity + cleartype + <em> issue.
  - What error handling do we need?
  - Mention div#infscr-loading so users can customize look more.
-
+ - Check if you're in a table and thus you can't add divs.
    
 */
 
@@ -417,11 +417,11 @@ $js_string = <<<EOT
 		// license: cc-wrapped GPL : http://creativecommons.org/licenses/GPL/2.0/
 		
 		var INFSCR_cfg = {
-		  isAdmin    : $isAdmin,
+		  debug    : $isAdmin,
 		  nextSelector    : "$next_selector",
 		  loadingImg      : "$loading_image",
-	      text            : "$loading_text",
-	      donetext        : "$donetext",
+      text            : "$loading_text",
+      donetext        : "$donetext",
 		  navSelector     : "$navigation_selector",
 		  contentSelector : "$content_selector",
 		  postSelector    : "$post_selector",

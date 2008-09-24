@@ -8,7 +8,8 @@ var jQis = jQuery.noConflict(); // held separately to avoid collisions
  
 var INFSCR = {      // more configuration set in init()
       cfg           : INFSCR_cfg, // defined in the php
-      currPage    : 1,
+      currPage      : 1,
+      currDOMChunk  : null,  // defined in setup()'s load()
       isDuringAjax  : false,
       isInvalidPage : false,
       isDone        : false  // for when it goes all the way through the archive.
@@ -30,21 +31,31 @@ INFSCR.setup = function(){
 			jQis( INFSCR.cfg.navSelector ).hide(); // take out the previous/next links
 			INFSCR.currPage++;
 			
-			jQis('<div/>')
+			// if we're dealing with a table we can't use DIVs
+			var box = jQis(INFSCR.cfg.contentSelector).is('table') ? jQis('<tbody/>') : jQis('<div/>');  
+			
+			box
 			  .attr('id','infscr-page-'+INFSCR.currPage)
 			  .attr('class','infscr-pages')
 			  .appendTo( INFSCR.cfg.contentSelector )
 			  .load( INFSCR.path.join( INFSCR.currPage ) + ' ' + INFSCR.cfg.postSelector,null,function(){
+			    
 			        if (INFSCR.isDone){ // if we've hit the last page...
-    			        INFSCR.loadingMsg.find('img').hide().parent().find('span').html(INFSCR.cfg.donetext).animate({opacity: 1},2000).fadeOut('normal');
+    			        INFSCR.loadingMsg
+    			          .find('img').hide()
+    			          .parent()
+    			          .find('span').html(INFSCR.cfg.donetext).animate({opacity: 1},2000).fadeOut('normal');
+    			          
 		            } else {
     		            INFSCR.loadingMsg.fadeOut('normal' ); // currently makes the <em>'d text ugly in IE6
 
                     var scrollTo = jQuery(window).scrollTop() + jQuery('#infscr-loading').height() + 150 + 'px';
                     jQuery('html,body').animate({scrollTop: scrollTo}, 800); // smooth scroll to ease in the new content
 
+                    INFSCR.currDOMChunk = jQis('#infscr-page-'+INFSCR.currPage); // convenience for jsCalls.
+
+                    INFSCR.cfg.jsCalls.call(INFSCR.currDOMChunk);
     		            INFSCR.isDuringAjax = false; // once the call is done, we can allow it again.
-                    INFSCR.cfg.jsCalls();
 		            }
 			    });
 			
@@ -54,8 +65,12 @@ INFSCR.setup = function(){
 (INFSCR.init = function(){
   
   delete INFSCR_cfg; // remove the global
+  var relurl           = /(.*?\/\/).*?(\/.*)/;
+   
+  INFSCR.path          = jQis(INFSCR.cfg.nextSelector).attr('href');
+  INFSCR.path          = INFSCR.path.match(relurl) ? INFSCR.path.match(relurl)[2] : INFSCR.path; // gets the relative URL - everything past the domain name.
   
-  INFSCR.path          = jQis(INFSCR.cfg.nextSelector).attr('href').match(/(.*?\/\/).*?(\/.*)/)[2]; // gets the relative URL - everything past the domain name.
+  
   INFSCR.loadingMsg    = jQis('<div id="infscr-loading" style="text-align: center;"><img style="float:none;" alt="Loading..." src="'+INFSCR.cfg.loadingImg+'" /><br /><span>'+INFSCR.cfg.text+'</span></div>');
   INFSCR.scrollDelta   = jQis(document).height() - jQis(INFSCR.cfg.navSelector).offset().top; //distance from nav links to bottom of page
   (new Image()).src    = INFSCR.cfg.loadingImg; // preload the image.
@@ -76,7 +91,7 @@ INFSCR.setup = function(){
     
   jQis(window).scroll( INFSCR.setup ); // hook up the function to the window scroll event.
 
-  $(INFSCR.setup); // check short pages to see if they should go
+  jQis(INFSCR.setup); // check short pages to see if they should go
   
 
 })();
