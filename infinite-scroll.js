@@ -7,7 +7,7 @@
 // license: cc-wrapped GPL : http://creativecommons.org/licenses/GPL/2.0/
 
  
-(function($){
+;(function($){
     
   $.fn.infinitescroll = function(options){
     
