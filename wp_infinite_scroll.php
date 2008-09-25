@@ -429,10 +429,9 @@ jQis(function($){
     navSelector     : "$navigation_selector",
     contentSelector : "$content_selector",
     itemSelector    : "$post_selector",
-    jsCalls         :  function(){ 
+    },function(){ 
 $js_calls 
-                         }
-  });
+    });
 });		
 </script>	
 	
