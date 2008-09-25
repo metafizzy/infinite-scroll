@@ -421,18 +421,16 @@ jQis(function($){
   // copyright: Paul Irish & dirkhaim
   // license: cc-wrapped GPL : http://creativecommons.org/licenses/GPL/2.0/
   $('$content_selector').infinitescroll({
-		  debug           : $isAdmin,
-		  nextSelector    : "$next_selector",
-		  loadingImg      : "$loading_image",
-      text            : "$loading_text",
-      donetext        : "$donetext",
-		  navSelector     : "$navigation_selector",
-		  contentSelector : "$content_selector",
-		  postSelector    : "$post_selector",
-		  jsCalls         :  function(){ 
-		    
+    debug           : $isAdmin,
+    nextSelector    : "$next_selector",
+    loadingImg      : "$loading_image",
+    text            : "$loading_text",
+    donetext        : "$donetext",
+    navSelector     : "$navigation_selector",
+    contentSelector : "$content_selector",
+    itemSelector    : "$post_selector",
+    jsCalls         :  function(){ 
 $js_calls 
-
                          }
   });
 });		

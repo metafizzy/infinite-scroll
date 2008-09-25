@@ -3,23 +3,25 @@
 
 // Infinite Scroll jQuery plugin
 // copyright Paul Irish
+// version 1.1.2008.09.25
 // http://www.infinite-scroll.com
 // license: cc-wrapped GPL : http://creativecommons.org/licenses/GPL/2.0/
 
  
 ;(function($){
     
-  $.fn.infinitescroll = function(options){
+  $.fn.infinitescroll = function(options,callback){
     
     var opts    = $.extend({}, $.fn.infinitescroll.defaults, options);
     var props   = $.fn.infinitescroll; // shorthand
+    callback    = callback || function(){};
     
     // get the relative URL - everything past the domain name.
     var relurl        = /(.*?\/\/).*?(\/.*)/;
     var path          = $(opts.nextSelector).attr('href');
         path          = path.match(relurl) ? path.match(relurl)[2] : path; 
 
-    $.fn.infinitescroll.loadingMsg = $('<div id="infscr-loading" style="text-align: center;"><img style="float:none;" alt="Loading..." src="'+opts.loadingImg+'" /><br /><span>'+opts.text+'</span></div>');
+    $.fn.infinitescroll.loadingMsg = $('<div id="infscr-loading" style="text-align: center;"><img style="float:none;" alt="Loading..." src="'+opts.loadingImg+'" /><br /><span>'+opts.loadingText+'</span></div>');
     
     //distance from nav links to bottom of page
     props.scrollDelta = $.fn.infinitescroll.scrollDelta  = $(document).height() - $(opts.navSelector).offset().top; 
@@ -31,7 +33,7 @@
       path = path.split('2');
     }
     else {
-      opts.debug && alert('Sorry, we couldn\'t parse your Previous Posts URL. Verify your Previous Posts css selector points to the A tag. If you still get this error: yell, scream, and kindly ask for help.');    
+      opts.debug && console && console.log('Sorry, we couldn\'t parse your Previous Posts URL. Verify your Previous Posts css selector points to the A tag. If you still get this error: yell, scream, and kindly ask for help.');    
       props.isInvalidPage = true;  //prevent it from running on this page.
     }
     
@@ -39,8 +41,8 @@
       if (xhr.status == 404){ props.isDone = true; } // die if we're out of pages.
     });
       
-    $(window).scroll( function(){ infscrSetup(path,opts,props); } ); // hook up the function to the window scroll event.
-    infscrSetup(path,opts,props); // check short pages to see if they should go
+    $(window).scroll( function(){ infscrSetup(path,opts,props,callback); } ); // hook up the function to the window scroll event.
+    infscrSetup(path,opts,props,callback); // check short pages to see if they should go
     
     return this;
   
@@ -50,7 +52,7 @@
       return (  $(document).height() - $(document).scrollTop() - $(window).height()  <  props.scrollDelta);    
   }
   
-  function infscrSetup(path,opts,props){
+  function infscrSetup(path,opts,props,callback){
   
       if (props.isDuringAjax || props.isInvalidPage || props.isDone) return; 
   
@@ -70,9 +72,10 @@
   			  .attr('id','infscr-page-'+props.currPage)
   			  .attr('class','infscr-pages')
   			  .appendTo( opts.contentSelector )
-  			  .load( path.join( props.currPage ) + ' ' + opts.postSelector,null,function(){
+  			  .load( path.join( props.currPage ) + ' ' + opts.itemSelector,null,function(){
   			    
   			        if (props.isDone){ // if we've hit the last page...
+  			        
       			        props.loadingMsg
       			          .find('img').hide()
       			          .parent()
@@ -81,13 +84,13 @@
   		            } else {
       		            props.loadingMsg.fadeOut('normal' ); // currently makes the <em>'d text ugly in IE6
   
-      		            if (opts.animate){
+      		            if (opts.animate){ // smooth scroll to ease in the new content
         		            var scrollTo = jQuery(window).scrollTop() + jQuery('#infscr-loading').height() + opts.extraScrollPx + 'px';
-                        jQuery('html,body').animate({scrollTop: scrollTo}, 800,function(){ props.isDuringAjax = false; }); // smooth scroll to ease in the new content
+                        jQuery('html,body').animate({scrollTop: scrollTo}, 800,function(){ props.isDuringAjax = false; }); 
       		            }
                       
-                      props.currDOMChunk = $('#infscr-page-'+props.currPage)[0]; // convenience for jsCalls. ACTUAL DOM, not jQ obj.
-                      opts.jsCalls.call(props.currDOMChunk);
+                      props.currDOMChunk = $('#infscr-page-'+props.currPage)[0]; // convenience for callback. ACTUAL DOM, not jQ obj.
+                      callback.call(props.currDOMChunk);
                       
       		            if (!opts.animate) props.isDuringAjax = false; // once the call is done, we can allow it again.
   		            }
@@ -99,16 +102,15 @@
   $.extend($.fn.infinitescroll,{      // more configuration set in init()
         defaults           : {
                           debug           : false,
-                          nextSelector    : "$next_selector",
+                          nextSelector    : "div.navigation a:first",
                           loadingImg      : "http://www.infinite-scroll.com/loading.gif",
-                          text            : "<em>Loading the next set of posts...</em>",
+                          loadingText     : "<em>Loading the next set of posts...</em>",
                           donetext        : "<em>Congratulations, you've reached the end of the internet.</em>",
-                          navSelector     : "#navigation",
-                          contentSelector : this,
+                          navSelector     : "div.navigation",
+                          contentSelector : this,           // not really a selector. :) it's whatever the method was called on..
                           extraScrollPx   : 150,
-                          postSelector    : "div.post",
-                          animate         : true,
-                          jsCalls         : function(){ }
+                          itemSelector    : "div.post",
+                          animate         : true
                         }, 
         currPage      : 1,
         currDOMChunk  : null,  // defined in setup()'s load()
