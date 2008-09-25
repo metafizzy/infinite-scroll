@@ -428,7 +428,7 @@ jQis(function($){
     donetext        : "$donetext",
     navSelector     : "$navigation_selector",
     contentSelector : "$content_selector",
-    itemSelector    : "$post_selector",
+    itemSelector    : "$post_selector"
     },function(){ 
 $js_calls 
     });

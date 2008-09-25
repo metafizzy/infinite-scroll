@@ -1,11 +1,14 @@
 
 
-
 // Infinite Scroll jQuery plugin
 // copyright Paul Irish
 // version 1.1.2008.09.25
-// http://www.infinite-scroll.com
-// license: cc-wrapped GPL : http://creativecommons.org/licenses/GPL/2.0/
+
+// project home  : http://www.infinite-scroll.com
+// documentation : http://www.infinite-scroll.com/infinite-scroll-jquery-plugin/
+
+// dual license  : GPL : http://creativecommons.org/licenses/GPL/2.0/
+//               : MIT : http://creativecommons.org/licenses/MIT/
 
  
 ;(function($){
@@ -110,7 +113,7 @@
                           contentSelector : this,           // not really a selector. :) it's whatever the method was called on..
                           extraScrollPx   : 150,
                           itemSelector    : "div.post",
-                          animate         : true
+                          animate         : false
                         }, 
         currPage      : 1,
         currDOMChunk  : null,  // defined in setup()'s load()
