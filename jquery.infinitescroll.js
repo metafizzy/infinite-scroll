@@ -36,11 +36,12 @@
       path = path.split('2');
     }
     else {
-      opts.debug && console && console.log('Sorry, we couldn\'t parse your Previous Posts URL. Verify your Previous Posts css selector points to the A tag. If you still get this error: yell, scream, and kindly ask for help.');    
+      opts.debug && console && console.log('Sorry, we couldn\'t parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.');    
       props.isInvalidPage = true;  //prevent it from running on this page.
     }
     
     $(document).ajaxError(function(e,xhr,opt){
+      opts.debug && console && console.log('Page not found. Self-destructing...');    
       if (xhr.status == 404){ props.isDone = true; } // die if we're out of pages.
     });
       

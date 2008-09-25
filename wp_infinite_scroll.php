@@ -7,6 +7,7 @@ Plugin URI: http://www.infinite-scroll.com
 Description: Automatically loads the next page of posts into the bottom of the initial page. 
 Author: dirkhaim & Paul Irish
 Author URI: http://www.infinite-scroll.com
+License   : http://creativecommons.org/licenses/GPL/2.0/
 
 
 BUGS:
