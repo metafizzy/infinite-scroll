@@ -11,7 +11,9 @@
 //               : MIT : http://creativecommons.org/licenses/MIT/
 
 
-// todo: all callback for the complete (404) state.
+// todo: add callback for the complete (404) state.
+//       add preloading option.
+//       fix with jorn's syntax improvements.
  
 ;(function($){
     
@@ -108,6 +110,7 @@
   $.extend($.fn.infinitescroll,{      // more configuration set in init()
         defaults           : {
                           debug           : false,
+                          preload         : false,
                           nextSelector    : "div.navigation a:first",
                           loadingImg      : "http://www.infinite-scroll.com/loading.gif",
                           loadingText     : "<em>Loading the next set of posts...</em>",
