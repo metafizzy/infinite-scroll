@@ -10,6 +10,8 @@
 // dual license  : GPL : http://creativecommons.org/licenses/GPL/2.0/
 //               : MIT : http://creativecommons.org/licenses/MIT/
 
+
+// todo: all callback for the complete (404) state.
  
 ;(function($){
     
