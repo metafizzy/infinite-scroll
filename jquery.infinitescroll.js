@@ -23,11 +23,16 @@
     var props   = $.fn.infinitescroll; // shorthand
     callback    = callback || function(){};
     
+    if (!areSelectorsValid(opts)){ return false;  }
+    
     // get the relative URL - everything past the domain name.
     var relurl        = /(.*?\/\/).*?(\/.*)/;
     var path          = $(opts.nextSelector).attr('href');
         path          = path.match(relurl) ? path.match(relurl)[2] : path; 
 
+    // contentSelector is just the element you're calling the infinitescroll() method on.
+    opts.contentSelector = opts.contentSelector || this; 
+    
     $.fn.infinitescroll.loadingMsg = $('<div id="infscr-loading" style="text-align: center;"><img style="float:none;" alt="Loading..." src="'+opts.loadingImg+'" /><br /><span>'+opts.loadingText+'</span></div>');
     
     //distance from nav links to bottom of page
@@ -55,6 +60,19 @@
     return this;
   
   }  
+  
+  // verify selectors are good
+  function areSelectorsValid(opts){
+    for (var key in opts){
+      
+      // grab each selector option and see if any fail.
+      if (key.indexOf && key.indexOf('Selector') > 0 && jQis(opts[key]).length === 0){
+          opts.debug && console && console.error('Your ' + key + ' found no elements.');    
+          return false;
+      } 
+      return true;
+    }
+  }
     
   function isNearBottom(opts,props){
       return (  $(document).height() - $(document).scrollTop() - $(window).height()  <  props.scrollDelta);    
@@ -116,7 +134,7 @@
                           loadingText     : "<em>Loading the next set of posts...</em>",
                           donetext        : "<em>Congratulations, you've reached the end of the internet.</em>",
                           navSelector     : "div.navigation",
-                          contentSelector : this,           // not really a selector. :) it's whatever the method was called on..
+                          contentSelector : null,           // not really a selector. :) it's whatever the method was called on..
                           extraScrollPx   : 150,
                           itemSelector    : "div.post",
                           animate         : false
