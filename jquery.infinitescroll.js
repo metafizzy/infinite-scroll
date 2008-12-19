@@ -41,10 +41,10 @@
     
     (new Image()).src    = opts.loadingImg; // preload the image.
   		      
-    if (path.split('2').length == 2){ // there is a 2 in the next url, e.g. /page/2/
-      path = path.split('2');
-    }
-    else {
+    // there is a 2 in the next url, e.g. /page/2/
+    if ( path.match(/^(.*?\/)2(\/|$)/) ){  
+        path = path.match(/^(.*?\/)2(\/|$)/).slice(1);
+    } else {
       opts.debug && console && console.log('Sorry, we couldn\'t parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.');    
       props.isInvalidPage = true;  //prevent it from running on this page.
     }
