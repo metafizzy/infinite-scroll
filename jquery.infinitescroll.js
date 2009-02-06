@@ -19,6 +19,11 @@
     
   $.fn.infinitescroll = function(options,callback){
     
+    function debug(q,w,e,r){
+      try { if (typeof console != 'undefined') console.log.apply(console,arguments); } 
+      catch(e){ if (typeof console != 'undefined')  console.log(q,w,e,r); }
+    }
+    
     var opts    = $.extend({}, $.fn.infinitescroll.defaults, options);
     var props   = $.fn.infinitescroll; // shorthand
     callback    = callback || function(){};
@@ -28,6 +33,9 @@
     // get the relative URL - everything past the domain name.
     var relurl        = /(.*?\/\/).*?(\/.*)/;
     var path          = $(opts.nextSelector).attr('href');
+    
+    if (!!path) { opts.debug && debug('Navigation selector not found'); return; }
+    
         path          = path.match(relurl) ? path.match(relurl)[2] : path; 
 
     // contentSelector is just the element you're calling the infinitescroll() method on.
@@ -45,12 +53,12 @@
     if ( path.match(/^(.*?\/)2(\/|$)/) ){  
         path = path.match(/^(.*?\/)2(\/|$)/).slice(1);
     } else {
-      opts.debug && console && console.log('Sorry, we couldn\'t parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.');    
+      opts.debug && debug('Sorry, we couldn\'t parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.');    
       props.isInvalidPage = true;  //prevent it from running on this page.
     }
     
     $(document).ajaxError(function(e,xhr,opt){
-      opts.debug && console && console.log('Page not found. Self-destructing...');    
+      opts.debug && debug('Page not found. Self-destructing...');    
       if (xhr.status == 404){ props.isDone = true; } // die if we're out of pages.
     });
       
@@ -67,7 +75,7 @@
       
       // grab each selector option and see if any fail.
       if (key.indexOf && key.indexOf('Selector') > 0 && jQis(opts[key]).length === 0){
-          opts.debug && console && console.error('Your ' + key + ' found no elements.');    
+          opts.debug && debug('Your ' + key + ' found no elements.');    
           return false;
       } 
       return true;
