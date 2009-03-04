@@ -20,6 +20,7 @@
   $.fn.infinitescroll = function(options,callback){
     
     function debug(q,w,e,r){
+      if (!opts.debug) return; // quit if we shouldnt be outputting.
       try { if (typeof console != 'undefined') console.log.apply(console,arguments); } 
       catch(e){ if (typeof console != 'undefined')  console.log(q,w,e,r); }
     }
@@ -34,8 +35,9 @@
     var relurl        = /(.*?\/\/).*?(\/.*)/;
     var path          = $(opts.nextSelector).attr('href');
     
-    if (!!path) { opts.debug && debug('Navigation selector not found'); return; }
+    if (!path) { debug('Navigation selector not found'); return; }
     
+        // set the path to be a relative URL from root.
         path          = path.match(relurl) ? path.match(relurl)[2] : path; 
 
     // contentSelector is just the element you're calling the infinitescroll() method on.
@@ -49,16 +51,21 @@
     
     (new Image()).src    = opts.loadingImg; // preload the image.
   		      
-    // there is a 2 in the next url, e.g. /page/2/
+    // there is a 2 in the url surrounded by slashes, e.g. /page/2/
     if ( path.match(/^(.*?\/)2(\/|$)/) ){  
         path = path.match(/^(.*?\/)2(\/|$)/).slice(1);
+    } else 
+      // if there is any 2 in the url at all.
+      if (path.match(/^(.*?)2(.*?$)/)){
+        debug('Trying backup next selector parse technique. Treacherous waters here, matey.');
+        path = path.match(/^(.*?)2(.*?$)/).slice(1);
     } else {
-      opts.debug && debug('Sorry, we couldn\'t parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.');    
+      debug('Sorry, we couldn\'t parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.');    
       props.isInvalidPage = true;  //prevent it from running on this page.
     }
     
     $(document).ajaxError(function(e,xhr,opt){
-      opts.debug && debug('Page not found. Self-destructing...');    
+      debug('Page not found. Self-destructing...');    
       if (xhr.status == 404){ props.isDone = true; } // die if we're out of pages.
     });
       
@@ -75,7 +82,7 @@
       
       // grab each selector option and see if any fail.
       if (key.indexOf && key.indexOf('Selector') > 0 && jQis(opts[key]).length === 0){
-          opts.debug && debug('Your ' + key + ' found no elements.');    
+          debug('Your ' + key + ' found no elements.');    
           return false;
       } 
       return true;
