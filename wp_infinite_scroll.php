@@ -412,10 +412,17 @@ function wp_inf_scroll_add()
 $js_string = <<<EOT
 
 
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2/jquery.min.js"></script>
+
+
+<script type="text/javascript"> 
+if (!(jQuery && jQuery.fn.jquery >= '1.2.6')){
+  document.write(unescape("%3Cscript src='http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js' type='text/javascript'%3E%3C/script%3E"));
+}
+</script> 
+
 <script type="text/javascript" src="$plugin_dir/jquery.infinitescroll.js"></script>
 <script type="text/javascript" >
-var jQis = jQuery.noConflict();
+var jQis = jQuery.noConflict(true);
 jQis(function($){
   
   // Infinite Scroll plugin
