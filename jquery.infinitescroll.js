@@ -14,6 +14,7 @@
 // todo: add callback for the complete (404) state.
 //       add preloading option.
 //       fix with jorn's syntax improvements.
+//       check .length of returned elements. if 0, treat as 404
  
 ;(function($){
     
