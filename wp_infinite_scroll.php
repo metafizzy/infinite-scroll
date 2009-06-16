@@ -45,7 +45,7 @@ define('key_infscr_next_selector'		, 'infscr_next_selector');
 define('infscr_state_default'			, infscr_config); 
 define('infscr_js_calls_default'		, '');
 
-$image_path = get_option('home').'/wp-content/plugins/infinite-scroll'.'/ajax-loader.gif';
+$image_path = get_option('siteurl').'/wp-content/plugins/infinite-scroll'.'/ajax-loader.gif';
 define('infscr_image_default'			, $image_path);
 define('infscr_text_default'			, '<em>Loading the next set of posts...</em>');
 define('infscr_donetext_default'			, '<em>Congratulations, you\'ve reached the end of the internet.</em>');
@@ -398,7 +398,7 @@ function wp_inf_scroll_add()
     return;
   }  
 	
-	$plugin_dir 		= get_option('home').'/wp-content/plugins/infinite-scroll';
+	$plugin_dir 		= get_option('siteurl').'/wp-content/plugins/infinite-scroll';
 	$js_calls		= stripslashes(get_option(key_infscr_js_calls));
 	$loading_image		= stripslashes(get_option(key_infscr_image));
 	$loading_text		= stripslashes(get_option(key_infscr_text));
