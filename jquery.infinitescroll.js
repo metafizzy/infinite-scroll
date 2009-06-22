@@ -20,14 +20,12 @@
     
   $.fn.infinitescroll = function(options,callback){
     
-    function debug(q,w,e,r){
-      if (!opts.debug) return; // quit if we shouldnt be outputting.
-      try { if (typeof console != 'undefined') console.log.apply(console,arguments); } 
-      catch(e){ if (typeof console != 'undefined')  console.log(q,w,e,r); }
+    function debug(){
+     window.console && console.log.call(console,arguments)
     }
     
-    var opts    = $.extend({}, $.fn.infinitescroll.defaults, options);
-    var props   = $.fn.infinitescroll; // shorthand
+    var opts    = $.extend({}, $.infinitescroll.defaults, options);
+    var props   = $.infinitescroll; // shorthand
     callback    = callback || function(){};
     
     if (!areSelectorsValid(opts)){ return false;  }
@@ -44,10 +42,10 @@
     // contentSelector is just the element you're calling the infinitescroll() method on.
     opts.contentSelector = opts.contentSelector || this; 
     
-    $.fn.infinitescroll.loadingMsg = $('<div id="infscr-loading" style="text-align: center;"><img style="float:none;" alt="Loading..." src="'+opts.loadingImg+'" /><br /><span>'+opts.loadingText+'</span></div>');
+    $.infinitescroll.loadingMsg = $('<div id="infscr-loading" style="text-align: center;"><img style="float:none;" alt="Loading..." src="'+opts.loadingImg+'" /><br /><span>'+opts.loadingText+'</span></div>');
     
     //distance from nav links to bottom of page
-    props.scrollDelta = $.fn.infinitescroll.scrollDelta  = $(document).height() - $(opts.navSelector).offset().top; 
+    props.scrollDelta = $.infinitescroll.scrollDelta  = $(document).height() - $(opts.navSelector).offset().top; 
 
     
     (new Image()).src    = opts.loadingImg; // preload the image.
@@ -141,7 +139,7 @@
   		}   
   }
   
-  $.extend($.fn.infinitescroll,{      // more configuration set in init()
+  $.infinitescroll = {      // more configuration set in init()
         defaults           : {
                           debug           : false,
                           preload         : false,
@@ -160,7 +158,7 @@
         isDuringAjax  : false,
         isInvalidPage : false,
         isDone        : false  // for when it goes all the way through the archive.
-  });
+  };
   
 
 
