@@ -30,9 +30,14 @@
     
     if (!areSelectorsValid(opts)){ return false;  }
     
+    // store the container elem
+    props.container   = this;
+    
     // get the relative URL - everything past the domain name.
     var relurl        = /(.*?\/\/).*?(\/.*)/;
     var path          = $(opts.nextSelector).attr('href');
+    
+    
     
     if (!path) { debug('Navigation selector not found'); return; }
     
@@ -42,11 +47,16 @@
     // contentSelector is just the element you're calling the infinitescroll() method on.
     opts.contentSelector = opts.contentSelector || this; 
     
-    $.infinitescroll.loadingMsg = $('<div id="infscr-loading" style="text-align: center;"><img style="float:none;" alt="Loading..." src="'+opts.loadingImg+'" /><br /><span>'+opts.loadingText+'</span></div>');
     
-    //distance from nav links to bottom of page
-    props.scrollDelta = $.infinitescroll.scrollDelta  = $(document).height() - $(opts.navSelector).offset().top; 
-
+    // we doing this on an overflow:auto div?
+    props.container = opts.scrollElem ? props.container : document.documentElement, 
+    
+    //distance from nav links to bottom
+    props.pixelsFromNavToBottom = $(props.container)[0].scrollHeight - $(props.container).offset().top - $(opts.navSelector).offset().top;
+    
+    
+    $.infinitescroll.loadingMsg = $('<div id="infscr-loading" style="text-align: center;"><img alt="Loading..." src="'+opts.loadingImg+'" /><div>'+opts.loadingText+'</div></div>');
+    
     
     (new Image()).src    = opts.loadingImg; // preload the image.
   		      
@@ -67,9 +77,12 @@
       debug('Page not found. Self-destructing...');    
       if (xhr.status == 404){ props.isDone = true; } // die if we're out of pages.
     });
-      
-    $(window).scroll( function(){ infscrSetup(path,opts,props,callback); } ); // hook up the function to the window scroll event.
-    infscrSetup(path,opts,props,callback); // check short pages to see if they should go
+    
+    // bind scroll handler to element (if its a local scroll) or window  
+    $(opts.scrollElem ? this : window)
+      .bind('scroll.infscr', function(){ infscrSetup(path,opts,props,callback); } )
+      .trigger('scroll.infscr'); // trigger the event, in case it's a short page
+    
     
     return this;
   
@@ -89,7 +102,13 @@
   }
     
   function isNearBottom(opts,props){
-      return (  $(document).height() - $(document).scrollTop() - $(window).height()  <  props.scrollDelta);    
+
+      
+          var pixelsFromWindowBottomToNav = $(props.container).height() - $(props.container).scrollTop() - $(props.scrollElem ? props.container : window).height() - opts.bufferPx;
+          
+          console.log('math:',pixelsFromWindowBottomToNav, props.pixelsFromNavToBottom, pixelsFromWindowBottomToNav < props.pixelsFromNavToBottom);
+
+      return ( pixelsFromWindowBottomToNav  < props.pixelsFromNavToBottom);    
   }
   
   function infscrSetup(path,opts,props,callback){
@@ -107,6 +126,8 @@
   			
   			// if we're dealing with a table we can't use DIVs
   			var box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');  
+  			
+  			console.log('heading into ajax',path);
   			
   			box
   			  .attr('id','infscr-page-'+props.currPage)
@@ -151,7 +172,9 @@
                           contentSelector : null,           // not really a selector. :) it's whatever the method was called on..
                           extraScrollPx   : 150,
                           itemSelector    : "div.post",
-                          animate         : false
+                          animate         : false,
+                          scrollElem      : false,
+                          bufferPx        : 40
                         }, 
         currPage      : 1,
         currDOMChunk  : null,  // defined in setup()'s load()
