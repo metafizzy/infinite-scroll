@@ -19,8 +19,7 @@
     
     // console log wrapper.
     function debug(){
-      if (opts.debug)
-        window.console && console.log.call(console,arguments)
+      if (opts.debug) { window.console && console.log.call(console,arguments)}
     }
     
     // grab each selector option and see if any fail.
@@ -60,7 +59,7 @@
     // 'document' means the full document usually, but sometimes the content of the overflow'd div in local mode
     function getDocumentHeight(){
       // weird doubletouch of scrollheight because http://soulpass.com/2006/07/24/ie-and-scrollheight/
-      return opts.scrollElem ? ($(props.container)[0].scrollHeight && $(props.container)[0].scrollHeight) 
+      return opts.localMode ? ($(props.container)[0].scrollHeight && $(props.container)[0].scrollHeight) 
                                 // needs to be document's height. (not props.container's) html's height is wrong in IE.
                                 : $(document).height()
     }
@@ -73,7 +72,7 @@
       // computed as: document height - distance already scroll - viewport height - buffer
       var pixelsFromWindowBottomToBottom = getDocumentHeight()  -
                                             $(props.container).scrollTop() - 
-                                            $(opts.scrollElem ? props.container : window).height();
+                                            $(opts.localMode ? props.container : window).height();
       
       debug('math:',pixelsFromWindowBottomToBottom, props.pixelsFromNavToBottom);
       
@@ -162,7 +161,7 @@
     if (!areSelectorsValid(opts)){ return false;  }
     
      // we doing this on an overflow:auto div?
-    props.container   =  opts.scrollElem ? this : document.documentElement;
+    props.container   =  opts.localMode ? this : document.documentElement;
     // contentSelector we'll use for our .load()
     opts.contentSelector = opts.contentSelector || this; 
     
@@ -179,7 +178,7 @@
     
 
     // reset scrollTop in case of page refresh:
-    if (opts.scrollElem) $(props.container)[0].scrollTop = 0;
+    if (opts.localMode) $(props.container)[0].scrollTop = 0;
 
     // distance from nav links to bottom
     // computed as: height of the document + top offset of container - top offset of nav link
@@ -203,12 +202,12 @@
       if (xhr.status == 404){ 
         showDoneMsg();
         props.isDone = true; 
-        $(opts.scrollElem ? this : window).unbind('scroll.infscr');
+        $(opts.localMode ? this : window).unbind('scroll.infscr');
       } 
     });
     
     // bind scroll handler to element (if its a local scroll) or window  
-    $(opts.scrollElem ? this : window)
+    $(opts.localMode ? this : window)
       .bind('scroll.infscr', function(){ infscrSetup(path,opts,props,callback); } )
       .trigger('scroll.infscr'); // trigger the event, in case it's a short page
     
@@ -234,7 +233,7 @@
                           extraScrollPx   : 150,
                           itemSelector    : "div.post",
                           animate         : false,
-                          scrollElem      : false,
+                          localMode      : false,
                           bufferPx        : 40,
                           errorCallback   : function(){}
                         }, 
