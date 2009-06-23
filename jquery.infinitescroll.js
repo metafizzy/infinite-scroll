@@ -84,7 +84,7 @@
       props.loadingMsg
         .find('img').hide()
         .parent()
-          .find('span').html(opts.donetext).animate({opacity: 1},2000).fadeOut('normal');
+          .find('div').html(opts.donetext).animate({opacity: 1},2000).fadeOut('normal');
       
       // user provided callback when done    
       opts.errorCallback();
