@@ -11,9 +11,7 @@
 //               : MIT : http://creativecommons.org/licenses/MIT/
 
 
-// todo: add callback for the complete (404) state.
-//       add preloading option.
-//       fix with jorn's syntax improvements.
+// todo: add preloading option.
  
 ;(function($){
     
@@ -88,6 +86,9 @@
         .find('img').hide()
         .parent()
           .find('span').html(opts.donetext).animate({opacity: 1},2000).fadeOut('normal');
+      
+      // user provided callback when done    
+      opts.errorCallback();
     }
     
     function infscrSetup(path,opts,props,callback){
@@ -234,7 +235,8 @@
                           itemSelector    : "div.post",
                           animate         : false,
                           scrollElem      : false,
-                          bufferPx        : 40
+                          bufferPx        : 40,
+                          errorCallback   : function(){}
                         }, 
         loadingImg    : undefined,
         loadingMsg    : undefined,
