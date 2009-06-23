@@ -30,36 +30,22 @@
     
     if (!areSelectorsValid(opts)){ return false;  }
     
-    // store the container elem
-    props.container   = this;
+     // we doing this on an overflow:auto div?
+    props.container   =  opts.scrollElem ? props.container : document.documentElement;
+    // contentSelector we'll use for our .load()
+    opts.contentSelector = opts.contentSelector || this; 
+    
     
     // get the relative URL - everything past the domain name.
     var relurl        = /(.*?\/\/).*?(\/.*)/;
     var path          = $(opts.nextSelector).attr('href');
     
     
-    
     if (!path) { debug('Navigation selector not found'); return; }
     
-        // set the path to be a relative URL from root.
-        path          = path.match(relurl) ? path.match(relurl)[2] : path; 
+    // set the path to be a relative URL from root.
+    path          = path.match(relurl) ? path.match(relurl)[2] : path; 
 
-    // contentSelector is just the element you're calling the infinitescroll() method on.
-    opts.contentSelector = opts.contentSelector || this; 
-    
-    
-    // we doing this on an overflow:auto div?
-    props.container = opts.scrollElem ? props.container : document.documentElement, 
-    
-    //distance from nav links to bottom
-    props.pixelsFromNavToBottom = $(props.container)[0].scrollHeight - $(props.container).offset().top - $(opts.navSelector).offset().top;
-    
-    
-    $.infinitescroll.loadingMsg = $('<div id="infscr-loading" style="text-align: center;"><img alt="Loading..." src="'+opts.loadingImg+'" /><div>'+opts.loadingText+'</div></div>');
-    
-    
-    (new Image()).src    = opts.loadingImg; // preload the image.
-  		      
     // there is a 2 in the url surrounded by slashes, e.g. /page/2/
     if ( path.match(/^(.*?\/)2(\/|$)/) ){  
         path = path.match(/^(.*?\/)2(\/|$)/).slice(1);
@@ -73,6 +59,23 @@
       props.isInvalidPage = true;  //prevent it from running on this page.
     }
     
+
+
+
+
+    //distance from nav links to bottom
+    props.pixelsFromNavToBottom =  opts.scrollElem ? $(props.container)[0].scrollHeight : $(props.container).height()  -
+                                     $(props.container).offset().top - $(opts.navSelector).offset().top;
+    
+    // define loading msg
+    props.loadingMsg = $('<div id="infscr-loading" style="text-align: center;"><img alt="Loading..." src="'+
+                                  opts.loadingImg+'" /><div>'+opts.loadingText+'</div></div>');    
+     // preload the image
+    (new Image()).src    = opts.loadingImg;
+  		      
+
+  
+    // set up our bindings
     $(document).ajaxError(function(e,xhr,opt){
       debug('Page not found. Self-destructing...');    
       if (xhr.status == 404){ props.isDone = true; } // die if we're out of pages.
@@ -88,50 +91,54 @@
   
   }  
   
-  // verify selectors are good
+  // grab each selector option and see if any fail.
   function areSelectorsValid(opts){
     for (var key in opts){
-      
-      // grab each selector option and see if any fail.
-      if (key.indexOf && key.indexOf('Selector') > 0 && jQis(opts[key]).length === 0){
+      if (key.indexOf && key.indexOf('Selector') && $(opts[key]).length === 0){
           debug('Your ' + key + ' found no elements.');    
           return false;
       } 
       return true;
     }
   }
-    
+  
+	// the math is: docheight - distancetotopofwindow - height of window < docheight - distance of nav element to the top. [go algebra!]  
   function isNearBottom(opts,props){
-
-      
-          var pixelsFromWindowBottomToNav = $(props.container).height() - $(props.container).scrollTop() - $(props.scrollElem ? props.container : window).height() - opts.bufferPx;
-          
-          console.log('math:',pixelsFromWindowBottomToNav, props.pixelsFromNavToBottom, pixelsFromWindowBottomToNav < props.pixelsFromNavToBottom);
-
-      return ( pixelsFromWindowBottomToNav  < props.pixelsFromNavToBottom);    
+    
+    
+    var pixelsFromWindowBottomToNav = $(props.container).height() - 
+                                      $(props.container).scrollTop() - 
+                                      $(props.scrollElem ? props.container : window).height() - 
+                                      opts.bufferPx;
+    
+    typeof console != 'undefined' && console.log('math:',pixelsFromWindowBottomToNav, props.pixelsFromNavToBottom);
+    
+    return (pixelsFromWindowBottomToNav < props.pixelsFromNavToBottom);    
   }
   
   function infscrSetup(path,opts,props,callback){
   
       if (props.isDuringAjax || props.isInvalidPage || props.isDone) return; 
   
-     	// the math is: docheight - distancetotopofwindow - height of window < docheight - distance of nav element to the top. [go algebra!]
   		if ( isNearBottom(opts,props) ){ 
-  		
   		  
   			props.isDuringAjax = true; // we dont want to fire the ajax multiple times
   			props.loadingMsg.appendTo( opts.contentSelector ).show();
   			$( opts.navSelector ).hide(); // take out the previous/next links
+  			
+  			// increment the URL bit. e.g. /page/3/
   			props.currPage++;
+  			
+  			typeof console != 'undefined' && console.log('heading into ajax',path);
+  			
+  			
   			
   			// if we're dealing with a table we can't use DIVs
   			var box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');  
   			
-  			console.log('heading into ajax',path);
-  			
   			box
   			  .attr('id','infscr-page-'+props.currPage)
-  			  .attr('class','infscr-pages')
+  			  .addClass('infscr-pages')
   			  .appendTo( opts.contentSelector )
   			  .load( path.join( props.currPage ) + ' ' + opts.itemSelector,null,function(){
   			    
@@ -150,8 +157,8 @@
                         jQuery('html,body').animate({scrollTop: scrollTo}, 800,function(){ props.isDuringAjax = false; }); 
       		            }
                       
-                      props.currDOMChunk = $('#infscr-page-'+props.currPage)[0]; // convenience for callback. ACTUAL DOM, not jQ obj.
-                      callback.call(props.currDOMChunk);
+                      // pass in the new DOM element as context for the callback
+                      callback.call( box[0] );
                       
       		            if (!opts.animate) props.isDuringAjax = false; // once the call is done, we can allow it again.
   		            }
@@ -160,8 +167,11 @@
   		}   
   }
   
-  $.infinitescroll = {      // more configuration set in init()
-        defaults           : {
+  
+  // options and read-only properties object
+  
+  $.infinitescroll = {     
+        defaults      : {
                           debug           : false,
                           preload         : false,
                           nextSelector    : "div.navigation a:first",
@@ -176,6 +186,9 @@
                           scrollElem      : false,
                           bufferPx        : 40
                         }, 
+        loadingImg    : undefined,
+        loadingMsg    : undefined,
+        container     : undefined,
         currPage      : 1,
         currDOMChunk  : null,  // defined in setup()'s load()
         isDuringAjax  : false,
