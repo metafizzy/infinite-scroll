@@ -2,7 +2,7 @@
 
 // Infinite Scroll jQuery plugin
 // copyright Paul Irish
-// version 1.1.2008.09.25
+// version 1.2.090622
 
 // project home  : http://www.infinite-scroll.com
 // documentation : http://www.infinite-scroll.com/infinite-scroll-jquery-plugin/
@@ -14,14 +14,10 @@
 // todo: add callback for the complete (404) state.
 //       add preloading option.
 //       fix with jorn's syntax improvements.
-//       check .length of returned elements. if 0, treat as 404
  
 ;(function($){
     
   $.fn.infinitescroll = function(options,callback){
-    
-    
-    
     
     
     function debug(){
@@ -65,6 +61,12 @@
       return (pixelsFromWindowBottomToBottom  - opts.bufferPx < props.pixelsFromNavToBottom);    
     }    
     
+    function showDoneMsg(){
+      props.loadingMsg
+        .find('img').hide()
+        .parent()
+          .find('span').html(opts.donetext).animate({opacity: 1},2000).fadeOut('normal');
+    }
     
     function infscrSetup(path,opts,props,callback){
     
@@ -92,34 +94,33 @@
     		  .appendTo( opts.contentSelector )
     		  .load( path.join( props.currPage ) + ' ' + opts.itemSelector,null,function(){
     		    
-    		        if (props.isDone){ // if we've hit the last page...
-    		        
-      			        props.loadingMsg
-      			          .find('img').hide()
-      			          .parent()
-      			          .find('span').html(opts.donetext).animate({opacity: 1},2000).fadeOut('normal');
-      			          
-    	            } else {
-    	              
-    	                // if it didn't return anything
-    	                if (box.children().length == 0){
-    	                  // fake an ajaxError so we can quit.
-    	                  jQuery.event.trigger( "ajaxError", [{status:404}] ); 
-    	                } 
-    	              
-      		            props.loadingMsg.fadeOut('normal' ); // currently makes the <em>'d text ugly in IE6
-    
-      		            if (opts.animate){ // smooth scroll to ease in the new content
-        		            var scrollTo = jQuery(window).scrollTop() + jQuery('#infscr-loading').height() + opts.extraScrollPx + 'px';
-                        jQuery('html,body').animate({scrollTop: scrollTo}, 800,function(){ props.isDuringAjax = false; }); 
-      		            }
-                      
-                      // pass in the new DOM element as context for the callback
-                      callback.call( box[0] );
-                      
-      		            if (!opts.animate) props.isDuringAjax = false; // once the call is done, we can allow it again.
-    	            }
-    		    });
+    		        // if we've hit the last page...
+    		        if (props.isDone){ 
+                    showDoneMsg();
+        			      return false;    
+        			      
+  	            } else {
+  	              
+  	                // if it didn't return anything
+  	                if (box.children().length == 0){
+  	                  // fake an ajaxError so we can quit.
+  	                  $.event.trigger( "ajaxError", [{status:404}] ); 
+  	                } 
+  	              
+    		            props.loadingMsg.fadeOut('normal' ); // currently makes the <em>'d text ugly in IE6
+  
+    		            // smooth scroll to ease in the new content
+    		            if (opts.animate){ 
+      		            var scrollTo = $(window).scrollTop() + $('#infscr-loading').height() + opts.extraScrollPx + 'px';
+                      $('html,body').animate({scrollTop: scrollTo}, 800,function(){ props.isDuringAjax = false; }); 
+    		            }
+                    
+                    // pass in the new DOM element as context for the callback
+                    callback.call( box[0] );
+                    
+    		            if (!opts.animate) props.isDuringAjax = false; // once the call is done, we can allow it again.
+  	            }
+    		    }); // end of load()
     			
     		    
       }  // end of infscrSetup()
@@ -136,7 +137,7 @@
     if (!areSelectorsValid(opts)){ return false;  }
     
      // we doing this on an overflow:auto div?
-    props.container   =  opts.scrollElem ? props.container : document.documentElement;
+    props.container   =  opts.scrollElem ? this : document.documentElement;
     // contentSelector we'll use for our .load()
     opts.contentSelector = opts.contentSelector || this; 
     
@@ -165,9 +166,11 @@
     }
     
 
+    // reset scrollTop in case of page refresh:
+    if (opts.scrollElem) $(props.container)[0].scrollTop = 0;
+
     // distance from nav links to bottom
     // computed as: height of the document + top offset of container - top offset of nav link
-    // todo: consider forcing container's scrollTop as 0 in case of page refresh.
     props.pixelsFromNavToBottom =  getDocumentHeight()  +
                                      $(props.container).offset().top - 
                                      $(opts.navSelector).offset().top;
@@ -183,7 +186,13 @@
     // set up our bindings
     $(document).ajaxError(function(e,xhr,opt){
       debug('Page not found. Self-destructing...');    
-      if (xhr.status == 404){ props.isDone = true; } // die if we're out of pages.
+      
+      // die if we're out of pages.
+      if (xhr.status == 404){ 
+        showDoneMsg();
+        props.isDone = true; 
+        $(opts.scrollElem ? this : window).unbind('scroll.infscr');
+      } 
     });
     
     // bind scroll handler to element (if its a local scroll) or window  
