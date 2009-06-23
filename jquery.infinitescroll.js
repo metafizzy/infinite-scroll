@@ -19,10 +19,10 @@
     
   $.fn.infinitescroll = function(options,callback){
     
-    
+    // console log wrapper.
     function debug(){
-      //if (opts.debug)
-      window.console && console.log.call(console,arguments)
+      if (opts.debug)
+        window.console && console.log.call(console,arguments)
     }
     
     // grab each selector option and see if any fail.
@@ -34,6 +34,28 @@
         } 
         return true;
       }
+    }
+
+
+    // find the number to increment in the path.
+    function determinePath(path){
+      
+      path.match(relurl) ? path.match(relurl)[2] : path; 
+
+      // there is a 2 in the url surrounded by slashes, e.g. /page/2/
+      if ( path.match(/^(.*?\/)2(\/|$)/) ){  
+          path = path.match(/^(.*?\/)2(\/|$)/).slice(1);
+      } else 
+        // if there is any 2 in the url at all.
+        if (path.match(/^(.*?)2(.*?$)/)){
+          debug('Trying backup next selector parse technique. Treacherous waters here, matey.');
+          path = path.match(/^(.*?)2(.*?$)/).slice(1);
+      } else {
+        debug('Sorry, we couldn\'t parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.');    
+        props.isInvalidPage = true;  //prevent it from running on this page.
+      }
+      
+      return path;
     }
 
 
@@ -74,16 +96,17 @@
     
     		if ( !isNearBottom(opts,props) ) return; 
     		  
-    		props.isDuringAjax = true; // we dont want to fire the ajax multiple times
+    		// we dont want to fire the ajax multiple times
+    		props.isDuringAjax = true; 
+    		
+    		// show the loading message and hide the previous/next links
     		props.loadingMsg.appendTo( opts.contentSelector ).show();
-    		$( opts.navSelector ).hide(); // take out the previous/next links
+    		$( opts.navSelector ).hide(); 
     		
     		// increment the URL bit. e.g. /page/3/
     		props.currPage++;
     		
     		debug('heading into ajax',path);
-    		
-    		
     		
     		// if we're dealing with a table we can't use DIVs
     		var box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');  
@@ -106,8 +129,9 @@
   	                  // fake an ajaxError so we can quit.
   	                  $.event.trigger( "ajaxError", [{status:404}] ); 
   	                } 
-  	              
-    		            props.loadingMsg.fadeOut('normal' ); // currently makes the <em>'d text ugly in IE6
+  	                
+  	                // fadeout currently makes the <em>'d text ugly in IE6
+    		            props.loadingMsg.fadeOut('normal' ); 
   
     		            // smooth scroll to ease in the new content
     		            if (opts.animate){ 
@@ -150,20 +174,7 @@
     if (!path) { debug('Navigation selector not found'); return; }
     
     // set the path to be a relative URL from root.
-    path          = path.match(relurl) ? path.match(relurl)[2] : path; 
-
-    // there is a 2 in the url surrounded by slashes, e.g. /page/2/
-    if ( path.match(/^(.*?\/)2(\/|$)/) ){  
-        path = path.match(/^(.*?\/)2(\/|$)/).slice(1);
-    } else 
-      // if there is any 2 in the url at all.
-      if (path.match(/^(.*?)2(.*?$)/)){
-        debug('Trying backup next selector parse technique. Treacherous waters here, matey.');
-        path = path.match(/^(.*?)2(.*?$)/).slice(1);
-    } else {
-      debug('Sorry, we couldn\'t parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.');    
-      props.isInvalidPage = true;  //prevent it from running on this page.
-    }
+    path          = determinePath(path);
     
 
     // reset scrollTop in case of page refresh:
