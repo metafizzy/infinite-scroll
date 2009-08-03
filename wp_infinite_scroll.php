@@ -19,6 +19,7 @@ TODO:
  - What error handling do we need?
  - Mention div#infscr-loading so users can customize look more.
  - Check if you're in a table and thus you can't add divs.
+ - fix this: http://capacity.electronest.com/2009/01/13/fixing-url-path/
    
 */
 
