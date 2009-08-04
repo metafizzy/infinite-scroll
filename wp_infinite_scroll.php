@@ -416,7 +416,7 @@ $js_string = <<<EOT
 
 
 <script type="text/javascript"> 
-if (!(jQuery && jQuery.fn.jquery >= '1.2.6')){
+if (!(window.jQuery && jQuery.fn.jquery >= '1.2.6')){
   document.write(unescape("%3Cscript src='http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js' type='text/javascript'%3E%3C/script%3E"));
   window.INFSCR_jQ=true;
 }
