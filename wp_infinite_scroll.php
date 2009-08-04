@@ -2,7 +2,7 @@
 
 /*
 Plugin Name: Infinite Scroll
-Version: 1.1.2008.09.25
+Version: 1.2.090804
 Plugin URI: http://www.infinite-scroll.com
 Description: Automatically loads the next page of posts into the bottom of the initial page. 
 Author: dirkhaim & Paul Irish
@@ -418,17 +418,15 @@ $js_string = <<<EOT
 <script type="text/javascript"> 
 if (!(jQuery && jQuery.fn.jquery >= '1.2.6')){
   document.write(unescape("%3Cscript src='http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js' type='text/javascript'%3E%3C/script%3E"));
-  document.write(unescape("%3Cscript  type='text/javascript'%3EINFSCR_jQ%3Dtrue%3B%3C/script%3E"));
+  window.INFSCR_jQ=true;
 }
 </script> 
 
 <script type="text/javascript" src="$plugin_dir/jquery.infinitescroll.js"></script>
 <script type="text/javascript" >
-(INFSCR_jQ ? jQuery.noConflict(true) : jQuery)(function($){
+(window.INFSCR_jQ ? jQuery.noConflict() : jQuery)(function($){
   
   // Infinite Scroll jQuery+Wordpress plugin
-  // copyright: Paul Irish & dirkhaim
-  // license: cc-wrapped GPL : http://creativecommons.org/licenses/GPL/2.0/
   $('$content_selector').infinitescroll({
     debug           : $isAdmin,
     nextSelector    : "$next_selector",
