@@ -422,7 +422,7 @@ if (!(jQuery && jQuery.fn.jquery >= '1.2.6')){
 }
 </script> 
 
-<script type="text/javascript" src="$plugin_dir/jquery.infinitescroll.js"></script>
+<script type="text/javascript" src="$plugin_dir/jquery.infinitescroll.min.js"></script>
 <script type="text/javascript" >
 (window.INFSCR_jQ ? jQuery.noConflict() : jQuery)(function($){
   
