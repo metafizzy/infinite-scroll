@@ -1,15 +1,11 @@
 
-
+/*!
 // Infinite Scroll jQuery plugin
-// copyright Paul Irish
-// version 1.2.090622
+// copyright Paul Irish, licensed GPL & MIT
+// version 1.2.090804
 
-// project home  : http://www.infinite-scroll.com
-// documentation : http://www.infinite-scroll.com/infinite-scroll-jquery-plugin/
-
-// dual license  : GPL : http://creativecommons.org/licenses/GPL/2.0/
-//               : MIT : http://creativecommons.org/licenses/MIT/
-
+// home and docs: http://www.infinite-scroll.com
+*/
 
 // todo: add preloading option.
  
