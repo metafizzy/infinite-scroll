@@ -36,13 +36,13 @@
       path.match(relurl) ? path.match(relurl)[2] : path; 
 
       // there is a 2 in the url surrounded by slashes, e.g. /page/2/
-      if ( path.match(/^(.*?\/)2(\/|$)/) ){  
-          path = path.match(/^(.*?\/)2(\/|$)/).slice(1);
+      if ( path.match(/^(.*?)\b2\b(.*?$)/) ){  
+          path = path.match(/^(.*?)\b2\b(.*?$)/).slice(1);
       } else 
         // if there is any 2 in the url at all.
-        if (path.match(/^(.*?)\b2\b(.*?$)/)){
+        if (path.match(/^(.*?)2(.*?$)/)){
           debug('Trying backup next selector parse technique. Treacherous waters here, matey.');
-          path = path.match(/^(.*?)\b2\b(.*?$)/).slice(1);
+          path = path.match(/^(.*?)2(.*?$)/).slice(1);
       } else {
         debug('Sorry, we couldn\'t parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.');    
         props.isInvalidPage = true;  //prevent it from running on this page.
@@ -67,7 +67,9 @@
       // distance remaining in the scroll
       // computed as: document height - distance already scroll - viewport height - buffer
       var pixelsFromWindowBottomToBottom = getDocumentHeight()  -
-                                            $(props.container).scrollTop() - 
+                                            (opts.localMode ? $(props.container).scrollTop() : 
+                                              // have to do this bs because safari doesnt report a scrollTop on the html element
+                                              ($(props.container).scrollTop() || $(props.container.ownerDocument.body).scrollTop())) - 
                                             $(opts.localMode ? props.container : window).height();
       
       debug('math:',pixelsFromWindowBottomToBottom, props.pixelsFromNavToBottom);
@@ -158,6 +160,7 @@
     
      // we doing this on an overflow:auto div?
     props.container   =  opts.localMode ? this : document.documentElement;
+                          
     // contentSelector we'll use for our .load()
     opts.contentSelector = opts.contentSelector || this; 
     
