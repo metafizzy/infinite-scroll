@@ -44,9 +44,9 @@
           path = path.match(/^(.*?\/)2(\/|$)/).slice(1);
       } else 
         // if there is any 2 in the url at all.
-        if (path.match(/^(.*?)2(.*?$)/)){
+        if (path.match(/^(.*?)\b2\b(.*?$)/)){
           debug('Trying backup next selector parse technique. Treacherous waters here, matey.');
-          path = path.match(/^(.*?)2(.*?$)/).slice(1);
+          path = path.match(/^(.*?)\b2\b(.*?$)/).slice(1);
       } else {
         debug('Sorry, we couldn\'t parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.');    
         props.isInvalidPage = true;  //prevent it from running on this page.
