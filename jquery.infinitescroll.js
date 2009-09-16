@@ -41,6 +41,14 @@
       } else 
         // if there is any 2 in the url at all.
         if (path.match(/^(.*?)2(.*?$)/)){
+          
+          // page= is used in django:
+          //   http://www.infinite-scroll.com/changelog/comment-page-1/#comment-127
+          if ( path.match(/^(.*?page=)2(\/.*|$)/) ){
+            path = path.match(/^(.*?page=)2(\/.*|$)/).slice(1);
+            return path;
+          }
+          
           debug('Trying backup next selector parse technique. Treacherous waters here, matey.');
           path = path.match(/^(.*?)2(.*?$)/).slice(1);
       } else {
