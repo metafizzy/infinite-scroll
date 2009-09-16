@@ -431,7 +431,7 @@ if (!(window.jQuery && jQuery.fn.jquery >= '1.2.6')){
     debug           : $isAdmin,
     nextSelector    : "$next_selector",
     loadingImg      : "$loading_image",
-    text            : "$loading_text",
+    loadingText     : "$loading_text",
     donetext        : "$donetext",
     navSelector     : "$navigation_selector",
     contentSelector : "$content_selector",
