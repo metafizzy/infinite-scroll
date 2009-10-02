@@ -2,7 +2,7 @@
 /*!
 // Infinite Scroll jQuery plugin
 // copyright Paul Irish, licensed GPL & MIT
-// version 1.2.090804
+// version 1.2.091002
 
 // home and docs: http://www.infinite-scroll.com
 */
@@ -190,7 +190,7 @@
     // distance from nav links to bottom
     // computed as: height of the document + top offset of container - top offset of nav link
     props.pixelsFromNavToBottom =  getDocumentHeight()  +
-                                     $(props.container).offset().top - 
+                                     (props.container == document.documentElement ? 0 : $(props.container).offset().top )- 
                                      $(opts.navSelector).offset().top;
     
     // define loading msg
