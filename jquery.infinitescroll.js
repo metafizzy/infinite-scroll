@@ -70,15 +70,16 @@
     
     
         
-    function isNearBottom(opts,props){
+    function isNearBottom(){
       
       // distance remaining in the scroll
       // computed as: document height - distance already scroll - viewport height - buffer
-      var pixelsFromWindowBottomToBottom = getDocumentHeight()  -
-                                            (opts.localMode ? $(props.container).scrollTop() : 
-                                              // have to do this bs because safari doesnt report a scrollTop on the html element
-                                              ($(props.container).scrollTop() || $(props.container.ownerDocument.body).scrollTop())) - 
-                                            $(opts.localMode ? props.container : window).height();
+      var pixelsFromWindowBottomToBottom = 0 +
+                getDocumentHeight()  - (
+                    opts.localMode ? $(props.container).scrollTop() : 
+                    // have to do this bs because safari doesnt report a scrollTop on the html element
+                    ($(props.container).scrollTop() || $(props.container.ownerDocument.body).scrollTop())
+                    ) - $(opts.localMode ? props.container : window).height();
       
       debug('math:',pixelsFromWindowBottomToBottom, props.pixelsFromNavToBottom);
       
@@ -96,7 +97,7 @@
       opts.errorCallback();
     }
     
-    function infscrSetup(path,opts,props,callback){
+    function infscrSetup(){
     
         if (props.isDuringAjax || props.isInvalidPage || props.isDone) return; 
         
@@ -109,7 +110,7 @@
           
   
       
-    function kickOffAjax(path,opts,props,callback){
+    function kickOffAjax(){
         
         // we dont want to fire the ajax multiple times
         props.isDuringAjax = true; 
@@ -222,7 +223,7 @@
     
     // bind scroll handler to element (if its a local scroll) or window  
     $(opts.localMode ? this : window)
-      .bind('scroll.infscr', function(){ infscrSetup(path,opts,props,callback); } )
+      .bind('scroll.infscr', infscrSetup)
       .trigger('scroll.infscr'); // trigger the event, in case it's a short page
     
     $(document).bind('load.infscr',kickOffAjax);
