@@ -125,7 +125,7 @@
         debug('heading into ajax',path);
         
         // if we're dealing with a table we can't use DIVs
-        var box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');  
+        box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');  
         
         box
           .attr('id','infscr-page-'+props.currPage)
@@ -168,8 +168,10 @@
       
     // lets get started.
     
-    var opts    = $.extend({}, $.infinitescroll.defaults, options);
-    var props   = $.infinitescroll; // shorthand
+    var opts    = $.extend({}, $.infinitescroll.defaults, options),
+        props   = $.infinitescroll, // shorthand
+        box;
+        
     callback    = callback || function(){};
     
     if (!areSelectorsValid(opts)){ return false;  }
@@ -182,8 +184,8 @@
     
     
     // get the relative URL - everything past the domain name.
-    var relurl        = /(.*?\/\/).*?(\/.*)/;
-    var path          = $(opts.nextSelector).attr('href');
+    var relurl        = /(.*?\/\/).*?(\/.*)/,
+        path          = $(opts.nextSelector).attr('href');
     
     
     if (!path) { debug('Navigation selector not found'); return; }
