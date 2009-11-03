@@ -103,7 +103,7 @@
         
         if ( !isNearBottom(opts,props) ) return; 
         
-        $(document).trigger('load.infscr',kickOffAjax);
+        $(document).trigger('retrieve.infscr',kickOffAjax);
                 
                 
     }  // end of infscrSetup()
@@ -228,7 +228,7 @@
       .bind('scroll.infscr', infscrSetup)
       .trigger('scroll.infscr'); // trigger the event, in case it's a short page
     
-    $(document).bind('load.infscr',kickOffAjax);
+    $(document).bind('retrieve.infscr',kickOffAjax);
     
     return this;
   
