@@ -2,12 +2,10 @@
 /*!
 // Infinite Scroll jQuery plugin
 // copyright Paul Irish, licensed GPL & MIT
-// version 1.2.091002
+// version 1.3.091129
 
 // home and docs: http://www.infinite-scroll.com
 */
-
-// todo: add preloading option.
  
 ;(function($){
     
