@@ -103,7 +103,7 @@
         
         if ( !isNearBottom(opts,props) ) return; 
         
-        $(document).trigger('retrieve.infscr',kickOffAjax);
+        $(document).trigger('retrieve.infscr');
                 
                 
     }  // end of infscrSetup()
