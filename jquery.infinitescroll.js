@@ -2,7 +2,7 @@
 /*!
 // Infinite Scroll jQuery plugin
 // copyright Paul Irish, licensed GPL & MIT
-// version 1.4.091129
+// version 1.4.100210
 
 // home and docs: http://www.infinite-scroll.com
 */
@@ -19,7 +19,7 @@
     // grab each selector option and see if any fail.
     function areSelectorsValid(opts){
       for (var key in opts){
-        if (key.indexOf && key.indexOf('Selector') && $(opts[key]).length === 0){
+        if (key.indexOf && key.indexOf('Selector') > -1 && $(opts[key]).length === 0){
             debug('Your ' + key + ' found no elements.');    
             return false;
         } 

@@ -2,7 +2,7 @@
 
 /*
 Plugin Name: Infinite Scroll
-Version: 1.4.091129
+Version: 1.4.100210
 Plugin URI: http://www.infinite-scroll.com
 Description: Automatically loads the next page of posts into the bottom of the initial page. 
 Author: dirkhaim & Paul Irish
@@ -417,7 +417,7 @@ $js_string = <<<EOT
 
 <script type="text/javascript"> 
 if (!(window.jQuery && jQuery.fn.jquery >= '1.2.6')){
-  document.write(unescape("%3Cscript src='http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js' type='text/javascript'%3E%3C/script%3E"));
+  document.write(unescape("%3Cscript src='http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js' type='text/javascript'%3E%3C/script%3E"));
   window.INFSCR_jQ=true;
 }
 </script> 
