@@ -124,12 +124,10 @@
         
         // if we're dealing with a table we can't use DIVs
         box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');  
-        
-        box
-          .attr('id','infscr-page-'+props.currPage)
-          .addClass('infscr-pages')
-          .appendTo( opts.contentSelector )
-          .load( path.join( props.currPage ) + ' ' + opts.itemSelector,null,loadCallback); 
+        frag = document.createDocumentFragment();
+
+
+        box.load( path.join( props.currPage ) + ' ' + opts.itemSelector,null,loadCallback); 
         
     }
     
@@ -146,6 +144,13 @@
               // fake an ajaxError so we can quit.
               $.event.trigger( "ajaxError", [{status:404}] ); 
             } 
+            
+            // use a documentFragment because it works when content is going into a table or UL
+			while (box[0].firstChild){
+				frag.appendChild(  box[0].firstChild );
+			}
+
+           	$(opts.contentSelector)[0].appendChild(frag);
             
             // fadeout currently makes the <em>'d text ugly in IE6
             props.loadingMsg.fadeOut('normal' ); 
@@ -165,10 +170,11 @@
     
       
     // lets get started.
+    $.browser.ie6 = $.browser.msie && $.browser.version < 7;
     
     var opts    = $.extend({}, $.infinitescroll.defaults, options),
         props   = $.infinitescroll, // shorthand
-        box;
+        box, frag;
         
     callback    = callback || function(){};
     
