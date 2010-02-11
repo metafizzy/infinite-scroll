@@ -2,7 +2,7 @@
 /*!
 // Infinite Scroll jQuery plugin
 // copyright Paul Irish, licensed GPL & MIT
-// version 1.4.100210
+// version 1.4.100211
 
 // home and docs: http://www.infinite-scroll.com
 */
