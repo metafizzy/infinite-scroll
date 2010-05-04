@@ -2,7 +2,7 @@
 /*!
 // Infinite Scroll jQuery plugin
 // copyright Paul Irish, licensed GPL & MIT
-// version 1.4.100211
+// version 1.5.100504
 
 // home and docs: http://www.infinite-scroll.com
 */
@@ -50,6 +50,14 @@
           debug('Trying backup next selector parse technique. Treacherous waters here, matey.');
           path = path.match(/^(.*?)2(.*?$)/).slice(1);
       } else {
+          
+        // page= is used in drupal too but second page is page=1 not page=2:
+        // thx Jerod Fritz, vladikoff
+        if (path.match(/^(.*?page=)1(\/.*|$)/)) {
+          path = path.match(/^(.*?page=)1(\/.*|$)/).slice(1);
+          return path;
+        }  
+
         debug('Sorry, we couldn\'t parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.');    
         props.isInvalidPage = true;  //prevent it from running on this page.
       }
@@ -139,16 +147,18 @@
               
         } else {
           
+            var children = box.children().get();
+            
             // if it didn't return anything
-            if (box.children().length == 0){
+            if (children.length == 0){
               // fake an ajaxError so we can quit.
-              $.event.trigger( "ajaxError", [{status:404}] ); 
+              return $.event.trigger( "ajaxError", [{status:404}] ); 
             } 
             
             // use a documentFragment because it works when content is going into a table or UL
-			while (box[0].firstChild){
-				frag.appendChild(  box[0].firstChild );
-			}
+            while (box[0].firstChild){
+              frag.appendChild(  box[0].firstChild );
+            }
 
            	$(opts.contentSelector)[0].appendChild(frag);
             
@@ -161,8 +171,11 @@
                 $('html,body').animate({scrollTop: scrollTo}, 800,function(){ props.isDuringAjax = false; }); 
             }
         
-            // pass in the new DOM element as context for the callback
-            callback.call( box[0] );
+            // previously, we would pass in the new DOM element as context for the callback
+            // however we're now using a documentfragment, which doesnt havent parents or children,
+            // so the context is the contentContainer guy, and we pass in an array
+            //   of the elements collected as the first argument.
+            callback.call( $(opts.contentSelector)[0], children );
         
             if (!opts.animate) props.isDuringAjax = false; // once the call is done, we can allow it again.
         }
