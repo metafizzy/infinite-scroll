@@ -122,7 +122,7 @@
         props.isDuringAjax = true; 
         
         // show the loading message and hide the previous/next links
-        props.loadingMsg.appendTo( opts.contentSelector ).show();
+        props.loadingMsg.appendTo( opts.loadMsgSelector ).show();
         $( opts.navSelector ).hide(); 
         
         // increment the URL bit. e.g. /page/3/
@@ -197,7 +197,10 @@
     props.container   =  opts.localMode ? this : document.documentElement;
                           
     // contentSelector we'll use for our .load()
-    opts.contentSelector = opts.contentSelector || this; 
+    opts.contentSelector = opts.contentSelector || this;
+    
+    // loadMsgSelector - if we want to place the load message in a specific selector, defaulted to the contentSelector
+    opts.loadMsgSelector = opts.loadMsgSelector || opts.contentSelector;
     
     
     // get the relative URL - everything past the domain name.
@@ -265,6 +268,7 @@
                           donetext        : "<em>Congratulations, you've reached the end of the internet.</em>",
                           navSelector     : "div.navigation",
                           contentSelector : null,           // not really a selector. :) it's whatever the method was called on..
+                          loadMsgSelector : null,
                           extraScrollPx   : 150,
                           itemSelector    : "div.post",
                           animate         : false,
