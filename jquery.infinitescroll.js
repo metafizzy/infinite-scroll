@@ -97,7 +97,9 @@
       props.loadingMsg
         .find('img').hide()
         .parent()
-          .find('div').html(opts.donetext).animate({opacity: 1},2000).fadeOut('normal');
+          .find('div').html(opts.donetext).animate({opacity: 1},2000, function() {
+            $(this).parent().fadeOut('normal');
+          });
       
       // user provided callback when done    
       opts.errorCallback();
