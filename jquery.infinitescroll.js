@@ -123,21 +123,24 @@
         // we dont want to fire the ajax multiple times
         props.isDuringAjax = true; 
         
-        // show the loading message and hide the previous/next links
-        props.loadingMsg.appendTo( opts.loadMsgSelector ).show();
-        $( opts.navSelector ).hide(); 
-        
-        // increment the URL bit. e.g. /page/3/
-        props.currPage++;
-        
-        debug('heading into ajax',path);
-        
-        // if we're dealing with a table we can't use DIVs
-        box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');  
-        frag = document.createDocumentFragment();
+        // show the loading message quickly
+        // then hide the previous/next links after we're
+        // sure the loading message was visible
+        props.loadingMsg.appendTo( opts.loadMsgSelector ).show(opts.loadingMsgRevealSpeed, function(){
+          $( opts.navSelector ).hide(); 
 
+          // increment the URL bit. e.g. /page/3/
+          props.currPage++;
 
-        box.load( path.join( props.currPage ) + ' ' + opts.itemSelector,null,loadCallback); 
+          debug('heading into ajax',path);
+
+          // if we're dealing with a table we can't use DIVs
+          box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');  
+          frag = document.createDocumentFragment();
+
+          box.load( path.join( props.currPage ) + ' ' + opts.itemSelector,null,loadCallback);
+        });
+        
         
     }
     
@@ -271,6 +274,7 @@
                           navSelector     : "div.navigation",
                           contentSelector : null,           // not really a selector. :) it's whatever the method was called on..
                           loadMsgSelector : null,
+                          loadingMsgRevealSpeed : 'fast', // controls how fast you want the loading message to come in, ex: 'fast', 'slow', 200 (milliseconds)
                           extraScrollPx   : 150,
                           itemSelector    : "div.post",
                           animate         : false,
