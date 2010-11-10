@@ -89,8 +89,10 @@ Hong Kong Phooey, number one super guy. Hong Kong Phooey, quicker than the human
                      // selector for the NEXT link (to page 2)
       itemSelector : "#body p",
                      // selector for all items you'll retrieve
-      loadMsgSelector : "#footer"
+      loadMsgSelector : "#footer",
                      // selector for the loading message
+       loadingMsgRevealSpeed : "fast"
+                      // speed at which the loadingText should appear
     }, function(){ 
       window.callbackcontext = this;
       window.console && console.log('callbackcontext',this,$(this).find('p'))
