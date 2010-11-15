@@ -2,7 +2,7 @@
 /*!
 // Infinite Scroll jQuery plugin
 // copyright Paul Irish, licensed GPL & MIT
-// version 1.5.100504
+// version 1.5.101115
 
 // home and docs: http://www.infinite-scroll.com
 */
@@ -152,10 +152,10 @@
               
         } else {
           
-            var children = box.children().get();
+            var children = box.children();
             
             // if it didn't return anything
-            if (children.length == 0){
+            if (children.length == 0 || children.hasClass('error404')){
               // fake an ajaxError so we can quit.
               return $.event.trigger( "ajaxError", [{status:404}] ); 
             } 
@@ -180,7 +180,7 @@
             // however we're now using a documentfragment, which doesnt havent parents or children,
             // so the context is the contentContainer guy, and we pass in an array
             //   of the elements collected as the first argument.
-            callback.call( $(opts.contentSelector)[0], children );
+            callback.call( $(opts.contentSelector)[0], children.get() );
         
             if (!opts.animate) props.isDuringAjax = false; // once the call is done, we can allow it again.
         }
