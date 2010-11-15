@@ -80,6 +80,8 @@ Hong Kong Phooey, number one super guy. Hong Kong Phooey, quicker than the human
   <script type="text/javascript" src="../jquery.infinitescroll.js"></script>
   <script>
   $(function(){
+    
+    
     /* */
     $('#body').infinitescroll({
    
@@ -87,8 +89,13 @@ Hong Kong Phooey, number one super guy. Hong Kong Phooey, quicker than the human
                      // selector for the paged navigation (it will be hidden)
       nextSelector : "a#next:last",   
                      // selector for the NEXT link (to page 2)
-      itemSelector : "#body p"          
+      itemSelector : "#body p",          
                      // selector for all items you'll retrieve
+                     
+                                 
+      pathParse     : (!location.search) ? undefined : function( pathStr, nextPage ){
+                        return pathStr.replace('2', nextPage );
+                      }
     }, function(){ 
       window.callbackcontext = this;
       window.console && console.log('callbackcontext',this,$(this).find('p'))

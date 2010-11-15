@@ -30,16 +30,13 @@
 
     // find the number to increment in the path.
     function determinePath(path){
-      
-      path.match(relurl) ? path.match(relurl)[2] : path; 
 
-      // there is a 2 in the url surrounded by slashes, e.g. /page/2/
-      if ( path.match(/^(.*?)\b2\b(.*?$)/) ){  
+     if ( path.match(/^(.*?)\b2\b(.*?$)/) ){  
           path = path.match(/^(.*?)\b2\b(.*?$)/).slice(1);
-      } else 
-        // if there is any 2 in the url at all.
-        if (path.match(/^(.*?)2(.*?$)/)){
           
+      // if there is any 2 in the url at all.    
+      } else if (path.match(/^(.*?)2(.*?$)/)){
+        
           // page= is used in django:
           //   http://www.infinite-scroll.com/changelog/comment-page-1/#comment-127
           if ( path.match(/^(.*?page=)2(\/.*|$)/) ){
@@ -58,8 +55,12 @@
           return path;
         }  
 
-        debug('Sorry, we couldn\'t parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.');    
-        props.isInvalidPage = true;  //prevent it from running on this page.
+        if ($.isFunction(opts.pathParse)){
+          return [path];
+        } else {
+          debug('Sorry, we couldn\'t parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.');    
+          props.isInvalidPage = true;  //prevent it from running on this page.
+        }
       }
       
       return path;
@@ -129,7 +130,14 @@
           box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');  
           frag = document.createDocumentFragment();
 
-          box.load( path.join( props.currPage ) + ' ' + opts.itemSelector,null,loadCallback);
+          if ($.isFunction(opts.pathParse)){
+            // if we got a custom path parsing function, pass in our path guess and page iteration
+            desturl = opts.pathParse(path.join('2'), props.currPage);
+          } else {
+            desturl = path.join( props.currPage );
+          }
+
+          box.load( desturl + ' ' + opts.itemSelector,null,loadCallback);
         });
         
         
@@ -183,7 +191,7 @@
     
     var opts    = $.extend({}, $.infinitescroll.defaults, options),
         props   = $.infinitescroll, // shorthand
-        box, frag;
+        box, frag, desturl;
         
     callback    = callback || function(){};
     
@@ -264,6 +272,7 @@
                           extraScrollPx   : 150,
                           itemSelector    : "div.post",
                           animate         : false,
+                          pathParse       : undefined, // function for custom parsing of the URL path
                           bufferPx        : 40,
                           errorCallback   : function(){}
                         }, 
