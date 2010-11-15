@@ -66,28 +66,19 @@
     }
 
 
-    // 'document' means the full document usually, but sometimes the content of the overflow'd div in local mode
-    function getDocumentHeight(){
-      // weird doubletouch of scrollheight because http://soulpass.com/2006/07/24/ie-and-scrollheight/
-      return opts.localMode ? ($(props.container)[0].scrollHeight && $(props.container)[0].scrollHeight) 
-                                // needs to be document's height. (not props.container's) html's height is wrong in IE.
-                                : $(document).height()
-    }
-    
     
         
     function isNearBottom(){
       
       // distance remaining in the scroll
       // computed as: document height - distance already scroll - viewport height - buffer
-      var pixelsFromWindowBottomToBottom = 0 +
-                getDocumentHeight()  - (
-                    opts.localMode ? $(props.container).scrollTop() : 
-                    // have to do this bs because safari doesnt report a scrollTop on the html element
-                    ($(props.container).scrollTop() || $(props.container.ownerDocument.body).scrollTop())
-                    ) - $(opts.localMode ? props.container : window).height();
+      var pixelsFromWindowBottomToBottom = 0 
+                + $(document).height()  
+                // have to do this bs because safari doesnt report a scrollTop on the html element
+                - ($(props.container).scrollTop() || $(props.container.ownerDocument.body).scrollTop())
+                - $(window).height();
       
-      debug('math:',pixelsFromWindowBottomToBottom, props.pixelsFromNavToBottom);
+      debug('math:', pixelsFromWindowBottomToBottom, props.pixelsFromNavToBottom);
       
       // if distance remaining in the scroll (including buffer) is less than the orignal nav to bottom....
       return (pixelsFromWindowBottomToBottom  - opts.bufferPx < props.pixelsFromNavToBottom);    
@@ -198,8 +189,7 @@
     
     if (!areSelectorsValid(opts)){ return false;  }
     
-     // we doing this on an overflow:auto div?
-    props.container   =  opts.localMode ? this : document.documentElement;
+    props.container   =  document.documentElement;
                           
     // contentSelector we'll use for our .load()
     opts.contentSelector = opts.contentSelector || this;
@@ -218,13 +208,9 @@
     // set the path to be a relative URL from root.
     path          = determinePath(path);
     
-
-    // reset scrollTop in case of page refresh:
-    if (opts.localMode) $(props.container)[0].scrollTop = 0;
-
     // distance from nav links to bottom
     // computed as: height of the document + top offset of container - top offset of nav link
-    props.pixelsFromNavToBottom =  getDocumentHeight()  +
+    props.pixelsFromNavToBottom =  $(document).height()  +
                                      (props.container == document.documentElement ? 0 : $(props.container).offset().top )- 
                                      $(opts.navSelector).offset().top;
     
@@ -244,12 +230,12 @@
       if (xhr.status == 404){ 
         showDoneMsg();
         props.isDone = true; 
-        $(opts.localMode ? this : window).unbind('scroll.infscr');
+        $(window).unbind('scroll.infscr');
       } 
     });
     
     // bind scroll handler to element (if its a local scroll) or window  
-    $(opts.localMode ? this : window)
+    $(window)
       .bind('scroll.infscr', infscrSetup)
       .trigger('scroll.infscr'); // trigger the event, in case it's a short page
     
@@ -278,7 +264,6 @@
                           extraScrollPx   : 150,
                           itemSelector    : "div.post",
                           animate         : false,
-                          localMode      : false,
                           bufferPx        : 40,
                           errorCallback   : function(){}
                         }, 
