@@ -114,7 +114,7 @@
         
         if (opts.isDuringAjax || opts.isInvalidPage || opts.isDone) return; 
         
-        if ( !isNearBottom(opts,props) ) return; 
+        if ( !isNearBottom(opts,props) ) return;
         
         $(document).trigger('retrieve.infscr.'+opts.infid);
                 
@@ -128,21 +128,31 @@
         // we dont want to fire the ajax multiple times
         opts.isDuringAjax = true; 
         
-        // show the loading message and hide the previous/next links
-        props.loadingMsg.appendTo( opts.loadMsgSelector ).show();
-        $( opts.navSelector ).hide(); 
-        
-        // increment the URL bit. e.g. /page/3/
-        opts.currPage++;
-        
-        debug('heading into ajax',path);
-        
-        // if we're dealing with a table we can't use DIVs
-        box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');  
-        frag = document.createDocumentFragment();
-
-
-        box.load( path.join( opts.currPage ) + ' ' + opts.itemSelector,null,loadCallback);
+        // show the loading message quickly
+        // then hide the previous/next links after we're
+        // sure the loading message was visible
+        props.loadingMsg.appendTo( opts.loadMsgSelector ).show(opts.loadingMsgRevealSpeed, function(){
+	        $( opts.navSelector ).hide(); 
+	        
+	        // increment the URL bit. e.g. /page/3/
+	        opts.currPage++;
+	        
+	        debug('heading into ajax',path);
+	        
+	        // if we're dealing with a table we can't use DIVs
+	        box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');
+	        frag = document.createDocumentFragment();
+	        
+	        
+	        if ($.isFunction(opts.pathParse)){
+		        // if we got a custom path parsing function, pass in our path guess and page iteration
+		        desturl = opts.pathParse(path.join('2'), opts.currPage);
+		    } else {
+		      	desturl = path.join( opts.currPage );
+		    }
+		      
+		    box.load( desturl + ' ' + opts.itemSelector,null,loadCallback);
+	    });
         
     }
     
@@ -200,7 +210,6 @@
     
     if (!areSelectorsValid(opts)){ return false;  }
     
-     // we doing this on an overflow:auto div?
     props.container   =  document.documentElement;
     
     // if using filtering, determine nav
@@ -222,7 +231,6 @@
     
     // set the path to be a relative URL from root.
     path          = determinePath(path);
-
 
     // distance from nav links to bottom
     // computed as: height of the document + top offset of container - top offset of nav link
