@@ -1,8 +1,7 @@
-
 /*!
 // Infinite Scroll jQuery plugin
 // copyright Paul Irish, licensed GPL & MIT
-// version 1.5.101115
+// version 1.5.101116
 
 // home and docs: http://www.infinite-scroll.com
 */
@@ -65,10 +64,24 @@
       
       return path;
     }
-
-
     
-        
+    // determine filtering nav for multiple instances
+    function filterNav() {
+    	
+    	// make sure filterSelector is valid
+    	if ($(opts.filterSelector).length <= 0) {
+    		debug('Can\'t find filtering selector.');
+    		opts.isInvalidPage = true;  //prevent it from running on this page.
+    	} else {
+    		$(opts.filterSelector).click(function(e) {
+    			e.preventDefault();
+    			opts.isFiltered = true;
+    			return $.event.trigger( "ajaxError", [{status:302}] );
+    		})
+    	}
+    	
+    }
+    
     function isNearBottom(){
       
       // distance remaining in the scroll
@@ -83,7 +96,7 @@
       
       // if distance remaining in the scroll (including buffer) is less than the orignal nav to bottom....
       return (pixelsFromWindowBottomToBottom  - opts.bufferPx < props.pixelsFromNavToBottom);    
-    }    
+    } 
     
     function showDoneMsg(){
       props.loadingMsg
@@ -98,12 +111,12 @@
     }
     
     function infscrSetup(){
-    
-        if (props.isDuringAjax || props.isInvalidPage || props.isDone) return; 
+        
+        if (opts.isDuringAjax || opts.isInvalidPage || opts.isDone) return; 
         
         if ( !isNearBottom(opts,props) ) return; 
         
-        $(document).trigger('retrieve.infscr');
+        $(document).trigger('retrieve.infscr.'+opts.infid);
                 
                 
     }  // end of infscrSetup()
@@ -113,39 +126,29 @@
     function kickOffAjax(){
         
         // we dont want to fire the ajax multiple times
-        props.isDuringAjax = true; 
+        opts.isDuringAjax = true; 
         
-        // show the loading message quickly
-        // then hide the previous/next links after we're
-        // sure the loading message was visible
-        props.loadingMsg.appendTo( opts.loadMsgSelector ).show(opts.loadingMsgRevealSpeed, function(){
-          $( opts.navSelector ).hide(); 
-
-          // increment the URL bit. e.g. /page/3/
-          props.currPage++;
-
-          debug('heading into ajax',path);
-
-          // if we're dealing with a table we can't use DIVs
-          box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');  
-          frag = document.createDocumentFragment();
-
-          if ($.isFunction(opts.pathParse)){
-            // if we got a custom path parsing function, pass in our path guess and page iteration
-            desturl = opts.pathParse(path.join('2'), props.currPage);
-          } else {
-            desturl = path.join( props.currPage );
-          }
-
-          box.load( desturl + ' ' + opts.itemSelector,null,loadCallback);
-        });
+        // show the loading message and hide the previous/next links
+        props.loadingMsg.appendTo( opts.loadMsgSelector ).show();
+        $( opts.navSelector ).hide(); 
         
+        // increment the URL bit. e.g. /page/3/
+        opts.currPage++;
+        
+        debug('heading into ajax',path);
+        
+        // if we're dealing with a table we can't use DIVs
+        box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');  
+        frag = document.createDocumentFragment();
+
+
+        box.load( path.join( opts.currPage ) + ' ' + opts.itemSelector,null,loadCallback);
         
     }
     
     function loadCallback(){
         // if we've hit the last page...
-        if (props.isDone){ 
+        if (opts.isDone){ 
             showDoneMsg();
             return false;    
               
@@ -172,7 +175,7 @@
             // smooth scroll to ease in the new content
             if (opts.animate){ 
                 var scrollTo = $(window).scrollTop() + $('#infscr-loading').height() + opts.extraScrollPx + 'px';
-                $('html,body').animate({scrollTop: scrollTo}, 800,function(){ props.isDuringAjax = false; }); 
+                $('html,body').animate({scrollTop: scrollTo}, 800,function(){ opts.isDuringAjax = false; }); 
             }
         
             // previously, we would pass in the new DOM element as context for the callback
@@ -181,7 +184,7 @@
             //   of the elements collected as the first argument.
             callback.call( $(opts.contentSelector)[0], children.get() );
         
-            if (!opts.animate) props.isDuringAjax = false; // once the call is done, we can allow it again.
+            if (!opts.animate) opts.isDuringAjax = false; // once the call is done, we can allow it again.
         }
     }
     
@@ -192,12 +195,16 @@
     var opts    = $.extend({}, $.infinitescroll.defaults, options),
         props   = $.infinitescroll, // shorthand
         box, frag, desturl;
-        
+                
     callback    = callback || function(){};
     
     if (!areSelectorsValid(opts)){ return false;  }
     
+     // we doing this on an overflow:auto div?
     props.container   =  document.documentElement;
+    
+    // if using filtering, determine nav
+    if (opts.filtering) { filterNav(); }
                           
     // contentSelector we'll use for our .load()
     opts.contentSelector = opts.contentSelector || this;
@@ -215,7 +222,8 @@
     
     // set the path to be a relative URL from root.
     path          = determinePath(path);
-    
+
+
     // distance from nav links to bottom
     // computed as: height of the document + top offset of container - top offset of nav link
     props.pixelsFromNavToBottom =  $(document).height()  +
@@ -232,22 +240,30 @@
   
     // set up our bindings
     $(document).ajaxError(function(e,xhr,opt){
-      debug('Page not found. Self-destructing...');    
-      
-      // die if we're out of pages.
-      if (xhr.status == 404){ 
-        showDoneMsg();
-        props.isDone = true; 
-        $(window).unbind('scroll.infscr');
-      } 
+    	if (!opts.isDone && xhr.status == 404) {
+		    // die if we're out of pages.
+	    	debug('Page not found. Self-destructing...');
+	    	showDoneMsg();
+	    	opts.isDone = true;
+	    	opts.currPage = 1; // if you need to go back to this instance
+	    	$(window).unbind('scroll.infscr', infscrSetup);
+	    	$(document).unbind('retrieve.infscr.'+opts.infid,kickOffAjax);
+    	}
+    	if (opts.isFiltered && xhr.status == 302) {
+    		// die if filtered.
+	    	debug('Filtered. Going to next instance...');
+	    	opts.currPage = 1; // if you need to go back to this instance
+	    	$(window).unbind('scroll.infscr', infscrSetup);
+	    	$(document).unbind('retrieve.infscr.'+opts.infid,kickOffAjax);
+	    }
     });
-    
+        
     // bind scroll handler to element (if its a local scroll) or window  
     $(window)
       .bind('scroll.infscr', infscrSetup)
       .trigger('scroll.infscr'); // trigger the event, in case it's a short page
     
-    $(document).bind('retrieve.infscr',kickOffAjax);
+    $(document).bind('retrieve.infscr.'+opts.infid,kickOffAjax);
     
     return this;
   
@@ -262,6 +278,9 @@
                           debug           : false,
                           preload         : false,
                           nextSelector    : "div.navigation a:first",
+                          filtering		  : false,
+                          filterSelector  : null,
+                          filterClass	  : 'current',
                           loadingImg      : "http://www.infinite-scroll.com/loading.gif",
                           loadingText     : "<em>Loading the next set of posts...</em>",
                           donetext        : "<em>Congratulations, you've reached the end of the internet.</em>",
@@ -272,18 +291,20 @@
                           extraScrollPx   : 150,
                           itemSelector    : "div.post",
                           animate         : false,
-                          pathParse       : undefined, // function for custom parsing of the URL path
+                          pathParse		  : undefined,
                           bufferPx        : 40,
-                          errorCallback   : function(){}
+                          errorCallback   : function(){},
+                          infid           : 1, //Sam addition
+                          currPage        : 1,
+                          isDuringAjax    : false,
+					      isInvalidPage   : false,
+					      isFiltered	  : false,
+					      isDone          : false  // for when it goes all the way through the archive.
                         }, 
         loadingImg    : undefined,
         loadingMsg    : undefined,
         container     : undefined,
-        currPage      : 1,
         currDOMChunk  : null,  // defined in setup()'s load()
-        isDuringAjax  : false,
-        isInvalidPage : false,
-        isDone        : false  // for when it goes all the way through the archive.
   };
   
 
