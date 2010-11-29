@@ -1,7 +1,7 @@
 /*!
 // Infinite Scroll jQuery plugin
 // copyright Paul Irish, licensed GPL & MIT
-// version 1.5.101116
+// version 1.5.101117
 
 // home and docs: http://www.infinite-scroll.com
 */
@@ -82,6 +82,20 @@
     	
     }
     
+    function initPausing(theseChildren) { 	
+    	$(theseChildren).click(function(e) {
+    		e.preventDefault();
+    		debug('Pausing scrolling...');
+    		opts.isPaused = !opts.isPaused;
+    	});
+	    
+    }
+    
+    function redefinePause(newElements) {
+    	opts.pauseSelector = $(newPauseSelector, newElements);
+    	initPausing($(opts.pauseSelector, newElements));
+    }
+    
     function isNearBottom(){
       
       // distance remaining in the scroll
@@ -112,12 +126,11 @@
     
     function infscrSetup(){
         
-        if (opts.isDuringAjax || opts.isInvalidPage || opts.isDone) return; 
+        if (opts.isDuringAjax || opts.isInvalidPage || opts.isDone || opts.isPaused) return; 
         
         if ( !isNearBottom(opts,props) ) return;
         
         $(document).trigger('retrieve.infscr.'+opts.infid);
-                
                 
     }  // end of infscrSetup()
           
@@ -152,6 +165,7 @@
 		    }
 		      
 		    box.load( desturl + ' ' + opts.itemSelector,null,loadCallback);
+		    
 	    });
         
     }
@@ -193,6 +207,11 @@
             // so the context is the contentContainer guy, and we pass in an array
             //   of the elements collected as the first argument.
             callback.call( $(opts.contentSelector)[0], children.get() );
+            
+            //redefine opts.pauseSelector
+		    if (opts.pauseSelector) {
+		    	redefinePause(children);
+		    };
         
             if (!opts.animate) opts.isDuringAjax = false; // once the call is done, we can allow it again.
         }
@@ -270,6 +289,22 @@
     $(window)
       .bind('scroll.infscr', infscrSetup)
       .trigger('scroll.infscr'); // trigger the event, in case it's a short page
+      
+    // init pause button behavior if defined
+    if (opts.pauseSelector) {
+    
+    	var newPauseSelector = String(opts.pauseSelector);
+    	initPausing($(opts.pauseSelector, opts.itemSelector));
+    	
+    	if (opts.resumeSelector) {
+	    	
+	    	$(opts.resumeSelector).click(function(e) {
+	    		e.preventDefault();
+	    		debug('Resume scrolling...');
+	    		opts.isPaused = false;
+	    	});
+	    }
+    }
     
     $(document).bind('retrieve.infscr.'+opts.infid,kickOffAjax);
     
@@ -286,9 +321,11 @@
                           debug           : false,
                           preload         : false,
                           nextSelector    : "div.navigation a:first",
-                          filtering		  : false,
+                          filtering       : false,
                           filterSelector  : null,
                           filterClass	  : 'current',
+                          pauseSelector	  : null,
+                          resumeSelector  : null,
                           loadingImg      : "http://www.infinite-scroll.com/loading.gif",
                           loadingText     : "<em>Loading the next set of posts...</em>",
                           donetext        : "<em>Congratulations, you've reached the end of the internet.</em>",
@@ -299,15 +336,16 @@
                           extraScrollPx   : 150,
                           itemSelector    : "div.post",
                           animate         : false,
-                          pathParse		  : undefined,
+                          pathParse       : undefined,
                           bufferPx        : 40,
                           errorCallback   : function(){},
                           infid           : 1, //Sam addition
                           currPage        : 1,
                           isDuringAjax    : false,
-					      isInvalidPage   : false,
-					      isFiltered	  : false,
-					      isDone          : false  // for when it goes all the way through the archive.
+                          isInvalidPage   : false,
+                          isFiltered	  : false,
+                          isDone          : false,  // for when it goes all the way through the archive.
+                          isPaused		  : false
                         }, 
         loadingImg    : undefined,
         loadingMsg    : undefined,
