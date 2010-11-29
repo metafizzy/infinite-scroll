@@ -345,7 +345,7 @@
                           isInvalidPage   : false,
                           isFiltered	  : false,
                           isDone          : false,  // for when it goes all the way through the archive.
-                          isPaused		  : false
+                          isPaused        : false
                         }, 
         loadingImg    : undefined,
         loadingMsg    : undefined,
