@@ -198,9 +198,15 @@
         }
     }
     
-    function initPause() {
-    	opts.isPaused = !opts.isPaused;
-    	debug(opts.isPaused);
+    function initPause(pauseValue) {
+    	if (pauseValue == "pause") {
+    		opts.isPaused = true;
+    	} else if (pauseValue == "resume") {
+    		opts.isPaused = false;
+    	} else {
+    		opts.isPaused = !opts.isPaused;
+    	}
+    	debug('Paused: ' + opts.isPaused);
     	return false;
     }
     
@@ -268,15 +274,16 @@
 	    	debug('Filtered. Going to next instance...');
 	    	opts.currPage = 1; // if you need to go back to this instance
 	    	opts.isPaused = false;
-	    	$(window).unbind('scroll.infscr', infscrSetup).unbind('pause.infscr.'+opts.infid, initPause);
+	    	$(window).unbind('scroll.infscr', infscrSetup).unbind('pause.infscr.'+opts.infid);
 	    	$(document).unbind('retrieve.infscr.'+opts.infid,kickOffAjax);
 	    }
     });
         
     // bind scroll handler to element (if its a local scroll) or window  
+    var pauseValue = 'hilarious';
     $(window)
       .bind('scroll.infscr', infscrSetup)
-      .bind('pause.infscr.'+opts.infid, initPause)
+      .bind('pause.infscr.'+opts.infid, function(event, thisPause) { initPause(thisPause); })
       .trigger('scroll.infscr'); // trigger the event, in case it's a short page
           
     $(document).bind('retrieve.infscr.'+opts.infid,kickOffAjax);
