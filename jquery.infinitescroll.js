@@ -1,7 +1,7 @@
 /*!
 // Infinite Scroll jQuery plugin
 // copyright Paul Irish, licensed GPL & MIT
-// version 1.5.101117
+// version 1.5.101201
 
 // home and docs: http://www.infinite-scroll.com
 */
@@ -81,21 +81,7 @@
     	}
     	
     }
-    
-    function initPausing(theseChildren) { 	
-    	$(theseChildren).click(function(e) {
-    		e.preventDefault();
-    		debug('Pausing scrolling...');
-    		opts.isPaused = !opts.isPaused;
-    	});
-	    
-    }
-    
-    function redefinePause(newElements) {
-    	opts.pauseSelector = $(newPauseSelector, newElements);
-    	initPausing($(opts.pauseSelector, newElements));
-    }
-    
+        
     function isNearBottom(){
       
       // distance remaining in the scroll
@@ -207,14 +193,15 @@
             // so the context is the contentContainer guy, and we pass in an array
             //   of the elements collected as the first argument.
             callback.call( $(opts.contentSelector)[0], children.get() );
-            
-            //redefine opts.pauseSelector
-		    if (opts.pauseSelector) {
-		    	redefinePause(children);
-		    };
         
             if (!opts.animate) opts.isDuringAjax = false; // once the call is done, we can allow it again.
         }
+    }
+    
+    function initPause() {
+    	opts.isPaused = !opts.isPaused;
+    	debug(opts.isPaused);
+    	return false;
     }
     
       
@@ -280,7 +267,8 @@
     		// die if filtered.
 	    	debug('Filtered. Going to next instance...');
 	    	opts.currPage = 1; // if you need to go back to this instance
-	    	$(window).unbind('scroll.infscr', infscrSetup);
+	    	opts.isPaused = false;
+	    	$(window).unbind('scroll.infscr', infscrSetup).unbind('pause.infscr.'+opts.infid, initPause);
 	    	$(document).unbind('retrieve.infscr.'+opts.infid,kickOffAjax);
 	    }
     });
@@ -288,24 +276,9 @@
     // bind scroll handler to element (if its a local scroll) or window  
     $(window)
       .bind('scroll.infscr', infscrSetup)
+      .bind('pause.infscr.'+opts.infid, initPause)
       .trigger('scroll.infscr'); // trigger the event, in case it's a short page
-      
-    // init pause button behavior if defined
-    if (opts.pauseSelector) {
-    
-    	var newPauseSelector = String(opts.pauseSelector);
-    	initPausing($(opts.pauseSelector, opts.itemSelector));
-    	
-    	if (opts.resumeSelector) {
-	    	
-	    	$(opts.resumeSelector).click(function(e) {
-	    		e.preventDefault();
-	    		debug('Resume scrolling...');
-	    		opts.isPaused = false;
-	    	});
-	    }
-    }
-    
+          
     $(document).bind('retrieve.infscr.'+opts.infid,kickOffAjax);
     
     return this;
@@ -324,8 +297,6 @@
                           filtering       : false,
                           filterSelector  : null,
                           filterClass	  : 'current',
-                          pauseSelector	  : null,
-                          resumeSelector  : null,
                           loadingImg      : "http://www.infinite-scroll.com/loading.gif",
                           loadingText     : "<em>Loading the next set of posts...</em>",
                           donetext        : "<em>Congratulations, you've reached the end of the internet.</em>",
