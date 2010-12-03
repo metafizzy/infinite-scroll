@@ -1,7 +1,7 @@
 /*!
 // Infinite Scroll jQuery plugin
 // copyright Paul Irish, licensed GPL & MIT
-// version 1.5.101201
+// version 1.5.101203
 
 // home and docs: http://www.infinite-scroll.com
 */
@@ -67,19 +67,8 @@
     
     // determine filtering nav for multiple instances
     function filterNav() {
-    	
-    	// make sure filterSelector is valid
-    	if ($(opts.filterSelector).length <= 0) {
-    		debug('Can\'t find filtering selector.');
-    		opts.isInvalidPage = true;  //prevent it from running on this page.
-    	} else {
-    		$(opts.filterSelector).click(function(e) {
-    			e.preventDefault();
-    			opts.isFiltered = true;
-    			return $.event.trigger( "ajaxError", [{status:302}] );
-    		})
-    	}
-    	
+    	opts.isFiltered = true;
+    	return $.event.trigger( "ajaxError", [{status:302}] );
     }
         
     function isNearBottom(){
@@ -223,16 +212,12 @@
     if (!areSelectorsValid(opts)){ return false;  }
     
     props.container   =  document.documentElement;
-    
-    // if using filtering, determine nav
-    if (opts.filtering) { filterNav(); }
                           
     // contentSelector we'll use for our .load()
     opts.contentSelector = opts.contentSelector || this;
     
     // loadMsgSelector - if we want to place the load message in a specific selector, defaulted to the contentSelector
     opts.loadMsgSelector = opts.loadMsgSelector || opts.contentSelector;
-    
     
     // get the relative URL - everything past the domain name.
     var relurl        = /(.*?\/\/).*?(\/.*)/,
@@ -283,6 +268,7 @@
     var pauseValue = 'hilarious';
     $(window)
       .bind('scroll.infscr', infscrSetup)
+      .bind('filter.infscr', filterNav)
       .bind('pause.infscr.'+opts.infid, function(event, thisPause) { initPause(thisPause); })
       .trigger('scroll.infscr'); // trigger the event, in case it's a short page
           
@@ -301,9 +287,6 @@
                           debug           : false,
                           preload         : false,
                           nextSelector    : "div.navigation a:first",
-                          filtering       : false,
-                          filterSelector  : null,
-                          filterClass	  : 'current',
                           loadingImg      : "http://www.infinite-scroll.com/loading.gif",
                           loadingText     : "<em>Loading the next set of posts...</em>",
                           donetext        : "<em>Congratulations, you've reached the end of the internet.</em>",
@@ -328,7 +311,7 @@
         loadingImg    : undefined,
         loadingMsg    : undefined,
         container     : undefined,
-        currDOMChunk  : null,  // defined in setup()'s load()
+        currDOMChunk  : null  // defined in setup()'s load()
   };
   
 
