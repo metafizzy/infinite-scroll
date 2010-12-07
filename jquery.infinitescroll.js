@@ -1,7 +1,7 @@
 /*!
 // Infinite Scroll jQuery plugin
 // copyright Paul Irish, licensed GPL & MIT
-// version 1.5.101203
+// version 1.5.101207
 
 // home and docs: http://www.infinite-scroll.com
 */
@@ -68,7 +68,7 @@
     // determine filtering nav for multiple instances
     function filterNav() {
     	opts.isFiltered = true;
-    	return $.event.trigger( "ajaxError", [{status:302}] );
+    	return $(window).trigger( "error.infscr."+opts.infid, [302] );
     }
         
     function isNearBottom(){
@@ -101,7 +101,7 @@
     
     function infscrSetup(){
         
-        if (opts.isDuringAjax || opts.isInvalidPage || opts.isDone || opts.isPaused) return; 
+        if (opts.isDuringAjax || opts.isInvalidPage || opts.isDone || opts.isFiltered || opts.isPaused) return; 
         
         if ( !isNearBottom(opts,props) ) return;
         
@@ -157,8 +157,8 @@
             
             // if it didn't return anything
             if (children.length == 0 || children.hasClass('error404')){
-              // fake an ajaxError so we can quit.
-              return $.event.trigger( "ajaxError", [{status:404}] ); 
+              // trigger a 404 error so we can quit.
+              return $(window).trigger( "error.infscr."+opts.infid, [404] ); 
             } 
             
             // use a documentFragment because it works when content is going into a table or UL
@@ -199,13 +199,37 @@
     	return false;
     }
     
+    function infscrError(xhr){
+    	if (!opts.isDone && xhr == 404) {
+		    // die if we're out of pages.
+	    	debug('Page not found. Self-destructing...');
+	    	showDoneMsg();
+	    	opts.isDone = true;
+	    	opts.currPage = 1; // if you need to go back to this instance
+	    	$(window).unbind('scroll.infscr.'+opts.infid);
+	    	$(document).unbind('retrieve.infscr.'+opts.infid);
+    	}
+    	if (opts.isFiltered && xhr == 302) {
+    		// die if filtered.
+	    	debug('Filtered. Going to next instance...');
+	    	opts.isDone = true;
+	    	opts.currPage = 1; // if you need to go back to this instance
+	    	opts.isPaused = false;
+	    	$(window).unbind('scroll.infscr.'+opts.infid, infscrSetup)
+	    	  .unbind('pause.infscr.'+opts.infid)
+	    	  .unbind('filter.infscr.'+opts.infid)
+	    	  .unbind('error.infscr.'+opts.infid);
+	    	$(document).unbind('retrieve.infscr.'+opts.infid,kickOffAjax);
+	    }
+    }
+    
       
     // lets get started.
     $.browser.ie6 = $.browser.msie && $.browser.version < 7;
     
     var opts    = $.extend({}, $.infinitescroll.defaults, options),
         props   = $.infinitescroll, // shorthand
-        box, frag, desturl;
+        box, frag, desturl, thisPause, errorStatus;
                 
     callback    = callback || function(){};
     
@@ -242,35 +266,15 @@
     (new Image()).src    = opts.loadingImg;
               
 
-  
     // set up our bindings
-    $(document).ajaxError(function(e,xhr,opt){
-    	if (!opts.isDone && xhr.status == 404) {
-		    // die if we're out of pages.
-	    	debug('Page not found. Self-destructing...');
-	    	showDoneMsg();
-	    	opts.isDone = true;
-	    	opts.currPage = 1; // if you need to go back to this instance
-	    	$(window).unbind('scroll.infscr', infscrSetup);
-	    	$(document).unbind('retrieve.infscr.'+opts.infid,kickOffAjax);
-    	}
-    	if (opts.isFiltered && xhr.status == 302) {
-    		// die if filtered.
-	    	debug('Filtered. Going to next instance...');
-	    	opts.currPage = 1; // if you need to go back to this instance
-	    	opts.isPaused = false;
-	    	$(window).unbind('scroll.infscr', infscrSetup).unbind('pause.infscr.'+opts.infid);
-	    	$(document).unbind('retrieve.infscr.'+opts.infid,kickOffAjax);
-	    }
-    });
         
     // bind scroll handler to element (if its a local scroll) or window  
-    var pauseValue = 'hilarious';
     $(window)
-      .bind('scroll.infscr', infscrSetup)
-      .bind('filter.infscr', filterNav)
-      .bind('pause.infscr.'+opts.infid, function(event, thisPause) { initPause(thisPause); })
-      .trigger('scroll.infscr'); // trigger the event, in case it's a short page
+      .bind('scroll.infscr.'+opts.infid, infscrSetup)
+      .bind('filter.infscr.'+opts.infid, filterNav)
+      .bind('error.infscr.'+opts.infid, function(event,errorStatus) { infscrError(errorStatus); })
+      .bind('pause.infscr.'+opts.infid, function(event,thisPause) { initPause(thisPause); })
+      .trigger('scroll.infscr.'+opts.infid); // trigger the event, in case it's a short page
           
     $(document).bind('retrieve.infscr.'+opts.infid,kickOffAjax);
     
