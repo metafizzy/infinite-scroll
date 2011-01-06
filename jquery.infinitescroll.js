@@ -1,7 +1,7 @@
 /*!
 // Infinite Scroll jQuery plugin
 // copyright Paul Irish, licensed GPL & MIT
-// version 1.5.101207
+// version 1.5.110106
 
 // home and docs: http://www.infinite-scroll.com
 */
@@ -70,21 +70,44 @@
     	opts.isFiltered = true;
     	return $(window).trigger( "error.infscr."+opts.infid, [302] );
     }
-        
+	// Calculate internal height (used for local scroll)
+	function hiddenHeight(element)
+		{
+		var height = 0;
+		$(element).children().each(function() {
+			height = height + $(this).outerHeight(false);
+		});
+		return height;
+		}
+	//Generate InstanceID based on random data (to give consistent but different ID's)
+	function generateInstanceID(element)
+		{
+		var number = $(element).length + $(element).html().length + $(element).attr("class").length
+			+ $(element).attr("id").length;
+		opts.infid	= number;
+		}
     function isNearBottom(){
-      
-      // distance remaining in the scroll
+	// distance remaining in the scroll
       // computed as: document height - distance already scroll - viewport height - buffer
-      var pixelsFromWindowBottomToBottom = 0 
+      if(opts.container.nodeName=="HTML")
+	  	{
+		var pixelsFromWindowBottomToBottom = 0 
                 + $(document).height()  
                 // have to do this bs because safari doesnt report a scrollTop on the html element
-                - ($(props.container).scrollTop() || $(props.container.ownerDocument.body).scrollTop())
-                - $(window).height();
+                - ($(opts.container).scrollTop() || $(opts.container.ownerDocument.body).scrollTop())
+                - $(window).height();	
+		}
+	  else
+	  	{
+      	var pixelsFromWindowBottomToBottom = 0 
+                + hiddenHeight(opts.container) - $(opts.container).scrollTop() - $(opts.container).height();
+		
+		}      
       
-      debug('math:', pixelsFromWindowBottomToBottom, props.pixelsFromNavToBottom);
+      debug('math:', pixelsFromWindowBottomToBottom, opts.pixelsFromNavToBottom);
       
       // if distance remaining in the scroll (including buffer) is less than the orignal nav to bottom....
-      return (pixelsFromWindowBottomToBottom  - opts.bufferPx < props.pixelsFromNavToBottom);    
+      return (pixelsFromWindowBottomToBottom  - opts.bufferPx < opts.pixelsFromNavToBottom);    
     } 
     
     function showDoneMsg(){
@@ -100,11 +123,9 @@
     }
     
     function infscrSetup(){
-        
         if (opts.isDuringAjax || opts.isInvalidPage || opts.isDone || opts.isFiltered || opts.isPaused) return; 
         
-        if ( !isNearBottom(opts,props) ) return;
-        
+        if ( !isNearBottom(opts,props) )  return ;
         $(document).trigger('retrieve.infscr.'+opts.infid);
                 
     }  // end of infscrSetup()
@@ -138,7 +159,6 @@
 		    } else {
 		      	desturl = path.join( opts.currPage );
 		    }
-		      
 		    box.load( desturl + ' ' + opts.itemSelector,null,loadCallback);
 		    
 	    });
@@ -146,7 +166,8 @@
     }
     
     function loadCallback(){
-        // if we've hit the last page...
+        // if we've hit the last page..
+		
         if (opts.isDone){ 
             showDoneMsg();
             return false;    
@@ -158,14 +179,13 @@
             // if it didn't return anything
             if (children.length == 0 || children.hasClass('error404')){
               // trigger a 404 error so we can quit.
-              return $(window).trigger( "error.infscr."+opts.infid, [404] ); 
+              return infscrError([404]); 
             } 
             
             // use a documentFragment because it works when content is going into a table or UL
             while (box[0].firstChild){
               frag.appendChild(  box[0].firstChild );
             }
-
            	$(opts.contentSelector)[0].appendChild(frag);
             
             // fadeout currently makes the <em>'d text ugly in IE6
@@ -198,7 +218,6 @@
     	debug('Paused: ' + opts.isPaused);
     	return false;
     }
-    
     function infscrError(xhr){
     	if (!opts.isDone && xhr == 404) {
 		    // die if we're out of pages.
@@ -230,16 +249,17 @@
     var opts    = $.extend({}, $.infinitescroll.defaults, options),
         props   = $.infinitescroll, // shorthand
         box, frag, desturl, thisPause, errorStatus;
-                
     callback    = callback || function(){};
-    
+	
     if (!areSelectorsValid(opts)){ return false;  }
     
-    props.container   =  document.documentElement;
+    opts.container   =  opts.container || document.documentElement;
                           
     // contentSelector we'll use for our .load()
     opts.contentSelector = opts.contentSelector || this;
-    
+	// Generate unique instance ID
+	if(opts.infid==0)
+	generateInstanceID(opts.contentSelector);
     // loadMsgSelector - if we want to place the load message in a specific selector, defaulted to the contentSelector
     opts.loadMsgSelector = opts.loadMsgSelector || opts.contentSelector;
     
@@ -252,24 +272,34 @@
     
     // set the path to be a relative URL from root.
     path          = determinePath(path);
-
-    // distance from nav links to bottom
-    // computed as: height of the document + top offset of container - top offset of nav link
-    props.pixelsFromNavToBottom =  $(document).height()  +
-                                     (props.container == document.documentElement ? 0 : $(props.container).offset().top )- 
-                                     $(opts.navSelector).offset().top;
-    
+	    
     // define loading msg
     props.loadingMsg = $('<div id="infscr-loading" style="text-align: center;"><img alt="Loading..." src="'+
                                   opts.loadingImg+'" /><div>'+opts.loadingText+'</div></div>');    
      // preload the image
     (new Image()).src    = opts.loadingImg;
-              
-
-    // set up our bindings
-        
-    // bind scroll handler to element (if its a local scroll) or window  
-    $(window)
+    //Check if its HTML (window scroll)
+	if(opts.container.nodeName=="HTML")
+		{
+		debug("Window Scroll");
+		var innerContainerHeight 	= $(document).height();
+		var binder					= $(window);
+		}
+	else
+		{
+		debug("Local Scroll");
+		var innerContainerHeight 	= hiddenHeight(opts.container);	
+		var binder					= $(opts.container);
+		}
+	// distance from nav links to bottom
+    // computed as: height of the document + top offset of container - top offset of nav link
+    opts.pixelsFromNavToBottom =  innerContainerHeight  +
+                                     (opts.container == document.documentElement ? 0 : $(opts.container).offset().top )- 
+                                     $(opts.navSelector).offset().top;
+	
+	// set up our bindings
+    // bind scroll handler to element (if its a local scroll) or window 
+    binder
       .bind('scroll.infscr.'+opts.infid, infscrSetup)
       .bind('filter.infscr.'+opts.infid, filterNav)
       .bind('error.infscr.'+opts.infid, function(event,errorStatus) { infscrError(errorStatus); })
@@ -288,7 +318,7 @@
   
   $.infinitescroll = {     
         defaults      : {
-                          debug           : false,
+                          debug           : true,
                           preload         : false,
                           nextSelector    : "div.navigation a:first",
                           loadingImg      : "http://www.infinite-scroll.com/loading.gif",
@@ -304,17 +334,18 @@
                           pathParse       : undefined,
                           bufferPx        : 40,
                           errorCallback   : function(){},
-                          infid           : 1, //Sam addition
                           currPage        : 1,
+						  infid		  	  : 0, //Instance ID (Generated at setup)
                           isDuringAjax    : false,
                           isInvalidPage   : false,
                           isFiltered	  : false,
                           isDone          : false,  // for when it goes all the way through the archive.
-                          isPaused        : false
+                          isPaused        : false,
+						  container       : undefined, //If left undefined uses window scroll, set as container for local scroll
+						  pixelsFromNavToBottom	: undefined
                         }, 
         loadingImg    : undefined,
         loadingMsg    : undefined,
-        container     : undefined,
         currDOMChunk  : null  // defined in setup()'s load()
   };
   
