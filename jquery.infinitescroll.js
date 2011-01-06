@@ -61,7 +61,6 @@
           props.isInvalidPage = true;  //prevent it from running on this page.
         }
       }
-      
       return path;
     }
     
@@ -318,7 +317,7 @@
   
   $.infinitescroll = {     
         defaults      : {
-                          debug           : true,
+                          debug           : false,
                           preload         : false,
                           nextSelector    : "div.navigation a:first",
                           loadingImg      : "http://www.infinite-scroll.com/loading.gif",
