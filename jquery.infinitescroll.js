@@ -1,7 +1,7 @@
 /*!
 // Infinite Scroll jQuery plugin
 // copyright Paul Irish, licensed GPL & MIT
-// version 1.5.110106
+// version 1.5.110124
 
 // home and docs: http://www.infinite-scroll.com
 */
@@ -67,7 +67,7 @@
     // determine filtering nav for multiple instances
     function filterNav() {
     	opts.isFiltered = true;
-    	return $(window).trigger( "error.infscr."+opts.infid, [302] );
+    	return binder.trigger( "error.infscr."+opts.infid, [302] );
     }
 	// Calculate internal height (used for local scroll)
 	function hiddenHeight(element)
@@ -88,6 +88,7 @@
     function isNearBottom(){
 	// distance remaining in the scroll
       // computed as: document height - distance already scroll - viewport height - buffer
+      
       if(opts.container.nodeName=="HTML")
 	  	{
 		var pixelsFromWindowBottomToBottom = 0 
@@ -224,7 +225,7 @@
 	    	showDoneMsg();
 	    	opts.isDone = true;
 	    	opts.currPage = 1; // if you need to go back to this instance
-	    	$(window).unbind('scroll.infscr.'+opts.infid);
+	    	binder.unbind('scroll.infscr.'+opts.infid);
 	    	$(document).unbind('retrieve.infscr.'+opts.infid);
     	}
     	if (opts.isFiltered && xhr == 302) {
@@ -233,13 +234,17 @@
 	    	opts.isDone = true;
 	    	opts.currPage = 1; // if you need to go back to this instance
 	    	opts.isPaused = false;
-	    	$(window).unbind('scroll.infscr.'+opts.infid, infscrSetup)
+	    	binder.unbind('scroll.infscr.'+opts.infid, infscrSetup)
 	    	  .unbind('pause.infscr.'+opts.infid)
 	    	  .unbind('filter.infscr.'+opts.infid)
 	    	  .unbind('error.infscr.'+opts.infid);
 	    	$(document).unbind('retrieve.infscr.'+opts.infid,kickOffAjax);
 	    }
     }
+    
+    // smartscroll = debounced scroll event
+    // http://paulirish.com/2009/throttled-smartresize-jquery-event-handler/
+    
     
       
     // lets get started.
