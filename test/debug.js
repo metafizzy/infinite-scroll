@@ -15,9 +15,10 @@ $(document).ready(function() {
 			action = $self.attr('rel'),
 			arg = $self.attr('data-arg'),
 			arg = (!!arg) ? arg : null,
-			fn = '$.fn.infinitescroll._'+action;
-		
-		eval(fn)(arg);
+			fn = '$.fn.infinitescroll._'+action,
+			validFn = (eval(fn));
+
+		(validFn===undefined) ? $.fn.infinitescroll._cthullu('the-apocalypse') : eval(fn)(arg);
 	
 	});
 	

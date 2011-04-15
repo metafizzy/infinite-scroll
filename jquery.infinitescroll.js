@@ -15,6 +15,7 @@
         
         // grab each selector option and see if any fail.
         function areSelectorsValid(opts) {
+            var debug = $.fn.infinitescroll._debug;
             for (var key in opts) {
                 if (key.indexOf && key.indexOf('Selector') > -1 && $(opts[key]).length === 0) {
                     debug('Your ' + key + ' found no elements.');
@@ -85,42 +86,18 @@
         	
         	var command = options,
         		arguement = callback,
+        		validCommand = (command !== 'pause' || command !== 'filter' || command !== 'error' || command !== 'pause'),
+        		execute = '$.fn.infinitescroll._'+command,
         		pause = $.fn.infinitescroll._pause,
         		filter = $.fn.infinitescroll._filter,
         		error = $.fn.infinitescroll._error,
         		debug = $.fn.infinitescroll._debug;
         		
-        	
-        	switch (command) {
-        	
-        		case 'pause':
-        			
-        			return pause(arguement);
-        			
-        		break;
-        		
-        		case 'filter':
-        			
-        			return filter(arguement);
-        			
-        		break;
-        		
-        		case 'error':
-        			
-        			return error(arguement);
-        			
-        		break;
-        		
-        		case 'invalid':
-        			
-        			debug('Invalid command, returning');
-        			
-        		break;
-        	
-        	};
+        	argument = argument || null;
+        	console.log('validCommand',validCommand);
+        	command = (validCommand) ? eval(execute)(argument) : debug('you broke it, stupid');
         	
         	return false;
-        	
         }
         
         
@@ -486,6 +463,7 @@
         var debug = $.fn.infinitescroll._debug,
         	opts = $.infinitescroll.opts;
         
+        if (pause !== 'pause' || 'resume' || 'toggle') { debug('Invalid value. Pause will toggle instead'); };
         pause = (pause && (pause == 'pause' || pause == 'resume')) ? pause : 'toggle';
         
         switch (pause) {
