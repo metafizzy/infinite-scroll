@@ -1,7 +1,7 @@
 /*!
 // Infinite Scroll jQuery plugin
 // copyright Paul Irish, licensed GPL & MIT
-// version 2.0b1.110415
+// version 2.0b1.110417
 
 // home and docs: http://www.infinite-scroll.com
 */
@@ -82,20 +82,15 @@
         
         
         // if options is a string, use as a command
-        if (typeof options==='string') {
+        if (typeof options=='string') {
         	
         	var command = options,
-        		arguement = callback,
-        		validCommand = (command !== 'pause' || command !== 'filter' || command !== 'error' || command !== 'pause'),
-        		execute = '$.fn.infinitescroll._'+command,
-        		pause = $.fn.infinitescroll._pause,
-        		filter = $.fn.infinitescroll._filter,
-        		error = $.fn.infinitescroll._error,
+        		argument = callback,
+        		validCommand = (command == 'pause' || command == 'filter' || command == 'retrieve' || command == 'binding'),
         		debug = $.fn.infinitescroll._debug;
         		
         	argument = argument || null;
-        	console.log('validCommand',validCommand);
-        	command = (validCommand) ? eval(execute)(argument) : debug('you broke it, stupid');
+        	command = (validCommand) ? $.fn.infinitescroll[command](argument) : debug('Invalid command');
         	
         	return false;
         }
@@ -108,10 +103,10 @@
         	callback = $.fn.infinitescroll._callback = callback || function () { },
         	debug = $.fn.infinitescroll._debug,
         	error = $.fn.infinitescroll._error,
-        	pause = $.fn.infinitescroll._pause,
-        	filter = $.fn.infinitescroll._filter,
-        	retrieve = $.fn.infinitescroll._retrieve,
-        	binding = $.fn.infinitescroll._binding;
+        	pause = $.fn.infinitescroll.pause,
+        	filter = $.fn.infinitescroll.filter,
+        	retrieve = $.fn.infinitescroll.retrieve,
+        	binding = $.fn.infinitescroll.binding;
         	
         
         // if selectors from opts aren't valid, return false
@@ -121,7 +116,7 @@
         opts.container = opts.container || document.documentElement;
 
         
-        // contentSelector we'll use for our .load()
+        // contentSelector we'll use for our ajax call
         opts.contentSelector = opts.contentSelector || this;
         
         // Generate unique instance ID
@@ -265,7 +260,7 @@
     
     
     // Retrieve function (infscrSetup)
-    $.fn.infinitescroll._retrieve = function infscr_retrieve() {
+    $.fn.infinitescroll.retrieve = function infscr_retrieve() {
     
     	// replace with shorthand function
     	var props = $.infinitescroll,
@@ -457,13 +452,16 @@
     
     
     // Pause function
-    $.fn.infinitescroll._pause = function infscr_pause(pause) {
+    $.fn.infinitescroll.pause = function infscr_pause(pause) {
             
         // if pauseValue is not 'pause' or 'resume', toggle it's value
         var debug = $.fn.infinitescroll._debug,
         	opts = $.infinitescroll.opts;
         
-        if (pause !== 'pause' || 'resume' || 'toggle') { debug('Invalid value. Pause will toggle instead'); };
+        if (pause !== 'pause' && pause !== 'resume' && pause !== 'toggle' && pause !== null) {
+        	debug('Invalid argument. Toggling pause value instead');
+        };
+        
         pause = (pause && (pause == 'pause' || pause == 'resume')) ? pause : 'toggle';
         
         switch (pause) {
@@ -504,8 +502,8 @@
                 showDoneMsg();
                 opts.isDone = true;
                 opts.currPage = 1; // if you need to go back to this instance
+                opts.isPaused = false;
                 binder.unbind('smartscroll.infscr.' + opts.infid);
-                // $(document).unbind('retrieve.infscr.' + opts.infid);
         	
         	break;
         	
@@ -537,7 +535,7 @@
         
         
     // Filter current instance of the plugin
-    $.fn.infinitescroll._filter = function infscr_filter() {
+    $.fn.infinitescroll.filter = function infscr_filter() {
         
         // replace with shorthand function
         var opts = $.infinitescroll.opts,
@@ -550,11 +548,11 @@
     
     
     // Scroll binding + unbinding
-    $.fn.infinitescroll._binding = function infscr_binding(binding) {
+    $.fn.infinitescroll.binding = function infscr_binding(binding) {
         
         // replace with shorthand function
         var opts = $.infinitescroll.opts,
-        	retrieve = $.fn.infinitescroll._retrieve,
+        	retrieve = $.fn.infinitescroll.retrieve,
         	error = $.fn.infinitescroll._error,
         	debug = $.fn.infinitescroll._debug;
         	

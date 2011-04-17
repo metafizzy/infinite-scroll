@@ -14,11 +14,10 @@ $(document).ready(function() {
 		var $self = $(this),
 			action = $self.attr('rel'),
 			arg = $self.attr('data-arg'),
-			arg = (!!arg) ? arg : null,
-			fn = '$.fn.infinitescroll._'+action,
-			validFn = (eval(fn));
-
-		(validFn===undefined) ? $.fn.infinitescroll._cthullu('the-apocalypse') : eval(fn)(arg);
+			arg = arg || null;
+			
+			$('#content').infinitescroll(action,arg);
+			
 	
 	});
 	
