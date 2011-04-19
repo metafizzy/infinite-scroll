@@ -1,7 +1,7 @@
 /*!
 // Infinite Scroll jQuery plugin
 // copyright Paul Irish, licensed GPL & MIT
-// version 2.0b1.110417
+// version 2.0b1.110419
 
 // home and docs: http://www.infinite-scroll.com
 */
@@ -28,40 +28,42 @@
 
         // find the number to increment in the path.
         function determinePath(path) {
-
-            if (path.match(/^(.*?)\b2\b(.*?$)/)) {
-                path = path.match(/^(.*?)\b2\b(.*?$)/).slice(1);
-
-                // if there is any 2 in the url at all.    
-            } else if (path.match(/^(.*?)2(.*?$)/)) {
-
-                // page= is used in django:
-                //   http://www.infinite-scroll.com/changelog/comment-page-1/#comment-127
-                if (path.match(/^(.*?page=)2(\/.*|$)/)) {
-                    path = path.match(/^(.*?page=)2(\/.*|$)/).slice(1);
-                    return path;
-                }
-
-                path = path.match(/^(.*?)2(.*?$)/).slice(1);
-            } else {
-
-                // page= is used in drupal too but second page is page=1 not page=2:
-                // thx Jerod Fritz, vladikoff
-                if (path.match(/^(.*?page=)1(\/.*|$)/)) {
-                    path = path.match(/^(.*?page=)1(\/.*|$)/).slice(1);
-                    return path;
-                }
-
-                if ($.isFunction(opts.pathParse)) {
-                    return [path];
-                } else {
-                    debug('Sorry, we couldn\'t parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.');
-                    props.isInvalidPage = true;  //prevent it from running on this page.
-                }
-            }
-            debug('determinePath',path);
-            return path;
-        }
+        
+        	if ($.isFunction(opts.pathParse)) {
+        	
+        		debug('pathParse');
+        		return [path];
+        		
+        	} else if (path.match(/^(.*?)\b2\b(.*?$)/)) {
+        		path = path.match(/^(.*?)\b2\b(.*?$)/).slice(1);
+        		
+        	// if there is any 2 in the url at all.    
+        	} else if (path.match(/^(.*?)2(.*?$)/)) {
+        	
+	        	// page= is used in django:
+	        	// http://www.infinite-scroll.com/changelog/comment-page-1/#comment-127
+	        	if (path.match(/^(.*?page=)2(\/.*|$)/)) {
+	        		path = path.match(/^(.*?page=)2(\/.*|$)/).slice(1);
+	        		return path;
+	        	}
+	        	
+	        	path = path.match(/^(.*?)2(.*?$)/).slice(1);
+	        	
+	        } else {
+	        
+	        	// page= is used in drupal too but second page is page=1 not page=2:
+	        	// thx Jerod Fritz, vladikoff
+	        	if (path.match(/^(.*?page=)1(\/.*|$)/)) {
+	        		path = path.match(/^(.*?page=)1(\/.*|$)/).slice(1);
+	        		return path;
+	        	} else {
+	        		debug('Sorry, we couldn\'t parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.');
+	        		props.isInvalidPage = true;  //prevent it from running on this page.
+	        	}
+	        }
+	        debug('determinePath',path);
+	        return path;
+		}
         
         
         // Calculate internal height (used for local scroll)
@@ -86,7 +88,7 @@
         	
         	var command = options,
         		argument = callback,
-        		validCommand = (command == 'pause' || command == 'filter' || command == 'retrieve' || command == 'binding'),
+        		validCommand = (command == 'pause' || command == 'destroy' || command == 'retrieve' || command == 'binding'),
         		debug = $.fn.infinitescroll._debug;
         		
         	argument = argument || null;
@@ -104,7 +106,7 @@
         	debug = $.fn.infinitescroll._debug,
         	error = $.fn.infinitescroll._error,
         	pause = $.fn.infinitescroll.pause,
-        	filter = $.fn.infinitescroll.filter,
+        	destroy = $.fn.infinitescroll.destroy,
         	retrieve = $.fn.infinitescroll.retrieve,
         	binding = $.fn.infinitescroll.binding;
         	
@@ -195,7 +197,7 @@
             infid: 0, //Instance ID (Generated at setup)
             isDuringAjax: false,
             isInvalidPage: false,
-            isFiltered: false,
+            isDestroyed: false,
             isDone: false,  // for when it goes all the way through the archive.
             isPaused: false,
             container: undefined, //If left undefined uses window scroll, set as container for local scroll
@@ -268,7 +270,7 @@
     		isNearBottom = $.fn.infinitescroll._nearbottom,
     		kickOffAjax = $.fn.infinitescroll._ajax;
     	
-    	if (opts.isDuringAjax || opts.isInvalidPage || opts.isDone || opts.isFiltered || opts.isPaused) return;
+    	if (opts.isDuringAjax || opts.isInvalidPage || opts.isDone || opts.isDestroyed || opts.isPaused) return;
     	
     	if (!isNearBottom(opts, props)) return;
     	
@@ -491,7 +493,7 @@
         	binder = (opts.container.nodeName == "HTML") ? $(window) : $(opts.container),
         	debug = $.fn.infinitescroll._debug,
         	showDoneMsg = $.fn.infinitescroll._donemsg,
-        	error = (!opts.isDone && xhr == 404) ? 'end' : (opts.isFiltered && xhr == 302) ? 'filter' : 'unknown';
+        	error = (!opts.isDone && xhr == 404) ? 'end' : (opts.isDestroyed && xhr == 302) ? 'destroy' : 'unknown';
         
         switch (error) {
         
@@ -507,10 +509,10 @@
         	
         	break;
         	
-        	case 'filter':
+        	case 'destroy':
         	
-        		// die if filtered.
-                debug('Filtered. Going to next instance...');
+        		// die if destroyed.
+                debug('Destroyed. Going to next instance...');
                 opts.isDone = true;
                 opts.currPage = 1; // if you need to go back to this instance
                 opts.isPaused = false;
@@ -534,14 +536,14 @@
     }
         
         
-    // Filter current instance of the plugin
-    $.fn.infinitescroll.filter = function infscr_filter() {
+    // Destroy current instance of the plugin
+    $.fn.infinitescroll.destroy = function infscr_destroy() {
         
         // replace with shorthand function
         var opts = $.infinitescroll.opts,
         	error = $.fn.infinitescroll._error;
         	
-        opts.isFiltered = true;
+        opts.isDestroyed = true;
         return error([302]);
         
     }

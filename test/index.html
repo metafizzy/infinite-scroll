@@ -24,7 +24,7 @@
 		<a href="#" id="debug-trigger">+</a>
 		<h3>Debug bar</h3>
 		<nav id="debug-nav">
-			<a href="#" rel="filter">Filter</a>
+			<a href="#" rel="destroy">Destroy</a>
 			<a href="#" rel="pause" data-arg="pause">Pause <span>(pause)</span></a>
 			<a href="#" rel="pause" data-arg="resume">Pause <span>(resume)</span></a>
 			<a href="#" rel="pause">Pause <span>(toggle)</span></a>
@@ -77,9 +77,7 @@
 		debug		 	: true,
 		dataType	 	: 'html',
 		// appendCallback	: false, // USE FOR PREPENDING
-		pathParse     	: (!location.search) ? undefined : function( pathStr, nextPage ){
-							return pathStr.replace('2', nextPage );
-						}
+		// pathParse     	: function( pathStr, nextPage ){ return pathStr.replace('2', nextPage ); }
     }, function(newElements){
     
     	//USE FOR PREPENDING
