@@ -1,7 +1,7 @@
 /*!
 // Infinite Scroll jQuery plugin
 // copyright Paul Irish, licensed GPL & MIT
-// version 2.0b1.110419
+// version 2.0b1.110420
 
 // home and docs: http://www.infinite-scroll.com
 */
@@ -107,7 +107,6 @@
         	error = $.fn.infinitescroll._error,
         	pause = $.fn.infinitescroll.pause,
         	destroy = $.fn.infinitescroll.destroy,
-        	retrieve = $.fn.infinitescroll.retrieve,
         	binding = $.fn.infinitescroll.binding;
         	
         
@@ -261,14 +260,14 @@
     }
     
     
-    // Retrieve function (infscrSetup)
-    $.fn.infinitescroll.retrieve = function infscr_retrieve() {
+    // Setup function (infscrSetup)
+    $.fn.infinitescroll._setup = function infscr_setup() {
     
     	// replace with shorthand function
     	var props = $.infinitescroll,
     		opts = $.infinitescroll.opts,
     		isNearBottom = $.fn.infinitescroll._nearbottom,
-    		kickOffAjax = $.fn.infinitescroll._ajax;
+    		kickOffAjax = $.fn.infinitescroll.retrieve;
     	
     	if (opts.isDuringAjax || opts.isInvalidPage || opts.isDone || opts.isDestroyed || opts.isPaused) return;
     	
@@ -280,7 +279,7 @@
     
     
     // Ajax function (kickOffAjax)
-    $.fn.infinitescroll._ajax = function infscr_ajax() {
+    $.fn.infinitescroll.retrieve = function infscr_retrieve() {
     
     	// replace with shorthand function
     	var props = $.infinitescroll,
@@ -554,14 +553,14 @@
         
         // replace with shorthand function
         var opts = $.infinitescroll.opts,
-        	retrieve = $.fn.infinitescroll.retrieve,
+        	setup = $.fn.infinitescroll._setup,
         	error = $.fn.infinitescroll._error,
         	debug = $.fn.infinitescroll._debug;
         	
         switch(binding) {
         	
         	case 'bind':
-        		opts.binder.bind('smartscroll.infscr.'+opts.infid, retrieve);
+        		opts.binder.bind('smartscroll.infscr.'+opts.infid, setup);
         	break;
         	
         	case 'unbind':
