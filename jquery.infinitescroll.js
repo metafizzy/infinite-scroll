@@ -144,6 +144,8 @@
 		+ (opts.container == document.documentElement ? 0 : $(opts.container).offset().top)
 		- $(opts.navSelector).offset().top;
 
+		// hide nav selector on init
+		$(opts.navSelector).hide();
 
 		// set up our bindings
 		// unbind on init for twitter style when option is set to true
@@ -190,7 +192,10 @@
 			appendCallback        : true,
 			bufferPx              : 40,
 			orientation           : 'height',
-			errorCallback         : function () { },
+			doneCallback          : function() {},
+			noAppendCallback      : function() {},
+			appendCallback        : function() {},
+			errorCallback         : function() {},
 			currPage              : 1,
 			infid                 : 0, //Instance ID (Generated at setup)
 			isDuringAjax          : false,
@@ -287,8 +292,6 @@
 		// sure the loading message was visible
 		props.loadingMsg.appendTo(opts.loadMsgSelector).fadeIn(opts.loadingMsgRevealSpeed, function () {
 
-			$(opts.navSelector).hide();
-
 			// increment the URL bit. e.g. /page/3/
 			opts.currPage++;
 
@@ -355,7 +358,7 @@
 			case 'done':
 
 				showDoneMsg();
-				return false;
+				opts.doneCallback.call(this);
 
 			break;
 
@@ -366,6 +369,8 @@
 					data = $(data).find(opts.itemSelector);
 				};
 
+				opts.noAppendCallback.call(this);
+
 			break;
 
 			case 'append':
@@ -374,6 +379,7 @@
 
 				// if it didn't return anything
 				if (children.length == 0 || children.hasClass('error404')) {
+					opts.doneCallback.call(this);
 					// trigger a 404 error so we can quit.
 					return error([404]);
 				}
@@ -392,6 +398,7 @@
 				// of the elements collected as the first argument.
 
 				data = children.get();
+				opts.appendCallback.call(this);
 
 			break;
 		}
