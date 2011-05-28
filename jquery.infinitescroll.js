@@ -146,9 +146,19 @@
 
 
 		// set up our bindings
-		// bind scroll handler to element (if its a local scroll) or window
-		binding('bind');
-		opts.binder.trigger('smartscroll.infscr.' + opts.infid);
+		// unbind on init for twitter style when option is set to true
+		if (opts.unbind) {
+			binding('unbind');
+		}
+			else {
+				// bind scroll handler to element (if its a local scroll) or window
+				binding('bind');
+
+				 // trigger the event, in case it's a short page and the option is set to true
+				if (opts.shortpage) {
+					opts.binder.trigger('smartscroll.infscr.' + opts.infid);
+				}
+			};
 
 		return this;
 
@@ -160,6 +170,8 @@
 	$.infinitescroll = {
 		defaults : {
 			debug                 : false,
+			unbind                : false,
+			shortpage             : false,
 			binder                : $(window),
 			preload               : false,
 			nextSelector          : "div.navigation a:first",
