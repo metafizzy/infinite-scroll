@@ -359,6 +359,7 @@
 
 				showDoneMsg();
 				opts.doneCallback.call(this);
+				return false;
 
 			break;
 
