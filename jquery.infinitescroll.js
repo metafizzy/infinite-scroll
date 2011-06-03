@@ -25,55 +25,6 @@
             }
         }
 
-
-        // find the number to increment in the path.
-        function determinePath(path) {
-        
-        	if ($.isFunction(opts.pathParse)) {
-        	
-        		debug('pathParse');
-        		return [path];
-        		
-        	} else if (path.match(/^(.*?)\b2\b(.*?$)/)) {
-        		path = path.match(/^(.*?)\b2\b(.*?$)/).slice(1);
-        		
-        	// if there is any 2 in the url at all.    
-        	} else if (path.match(/^(.*?)2(.*?$)/)) {
-        	
-	        	// page= is used in django:
-	        	// http://www.infinite-scroll.com/changelog/comment-page-1/#comment-127
-	        	if (path.match(/^(.*?page=)2(\/.*|$)/)) {
-	        		path = path.match(/^(.*?page=)2(\/.*|$)/).slice(1);
-	        		return path;
-	        	}
-	        	
-	        	path = path.match(/^(.*?)2(.*?$)/).slice(1);
-	        	
-	        } else {
-	        
-	        	// page= is used in drupal too but second page is page=1 not page=2:
-	        	// thx Jerod Fritz, vladikoff
-	        	if (path.match(/^(.*?page=)1(\/.*|$)/)) {
-	        		path = path.match(/^(.*?page=)1(\/.*|$)/).slice(1);
-	        		return path;
-	        	} else {
-	        		debug('Sorry, we couldn\'t parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.');
-	        		props.isInvalidPage = true;  //prevent it from running on this page.
-	        	}
-	        }
-	        debug('determinePath',path);
-	        return path;
-		}
-        
-        
-        // Calculate internal height (used for local scroll)
-        function hiddenHeight(element) {
-            var height = 0;
-            $(element).children().each(function () {
-                height = height + $(this).outerHeight(false);
-            });
-            return height;
-        }
         
         
         //Generate InstanceID based on random data (to give consistent but different ID's)
@@ -97,24 +48,21 @@
         	return false;
         }
         
-        
         // lets get started.
         var opts = $.infinitescroll.opts = $.extend({}, $.infinitescroll.defaults, options),
         	props = $.infinitescroll, // shorthand
-        	innerContainerHeight, box, frag, desturl, pause, error, errorStatus, method, result;
+        	box, frag, desturl, pause, error, errorStatus, method, result;
         	callback = $.fn.infinitescroll._callback = callback || function () { },
         	debug = $.fn.infinitescroll._debug,
         	error = $.fn.infinitescroll._error,
         	pause = $.fn.infinitescroll.pause,
         	destroy = $.fn.infinitescroll.destroy,
-        	binding = $.fn.infinitescroll.binding;
+        	binding = $.fn.infinitescroll.binding,
+                hiddenHeight = $.fn.infinitescroll._hiddenHeight;
         	
         
         // if selectors from opts aren't valid, return false
         if (!areSelectorsValid(opts)) { return false; }
-
-        
-        opts.container = opts.container || document.documentElement;
 
         
         // contentSelector we'll use for our ajax call
@@ -126,7 +74,6 @@
         // loadMsgSelector - if we want to place the load message in a specific selector, defaulted to the contentSelector
         opts.loadMsgSelector = opts.loadMsgSelector || opts.contentSelector;
 
-        
         // get the relative URL - everything past the domain name.
         var relurl = /(.*?\/\/).*?(\/.*)/,
         	path = $(opts.nextSelector).attr('href');
@@ -134,7 +81,7 @@
         if (!path) { debug('Navigation selector not found'); return; }
 
         // set the path to be a relative URL from root.
-        opts.path = determinePath(path);
+        opts.path = path;
         
         
         // define loading msg
@@ -145,18 +92,10 @@
         (new Image()).src = opts.loadingImg;
         
         
-        //Check if its HTML (window scroll) and set innerContainerHeight
-        opts.binder = (opts.container.nodeName == "HTML") ? $(window) : $(opts.container);
-        innerContainerHeight = (opts.container.nodeName == "HTML") ? $(document).height() : innerContainerHeight = hiddenHeight(opts.container);
-        debug('Scrolling in: ',(opts.container.nodeName == "HTML") ? 'window' : opts.container);
-        
-        // distance from nav links to bottom
-        // computed as: height of the document + top offset of container - top offset of nav link
-        opts.pixelsFromNavToBottom = innerContainerHeight +
-                                     (opts.container == document.documentElement ? 0 : $(opts.container).offset().top) -
-                                     $(opts.navSelector).offset().top;
+        //Check if its HTML (window scroll)
+        opts.binder = (opts.container) ? $(opts.container) : $(window) ;
+        debug('Scrolling in: ',(opts.container) ? 'window' : opts.container);
 
-        
         // set up our bindings
         // bind scroll handler to element (if its a local scroll) or window 
         binding('bind');
@@ -176,8 +115,8 @@
             binder: $(window),
             preload: false,
             nextSelector: "div.navigation a:first",
-            loadingImg: "http://www.infinite-scroll.com/loading.gif",
-            loadingText: "<em>Loading the next set of posts...</em>",
+            loadingImg: "loading.gif",
+            loadingText: "<em>Loading the next page...</em>",
             donetext: "<em>Congratulations, you've reached the end of the internet.</em>",
             navSelector: "div.navigation",
             contentSelector: null,           // not really a selector. :) it's whatever the method was called on..
@@ -200,15 +139,13 @@
             isDone: false,  // for when it goes all the way through the archive.
             isPaused: false,
             container: undefined, //If left undefined uses window scroll, set as container for local scroll
-            pixelsFromNavToBottom: undefined,
             path: undefined
         },
         loadingImg: undefined,
         loadingMsg: undefined,
         currDOMChunk: null  // defined in setup()'s load()
     };
-    
-    
+
     /* Methods + Commands
     ---------------------------------------------------*/
     
@@ -226,6 +163,38 @@
     	// someone should write this, and it would rule
     
     };
+
+    $.fn.infinitescroll._hiddenHeight = function(element) {
+            var height = 0;
+            $(element).children().each(function () {
+                height = height + $(this).outerHeight(false);
+            });
+            return height;
+    };
+
+    // find the number to increment in the path.
+    $.fn.infinitescroll._determinePath = function(path) {
+            var opts = $.infinitescroll.opts,
+        	debug = $.fn.infinitescroll._debug;
+
+            debug("determinePath("+path+")");
+            if ($.isFunction(opts.pathParse)) {
+                    debug("parsePath");
+                    return opts.pathParse(path, opts.currPage);
+            } else if (path.match(/^(.*?)\b2\b(.*?)$/)) {
+                    debug("b2 match");
+                    return path.match(/^(.*?)\b2\b(.*?)$/).slice(1).join(opts.currPage);
+                    
+            // if there is any page= in the url at all.    
+            } if (path.match(/^(.*?page=)\d+(.*?)$/)) {
+                    debug("page match");
+                    return path.match(/^(.*?page=)\d+(.*?)$/).slice(1).join(opts.currPage);
+            } else {
+                    debug("Sorry, can't determine pagination");
+                    opts.isInvalidPage = true;  //prevent it from running on this page.
+            }
+            return path;
+    }
     
     
     // Near Bottom (isNearBottom)
@@ -234,44 +203,33 @@
         // replace with shorthand function
         var opts = $.infinitescroll.opts,
         	debug = $.fn.infinitescroll._debug,
-        	hiddenHeight = $.fn.infinitescroll._hiddenheight;
-        
-        // distance remaining in the scroll
-        // computed as: document height - distance already scroll - viewport height - buffer
+                $viewport = $(opts.container?opts.container:window),
+                scrollTop = $viewport.scrollTop(),
+                viewportHeight = $viewport.height(),
+                documentHeight = opts.container? $.fn.infinitescroll._hiddenHeight(opts.container) : $(document).height();
 
-        if (opts.container.nodeName == "HTML") {
-            var pixelsFromWindowBottomToBottom = 0
-            + $(document).height()
-            // have to do this bs because safari doesnt report a scrollTop on the html element
-            - ($(opts.container).scrollTop() || $(opts.container.ownerDocument.body).scrollTop())
-            - $(window).height();
-        }
-        else {
-            var pixelsFromWindowBottomToBottom = 0
-            + hiddenHeight(opts.container) - $(opts.container).scrollTop() - $(opts.container).height();
+        debug("documentHeight=",documentHeight,"viewport+scrollTop=",scrollTop+viewportHeight);
 
-        }
-
-        debug('math:', pixelsFromWindowBottomToBottom, opts.pixelsFromNavToBottom);
-
-        // if distance remaining in the scroll (including buffer) is less than the orignal nav to bottom....
-        return (pixelsFromWindowBottomToBottom - opts.bufferPx < opts.pixelsFromNavToBottom);
-        
+        return (scrollTop + viewportHeight > documentHeight - opts.bufferPx);
     }
     
     
     // Setup function (infscrSetup)
     $.fn.infinitescroll._setup = function infscr_setup() {
-    
+   
     	// replace with shorthand function
     	var props = $.infinitescroll,
     		opts = $.infinitescroll.opts,
     		isNearBottom = $.fn.infinitescroll._nearbottom,
     		kickOffAjax = $.fn.infinitescroll.retrieve;
+
+    	if (opts.isDuringAjax || opts.isInvalidPage || opts.isDone || opts.isDestroyed || opts.isPaused) {
+                return;
+        }
     	
-    	if (opts.isDuringAjax || opts.isInvalidPage || opts.isDone || opts.isDestroyed || opts.isPaused) return;
-    	
-    	if (!isNearBottom(opts, props)) return;
+    	if (!isNearBottom(opts, props)) {
+                return;
+        }
     	
     	kickOffAjax();    
     
@@ -286,11 +244,10 @@
     		opts = props.opts,
     		debug = $.fn.infinitescroll._debug,
     		loadCallback = $.fn.infinitescroll._loadcallback,
+                determinePath = $.fn.infinitescroll._determinePath,
     		error = $.fn.infinitescroll._error,
-    		path = opts.path, // get this
     		box, frag, desturl, method, condition;
-    		
-    	
+
     	// we dont want to fire the ajax multiple times
         opts.isDuringAjax = true;
         
@@ -305,15 +262,14 @@
             // increment the URL bit. e.g. /page/3/
             opts.currPage++;
 
-            debug('heading into ajax', path);
+            debug('heading into ajax', opts.path);
 
             // if we're dealing with a table we can't use DIVs
             box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');
             
-            
             // INSERT DEBUG ERROR FOR invalid desturl
-            desturl = ($.isFunction(opts.pathParse)) ? opts.pathParse(path.join('2'), opts.currPage) : desturl = path.join(opts.currPage);
-            // desturl = path.join(opts.currPage);
+            desturl = determinePath(opts.path);
+            debug('desturl=', desturl);
             
             // create switch parameter for append / callback
             // MAKE SURE CALLBACK EXISTS???
@@ -489,7 +445,7 @@
             
         // replace with shorthand function
         var opts = $.infinitescroll.opts,
-        	binder = (opts.container.nodeName == "HTML") ? $(window) : $(opts.container),
+        	binder = (opts.container) ? $(opts.container) : $(window),
         	debug = $.fn.infinitescroll._debug,
         	showDoneMsg = $.fn.infinitescroll._donemsg,
         	error = (!opts.isDone && xhr == 404) ? 'end' : (opts.isDestroyed && xhr == 302) ? 'destroy' : 'unknown';
