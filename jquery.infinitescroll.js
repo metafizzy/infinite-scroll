@@ -67,8 +67,6 @@
 
         _create: function infscr_create(options, callback) {
 
-            var debug = this._debug;
-
             // If selectors from options aren't valid, return false
             if (!this._validate(options)) { return false; }
 
@@ -87,7 +85,7 @@
 	        	path = $(opts.nextSelector).attr('href');
 
             // if there's not path, return
-            if (!path) { debug('Navigation selector not found'); return; }
+            if (!path) { this._debug('Navigation selector not found'); return; }
 
 
             // Set the path to be a relative URL from root.
@@ -384,7 +382,6 @@
 
             var instance = this,
 				opts = instance.options,
-				debug = instance._debug,
 				path = opts.path,
 				box, frag, desturl, method, condition,
 	    		pageNum = pageNum || null,
