@@ -23,6 +23,7 @@
 	$.infinitescroll.defaults = {
 		callback: function () { },
 		debug: false,
+		behavior: undefined,
 		binder: $(window), // used to cache the selector
 		nextSelector: "div.navigation a:first",
 		loadingImg: "http://www.infinite-scroll.com/loading.gif",
@@ -110,7 +111,9 @@
             // Setup binding
             // if extended, do that
 			// else, do this
-			this.binding('bind');
+			if (!opts.behavior) {
+				this.binding('bind');
+			}
 
         },
 
@@ -275,6 +278,37 @@
 
         },
 
+		// Pause / temporarily disable plugin from firing
+        _pausing: function infscr_pausing(pause) {
+
+            var opts = this.options;
+
+            // If pause is not 'pause' or 'resume', toggle it's value
+            if (pause !== 'pause' && pause !== 'resume' && pause !== null) {
+                this._debug('Invalid argument. Toggling pause value instead');
+            };
+
+            pause = (pause && (pause == 'pause' || pause == 'resume')) ? pause : 'toggle';
+
+            switch (pause) {
+                case 'pause':
+                    opts.isPaused = true;
+                    break;
+
+                case 'resume':
+                    opts.isPaused = false;
+                    break;
+
+                case 'toggle':
+                    opts.isPaused = !opts.isPaused;
+                    break;
+            }
+
+            this._debug('Paused', opts.isPaused);
+            return false;
+
+        },
+
         // Show done message
         _showdonemsg: function infscr_showdonemsg() {
 
@@ -346,36 +380,15 @@
 
         },
 
-        // Pause / temporarily disable plugin from firing
-        pause: function infscr_pause(pause) {
-
-            var opts = this.options;
-
-            // If pause is not 'pause' or 'resume', toggle it's value
-            if (pause !== 'pause' && pause !== 'resume' && pause !== 'toggle' && pause !== null) {
-                this._debug('Invalid argument. Toggling pause value instead');
-            };
-
-            pause = (pause && (pause == 'pause' || pause == 'resume')) ? pause : 'toggle';
-
-            switch (pause) {
-                case 'pause':
-                    opts.isPaused = true;
-                    break;
-
-                case 'resume':
-                    opts.isPaused = false;
-                    break;
-
-                case 'toggle':
-                    opts.isPaused = !opts.isPaused;
-                    break;
-            }
-
-            this._debug('Paused', opts.isPaused);
-            return false;
-
-        },
+		// Set pause value to false
+		pause: function infscr_pause() {
+			this._pausing('pause');
+		},
+		
+		// Set pause value to false
+		resume: function infscr_resume() {
+			this._pausing('resume');
+		},
 
         // Retrieve next set of content items
         retrieve: function infscr_retrieve(pageNum) {
@@ -464,7 +477,12 @@
 
             this.retrieve();
 
-        }
+        },
+		
+		// Toggle pause value
+		toggle: function infscr_toggle() {
+			this._pausing();
+		}
 
     }
 

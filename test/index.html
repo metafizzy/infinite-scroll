@@ -25,9 +25,9 @@
 		<h3>Debug bar</h3>
 		<nav id="debug-nav">
 			<a href="#" rel="destroy">Destroy</a>
-			<a href="#" rel="pause" data-arg="pause">Pause <span>(pause)</span></a>
-			<a href="#" rel="pause" data-arg="resume">Pause <span>(resume)</span></a>
-			<a href="#" rel="pause">Pause <span>(toggle)</span></a>
+			<a href="#" rel="pause">Pause</a>
+			<a href="#" rel="resume">Resume</a>
+			<a href="#" rel="toggle">Toggle</a>
 			<a href="#" rel="binding" data-arg="unbind">Binding <span>(unbind)</span></a>
 			<a href="#" rel="binding" data-arg="bind">Binding <span>(bind)</span></a>
 			<a href="#" rel="retrieve">Retrieve</a>
@@ -76,6 +76,7 @@
 		itemSelector 	: "#content p",
 		debug		 	: true,
 		dataType	 	: 'html',
+		// behavior		: 'twitter',
 		// appendCallback	: false, // USE FOR PREPENDING
 		// pathParse     	: function( pathStr, nextPage ){ return pathStr.replace('2', nextPage ); }
     }, function(newElements){
