@@ -323,7 +323,7 @@
 	    		});
 
             // user provided callback when done    
-            opts.errorCallback();
+            opts.errorCallback.call($(opts.contentSelector)[0],'done');
 
         },
 
