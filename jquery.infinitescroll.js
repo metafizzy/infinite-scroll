@@ -66,13 +66,42 @@
         ----------------------------
         */
 
-        _create: function infscr_create(options, callback) {
+        // Bind or unbind from scroll
+        _binding: function infscr_binding(binding) {
+
+            var instance = this;
+
+            if (binding !== 'bind' && binding !== 'unbind') {
+                this._debug('Binding value  ' + binding + ' not valid')
+                return false;
+            }
+
+            if (binding == 'unbind') {
+
+                (this.options.binder).unbind('smartscroll.infscr.' + instance.options.infid);
+
+            } else {
+
+                (this.options.binder)[binding]('smartscroll.infscr.' + instance.options.infid, function () {
+                    instance.setup();
+                });
+
+            };
+
+            this._debug('Binding', binding);
+
+        },
+
+		_create: function infscr_create(options, callback) {
 
             // If selectors from options aren't valid, return false
             if (!this._validate(options)) { return false; }
 
             // Define options and shorthand
-            var opts = this.options = $.extend({}, $.infinitescroll.defaults, options);
+            var opts = this.options = $.extend({}, $.infinitescroll.defaults, options),
+				// get the relative URL - everything past the domain name.
+				relurl = /(.*?\/\/).*?(\/.*)/,
+				path = $(opts.nextSelector).attr('href');
 
             // contentSelector is 'page fragment' option for .load() / .ajax() calls
             opts.contentSelector = opts.contentSelector || this.element;
@@ -80,25 +109,17 @@
             // loadMsgSelector - if we want to place the load message in a specific selector, defaulted to the contentSelector
             opts.loadMsgSelector = opts.loadMsgSelector || opts.contentSelector;
 
-
-            // get the relative URL - everything past the domain name.
-            var relurl = /(.*?\/\/).*?(\/.*)/,
-	        	path = $(opts.nextSelector).attr('href');
-
             // if there's not path, return
             if (!path) { this._debug('Navigation selector not found'); return; }
 
-
             // Set the path to be a relative URL from root.
             opts.path = this._determinepath(path);
-
 
             // Define loadingMsg
             opts.loadingMsg = $('<div id="infscr-loading"><img alt="Loading..." src="' + opts.loadingImg + '" /><div>' + opts.loadingText + '</div></div>');
 
             // Preload loadingImg
             (new Image()).src = opts.loadingImg;
-
 
             // distance from nav links to bottom
             // computed as: height of the document + top offset of container - top offset of nav link
@@ -112,7 +133,7 @@
             // if extended, do that
 			// else, do this
 			if (!opts.behavior) {
-				this.binding('bind');
+				this._binding('bind');
 			}
 
         },
@@ -346,31 +367,10 @@
         ----------------------------
         */
 
-        // Bind or unbind from scroll
-        binding: function infscr_binding(binding) {
-
-            var instance = this;
-
-            if (binding !== 'bind' && binding !== 'unbind') {
-                this._debug('Binding value  ' + binding + ' not valid')
-                return false;
-            }
-
-            if (binding == 'unbind') {
-
-                (this.options.binder).unbind('smartscroll.infscr.' + instance.options.infid);
-
-            } else {
-
-                (this.options.binder)[binding]('smartscroll.infscr.' + instance.options.infid, function () {
-                    instance.setup();
-                });
-
-            };
-
-            this._debug('Binding', binding);
-
-        },
+		// Bind to scroll
+		bind: function infscr_bind() {
+			this._binding('bind');
+		},
 
         // Destroy current instance of plugin
         destroy: function infscr_destroy() {
@@ -482,7 +482,12 @@
 		// Toggle pause value
 		toggle: function infscr_toggle() {
 			this._pausing();
-		}
+		},
+		
+		// Unbind from scroll
+		unbind: function infscr_unbind() {
+			this._binding('unbind');
+		},
 
     }
 
