@@ -3,7 +3,7 @@
 	Infinite Scroll
 	--------------------------------
 	+ https://github.com/paulirish/infinitescroll
-	+ version 2.0b2.110603
+	+ version 2.0b2.110617
 	+ Copyright 2011 Paul Irish & Luke Shumard
 	+ Licensed under the MIT license
 	
@@ -92,6 +92,7 @@
 
         },
 
+		// Fundamental aspects of the plugin are initialized
 		_create: function infscr_create(options, callback) {
 
             // If selectors from options aren't valid, return false
@@ -325,16 +326,14 @@
 
         },
 
+		// Behavior is determined
+		// If the behavior option is undefined, it will set to default and bind to scroll
 		_setup: function infscr_setup() {
 			
 			var opts = this.options;
+			(!opts.behavior)? this._binding('bind') : this['_setup_'+opts.behavior]();
 			
-			// Setup binding
-            // if extended, do that
-			// else, do this
-			if (!opts.behavior) {
-				this._binding('bind');
-			}
+			return false;
 			
 		},
 
