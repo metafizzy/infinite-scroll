@@ -14,7 +14,7 @@
 
 $.extend($.infinitescroll.prototype,{
 	
-	_setup_twitter: function infscr_twiiter_setup () {
+	_setup_twitter: function infscr_setup_twitter () {
 		var opts = this.options,
 			instance = this;
 			
