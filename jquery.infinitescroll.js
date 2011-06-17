@@ -83,7 +83,7 @@
             } else {
 
                 (this.options.binder)[binding]('smartscroll.infscr.' + instance.options.infid, function () {
-                    instance.setup();
+                    instance.scroll();
                 });
 
             };
@@ -129,12 +129,7 @@
             // FIX
             opts.callback = callback || function () { };
 
-            // Setup binding
-            // if extended, do that
-			// else, do this
-			if (!opts.behavior) {
-				this._binding('bind');
-			}
+            this._setup();
 
         },
 
@@ -330,6 +325,19 @@
 
         },
 
+		_setup: function infscr_setup() {
+			
+			var opts = this.options;
+			
+			// Setup binding
+            // if extended, do that
+			// else, do this
+			if (!opts.behavior) {
+				this._binding('bind');
+			}
+			
+		},
+
         // Show done message
         _showdonemsg: function infscr_showdonemsg() {
 
@@ -466,8 +474,8 @@
 
         },
 
-        // Check to see height left to fire - rename this!!!!
-        setup: function infscr_setup() {
+        // Check to see next page is needed
+        scroll: function infscr_scroll() {
 
             var opts = this.options;
 
