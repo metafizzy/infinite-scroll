@@ -273,7 +273,12 @@ h1, h2, h3, h4, h5, h6 { font-weight: bold; }
 	margin: 0 0 2em;
 }
 
-
+#next {
+	font-size: 2.2em;
+	display: block;
+	width: 200px;
+	margin: 0 auto 72px;
+}
 
 
 

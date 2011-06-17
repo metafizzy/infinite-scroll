@@ -58,23 +58,20 @@
 		<p>Top Cat! The most effectual Top Cat! Who's intellectual close friends get to call him T.C., providing it's with dignity. Top Cat! The indisputable leader of the gang. He's the boss, he's a pip, he's the championship. He's the most tip top, Top Cat.</p>
 		
 		<p>Hong Kong Phooey, number one super guy. Hong Kong Phooey, quicker than the human eye. He's got style, a groovy style, and a car that just won't stop. When the going gets tough, he's really rough, with a Hong Kong Phooey chop (Hi-Ya!). Hong Kong Phooey, number one super guy. Hong Kong Phooey, quicker than the human eye. Hong Kong Phooey, he's fan-riffic!</p>
-      
-      <a id="next" href="index2.html">next page?</a>
-	
+		
 	</div>
+	
+	<a id="next" href="index2.html">next page?</a>
 
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.js"></script>
 	<script>window.jQuery || document.write("<script src='jquery-1.6.1.js'>\x3C/script>")</script>
 	
 	<script src="debug.js"></script>
 	<script src="../jquery.infinitescroll.js"></script>
+	<script src="../behaviors/manual-trigger.js"></script>
 	
 	<script>
-	$.extend($.infinitescroll.prototype,{
-		_setup_twitter: function() {
-			console.log('TWITTER SETUP OMG');
-		}
-	});
+	
 	
 	$('#content').infinitescroll({
 	
@@ -84,6 +81,16 @@
 		debug		 	: true,
 		dataType	 	: 'html',
 		// behavior		: 'twitter',
+		// loadMore		: '#next',
+		/*
+		loadingStart	: function (opts) {
+			opts.loadingMsg
+				.appendTo(opts.loadMsgSelector)
+				.show(opts.loadingMsgRevealSpeed, function () {
+                	beginAjax(opts);
+            });
+		}
+		*/
 		// appendCallback	: false, // USE FOR PREPENDING
 		// pathParse     	: function( pathStr, nextPage ){ return pathStr.replace('2', nextPage ); }
     }, function(newElements){

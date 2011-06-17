@@ -26,15 +26,15 @@
 		behavior: undefined,
 		binder: $(window), // used to cache the selector
 		nextSelector: "div.navigation a:first",
+		loadMsgSelector: null,
+		loadingMsgRevealSpeed: 'fast', // controls how fast you want the loading message to come in, ex: 'fast', 'slow', 200 (milliseconds)
 		loadingImg: "http://www.infinite-scroll.com/loading.gif",
 		loadingText: "<em>Loading the next set of posts...</em>",
-		loadingStart: null,
-		loadingEnd: null,
+		loadingStart: undefined,
+		loadingEnd: undefined,
 		donetext: "<em>Congratulations, you've reached the end of the internet.</em>",
 		navSelector: "div.navigation",
 		contentSelector: null, // rename to pageFragment
-		loadMsgSelector: null,
-		loadingMsgRevealSpeed: 'fast', // controls how fast you want the loading message to come in, ex: 'fast', 'slow', 200 (milliseconds)
 		extraScrollPx: 150,
 		itemSelector: "div.post",
 		animate: false,
@@ -126,8 +126,24 @@
             // computed as: height of the document + top offset of container - top offset of nav link
             opts.pixelsFromNavToBottom = $(document).height() - $(opts.navSelector).offset().top;
 
+			// determine loadingStart actions
+            opts.loadingStart = opts.loadingStart || function() {
+				
+				$(opts.navSelector).hide();
+
+				opts.loadingMsg
+					.appendTo(opts.loadMsgSelector)
+					.show(opts.loadingMsgRevealSpeed, function () {
+	                	beginAjax(opts);
+	            });
+			};
+			
+			// determine loadingEnd actions
+			opts.loadingEnd = opts.loadingEnd || function() {
+				opts.loadingMsg.fadeOut('normal');
+			};
+
             // callback loading
-            // FIX
             opts.callback = callback || function () { };
 
             this._setup();
@@ -264,12 +280,9 @@
 
             }
 
-            // fadeout currently makes the <em>'d text ugly in IE6
-
-            // this is where the loadingEnd function goes!!!
-
-            opts.loadingMsg.fadeOut('normal');
-
+            // loadingEnd function
+			opts.loadingEnd.call($(opts.contentSelector)[0],opts)
+            
 
             // smooth scroll to ease in the new content
             if (opts.animate) {
@@ -405,71 +418,62 @@
 				path = opts.path,
 				box, frag, desturl, method, condition,
 	    		pageNum = pageNum || null,
-	    		getPage = (!!pageNum) ? pageNum : opts.currPage;
+				getPage = (!!pageNum) ? pageNum : opts.currPage;
+				beginAjax = function infscr_ajax(opts) {
+					
+					// increment the URL bit. e.g. /page/3/
+	                opts.currPage++;
 
-            if (opts.isDestroyed) {
-                this._debug('Instance already destroyed');
+	                instance._debug('heading into ajax', path);
+
+	                // if we're dealing with a table we can't use DIVs
+	                box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');
+
+	                desturl = ($.isFunction(opts.pathParse)) ? opts.pathParse(path.join('2'), opts.currPage) : path.join(opts.currPage);
+
+	                method = (opts.dataType == 'html' || opts.dataType == 'json') ? opts.dataType : 'html+callback';
+	                if (opts.appendCallback && opts.dataType == 'html') method += '+callback'
+
+	                switch (method) {
+
+	                    case 'html+callback':
+
+	                        instance._debug('Using HTML via .load() method');
+	                        box.load(desturl + ' ' + opts.itemSelector, null, function infscr_ajax_callback(jqXHR, textStatus) {
+	                            instance._loadcallback(box, jqXHR.responseText);
+	                        });
+
+	                        break;
+
+	                    case 'html':
+	                    case 'json':
+
+	                        instance._debug('Using ' + (method.toUpperCase()) + ' via $.ajax() method');
+	                        $.ajax({
+	                            // params
+	                            url: desturl,
+	                            dataType: opts.dataType,
+	                            complete: function infscr_ajax_callback(jqXHR, textStatus) {
+	                                condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
+	                                (condition) ? instance._loadcallback(box, jqXHR.responseText) : instance._error('end');
+	                            }
+	                        });
+	
+	                        break;
+	                }
+				};
+
+            
+			// for manual triggers, if destroyed, get out of here
+			if (opts.isDestroyed) {
+                this._debug('Instance is destroyed');
                 return false;
             };
 
             // we dont want to fire the ajax multiple times
             opts.isDuringAjax = true;
 
-            // this is where the loadingStart function goes!!!
-            //($.isFunction(opts.loadingStart)) ? opts.loadingStart() : /* default*/ '';
-
-            opts.loadingMsg.appendTo(opts.loadMsgSelector).show(opts.loadingMsgRevealSpeed, function () {
-
-                $(opts.navSelector).hide();
-
-                // increment the URL bit. e.g. /page/3/
-                opts.currPage++;
-
-                instance._debug('heading into ajax', path);
-
-                // if we're dealing with a table we can't use DIVs
-                box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');
-
-
-                // INSERT DEBUG ERROR FOR invalid desturl
-                desturl = ($.isFunction(opts.pathParse)) ? opts.pathParse(path.join('2'), opts.currPage) : path.join(opts.currPage);
-                // desturl = path.join(opts.currPage);
-
-                // create switch parameter for append / callback
-                // MAKE SURE CALLBACK EXISTS???
-                method = (opts.dataType == 'html' || opts.dataType == 'json') ? opts.dataType : 'html+callback';
-                if (opts.appendCallback && opts.dataType == 'html') method += '+callback'
-
-                switch (method) {
-
-                    case 'html+callback':
-
-                        instance._debug('Using HTML via .load() method');
-                        box.load(desturl + ' ' + opts.itemSelector, null, function infscr_ajax_callback(jqXHR, textStatus) {
-                            instance._loadcallback(box, jqXHR.responseText);
-                        });
-
-                        break;
-
-                    case 'html':
-                    case 'json':
-
-                        instance._debug('Using ' + (method.toUpperCase()) + ' via $.ajax() method');
-                        $.ajax({
-                            // params
-                            url: desturl,
-                            dataType: opts.dataType,
-                            complete: function infscr_ajax_callback(jqXHR, textStatus) {
-                                condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
-                                (condition) ? instance._loadcallback(box, jqXHR.responseText) : instance._error('end');
-                            }
-                        });
-
-                        break;
-
-                }
-
-            });
+            opts.loadingStart.call($(opts.contentSelector)[0],opts);
 
         },
 
