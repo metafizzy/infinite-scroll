@@ -21,6 +21,7 @@
 	};
 	
 	$.infinitescroll.defaults = {
+                dataCallback: function () {},
 		callback: function () { },
 		debug: false,
 		behavior: undefined,
@@ -96,7 +97,7 @@
 		_create: function infscr_create(options, callback) {
 
             // If selectors from options aren't valid, return false
-            if (!this._validate(options)) { return false; }
+            if (!this._validate(options)) {return false;}
 
             // Define options and shorthand
             var opts = this.options = $.extend({}, $.infinitescroll.defaults, options),
@@ -111,7 +112,7 @@
             opts.loadMsgSelector = opts.loadMsgSelector || opts.contentSelector;
 
             // if there's not path, return
-            if (!path) { this._debug('Navigation selector not found'); return; }
+            if (!path) {this._debug('Navigation selector not found');return;}
 
             // Set the path to be a relative URL from root.
             opts.path = this._determinepath(path);
@@ -142,6 +143,9 @@
 			opts.loadingEnd = opts.loadingEnd || function() {
 				opts.loadingMsg.fadeOut('normal');
 			};
+
+            // data callback
+            opts.dataCallback = opts.dataCallback || function () {};
 
             // callback loading
             opts.callback = callback || function () { };
@@ -226,12 +230,12 @@
 
         // Load Callback
         _loadcallback: function infscr_loadcallback(box, data) {
-
+            
             var opts = this.options,
 	    		callback = this.options.callback, // GLOBAL OBJECT FOR CALLBACK
 	    		result = (opts.isDone) ? 'done' : (!opts.appendCallback) ? 'no-append' : 'append',
 	    		frag;
-
+            
             switch (result) {
 
                 case 'done':
@@ -287,7 +291,7 @@
             // smooth scroll to ease in the new content
             if (opts.animate) {
                 var scrollTo = $(window).scrollTop() + $('#infscr-loading').height() + opts.extraScrollPx + 'px';
-                $('html,body').animate({ scrollTop: scrollTo }, 800, function () { opts.isDuringAjax = false; });
+                $('html,body').animate({scrollTop: scrollTo}, 800, function () {opts.isDuringAjax = false;});
             }
 
             if (!opts.animate) opts.isDuringAjax = false; // once the call is done, we can allow it again.
@@ -359,7 +363,7 @@
 	    		.find('img')
 	    		.hide()
 	    		.parent()
-	    		.find('div').html(opts.donetext).animate({ opacity: 1 }, 2000, function () {
+	    		.find('div').html(opts.donetext).animate({opacity: 1}, 2000, function () {
 	    		    $(this).parent().fadeOut('normal');
 	    		});
 
@@ -440,6 +444,7 @@
 
 	                        instance._debug('Using HTML via .load() method');
 	                        box.load(desturl + ' ' + opts.itemSelector, null, function infscr_ajax_callback(jqXHR, textStatus) {
+                                    instance.options.dataCallback.call(instance.options, jqXHR);
 	                            instance._loadcallback(box, jqXHR.responseText);
 	                        });
 
@@ -498,7 +503,7 @@
 		// Unbind from scroll
 		unbind: function infscr_unbind() {
 			this._binding('unbind');
-		},
+		}
 
     }
 
@@ -610,7 +615,7 @@
             // set correct event type
             event.type = "smartscroll";
 
-            if (scrollTimeout) { clearTimeout(scrollTimeout); }
+            if (scrollTimeout) {clearTimeout(scrollTimeout);}
             scrollTimeout = setTimeout(function () {
                 jQuery.event.handle.apply(context, args);
             }, execAsap === "execAsap" ? 0 : 100);
