@@ -23,7 +23,7 @@
 	$.infinitescroll.defaults = {
 		callback: function () { },
 		debug: false,
-		behavior: undefined,
+		behavior: 'default',
 		binder: $(window), // used to cache the selector
 		nextSelector: "div.navigation a:first",
 		loadMsgSelector: null,
@@ -228,6 +228,15 @@
         _loadcallback: function infscr_loadcallback(box, data) {
 
             var opts = this.options,
+                loadCallback = '_loadcallback_' + opts.behavior;
+            
+            this[loadCallback](box, data);
+            
+        },
+
+        // Default Load Callback
+        _loadcallback_default: function infscr_loadcallback_default (box, data) {
+            var opts = this.options,
 	    		callback = this.options.callback, // GLOBAL OBJECT FOR CALLBACK
 	    		result = (opts.isDone) ? 'done' : (!opts.appendCallback) ? 'no-append' : 'append',
 	    		frag;
@@ -340,14 +349,24 @@
         },
 
 		// Behavior is determined
-		// If the behavior option is undefined, it will set to default and bind to scroll
+		// The default behavor is 'default'
 		_setup: function infscr_setup() {
 			
 			var opts = this.options;
-			(!opts.behavior)? this._binding('bind') : this['_setup_'+opts.behavior]();
+                        this._debug('Using behavior', opts.behavior);
+			
+                        this['_setup_'+opts.behavior]();
 			
 			return false;
+		},
 			
+                // Default Behavior (will be used to setup unless a behavior is explicitely specified
+                // Simply binds to scroll
+                _setup_default: function infscr_setup_default() {
+                        var opts = this.options;
+			this._binding('bind');
+			
+			return false;
 		},
 
         // Show done message
@@ -439,8 +458,8 @@
 	                    case 'html+callback':
 
 	                        instance._debug('Using HTML via .load() method');
-	                        box.load(desturl + ' ' + opts.itemSelector, null, function infscr_ajax_callback(jqXHR, textStatus) {
-	                            instance._loadcallback(box, jqXHR.responseText);
+	                        box.load(desturl + ' ' + opts.itemSelector, null, function infscr_ajax_callback(responseText) {
+	                            instance._loadcallback(box, responseText);
 	                        });
 
 	                        break;
@@ -498,7 +517,7 @@
 		// Unbind from scroll
 		unbind: function infscr_unbind() {
 			this._binding('unbind');
-		},
+		}
 
     }
 
