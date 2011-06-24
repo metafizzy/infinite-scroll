@@ -439,8 +439,8 @@
 	                    case 'html+callback':
 
 	                        instance._debug('Using HTML via .load() method');
-	                        box.load(desturl + ' ' + opts.itemSelector, null, function infscr_ajax_callback(jqXHR, textStatus) {
-	                            instance._loadcallback(box, jqXHR.responseText);
+	                        box.load(desturl + ' ' + opts.itemSelector, null, function infscr_ajax_callback(responseText) {
+	                            instance._loadcallback(box, responseText);
 	                        });
 
 	                        break;
@@ -498,7 +498,7 @@
 		// Unbind from scroll
 		unbind: function infscr_unbind() {
 			this._binding('unbind');
-		},
+		}
 
     }
 
