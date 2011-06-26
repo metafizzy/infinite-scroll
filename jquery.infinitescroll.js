@@ -69,9 +69,16 @@
         // Bind or unbind from scroll
         _binding: function infscr_binding(binding) {
 
-            var instance = this;
+            var instance = this,
+				opts = instance.options;
 
-            if (binding !== 'bind' && binding !== 'unbind') {
+            // if behavior is defined and this function is extended, call that instead of default
+			if (!!opts.behavior && this['_binding_'+opts.behavior] !== undefined) {
+				this['_binding_'+opts.behavior].call(this);
+				return;
+			}
+
+			if (binding !== 'bind' && binding !== 'unbind') {
                 this._debug('Binding value  ' + binding + ' not valid')
                 return false;
             }
@@ -153,7 +160,7 @@
         // Console log wrapper
         _debug: function infscr_debug() {
 
-            if (this.options.debug) {
+			if (this.options.debug) {
                 return window.console && console.log.call(console, arguments);
             }
 
@@ -163,6 +170,12 @@
         _determinepath: function infscr_determinepath(path) {
 
             var opts = this.options;
+
+			// if behavior is defined and this function is extended, call that instead of default
+			if (!!opts.behavior && this['_determinepath_'+opts.behavior] !== undefined) {
+				this['_determinepath_'+opts.behavior].call(this,path);
+				return;
+			}
 
             if ($.isFunction(opts.pathParse)) {
 
@@ -207,6 +220,12 @@
 
             var opts = this.options;
 
+			// if behavior is defined and this function is extended, call that instead of default
+			if (!!opts.behavior && this['_error_'+opts.behavior] !== undefined) {
+				this['_error_'+opts.behavior].call(this,xhr);
+				return;
+			}
+
             if (xhr !== 'destroy' && xhr !== 'end') {
                 xhr = 'unknown';
             }
@@ -231,6 +250,12 @@
 	    		callback = this.options.callback, // GLOBAL OBJECT FOR CALLBACK
 	    		result = (opts.isDone) ? 'done' : (!opts.appendCallback) ? 'no-append' : 'append',
 	    		frag;
+	
+			// if behavior is defined and this function is extended, call that instead of default
+			if (!!opts.behavior && this['_loadcallback_'+opts.behavior] !== undefined) {
+				this['_loadcallback_'+opts.behavior].call(this,box,data);
+				return;
+			}
 
             switch (result) {
 
@@ -301,7 +326,13 @@
             var opts = this.options,
 	        	pixelsFromWindowBottomToBottom = 0 + $(document).height() - (opts.binder.scrollTop()) - $(window).height();
 
-            this._debug('math:', pixelsFromWindowBottomToBottom, opts.pixelsFromNavToBottom);
+            // if behavior is defined and this function is extended, call that instead of default
+			if (!!opts.behavior && this['_nearbottom_'+opts.behavior] !== undefined) {
+				this['_nearbottom_'+opts.behavior].call(this);
+				return;
+			}
+
+			this._debug('math:', pixelsFromWindowBottomToBottom, opts.pixelsFromNavToBottom);
 
             // if distance remaining in the scroll (including buffer) is less than the orignal nav to bottom....
             return (pixelsFromWindowBottomToBottom - opts.bufferPx < opts.pixelsFromNavToBottom);
@@ -313,7 +344,13 @@
 
             var opts = this.options;
 
-            // If pause is not 'pause' or 'resume', toggle it's value
+            // if behavior is defined and this function is extended, call that instead of default
+			if (!!opts.behavior && this['_pausing_'+opts.behavior] !== undefined) {
+				this['_pausing_'+opts.behavior].call(this,pause);
+				return;
+			}
+
+			// If pause is not 'pause' or 'resume', toggle it's value
             if (pause !== 'pause' && pause !== 'resume' && pause !== null) {
                 this._debug('Invalid argument. Toggling pause value instead');
             };
@@ -344,7 +381,14 @@
 		_setup: function infscr_setup() {
 			
 			var opts = this.options;
-			(!opts.behavior)? this._binding('bind') : this['_setup_'+opts.behavior]();
+			
+			// if behavior is defined and this function is extended, call that instead of default
+			if (!!opts.behavior && this['_setup_'+opts.behavior] !== undefined) {
+				this['_setup_'+opts.behavior].call(this);
+				return;
+			}
+			
+			this._binding('bind');
 			
 			return false;
 			
@@ -354,6 +398,12 @@
         _showdonemsg: function infscr_showdonemsg() {
 
             var opts = this.options;
+
+			// if behavior is defined and this function is extended, call that instead of default
+			if (!!opts.behavior && this['_showdonemsg_'+opts.behavior] !== undefined) {
+				this['_showdonemsg_'+opts.behavior].call(this);
+				return;
+			}
 
             opts.loadingMsg
 	    		.find('img')
@@ -462,6 +512,12 @@
 	                        break;
 	                }
 				};
+				
+			// if behavior is defined and this function is extended, call that instead of default
+			if (!!opts.behavior && this['retrieve_'+opts.behavior] !== undefined) {
+				this['retrieve_'+opts.behavior].call(this,pageNum);
+				return;
+			}
 
             
 			// for manual triggers, if destroyed, get out of here
@@ -482,7 +538,13 @@
 
             var opts = this.options;
 
-            if (opts.isDuringAjax || opts.isInvalidPage || opts.isDone || opts.isDestroyed || opts.isPaused) return;
+            // if behavior is defined and this function is extended, call that instead of default
+			if (!!opts.behavior && this['scroll_'+opts.behavior] !== undefined) {
+				this['scroll_'+opts.behavior].call(this);
+				return;
+			}
+
+			if (opts.isDuringAjax || opts.isInvalidPage || opts.isDone || opts.isDestroyed || opts.isPaused) return;
 
             if (!this._nearbottom()) return;
 
@@ -564,7 +626,7 @@
                     if (instance) {
 
                         // go for it
-                        // instance._create(options);
+                        // instance._update(options);
 
                     } else {
 
