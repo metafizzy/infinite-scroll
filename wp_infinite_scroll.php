@@ -146,7 +146,7 @@ function wp_inf_scroll_init()
 		
 		/* I always hated the way the old plugin outputted... so did my IDE... */
 		echo "<script type=\"text/javascript\"> if (!(window.jQuery && jQuery.fn.jquery >= '1.5')){document.write(unescape(\"%3Cscript src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js' type='text/javascript'%3E%3C/script%3E\"));}</script>";
-		echo "<script type=\"text/javascript\" src=\"$plugin_dir/jquery.infinitescroll.js\"></script>";
+		echo "<script type=\"text/javascript\" src=\"$plugin_dir/jquery.infinitescroll.min.js\"></script>";
 		echo "	<script type=\"text/javascript\">
 				jQuery(document).ready(function($) {
 				// Infinite Scroll jQuery+Wordpress plugin
