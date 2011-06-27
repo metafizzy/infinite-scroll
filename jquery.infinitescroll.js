@@ -3,7 +3,7 @@
 	Infinite Scroll
 	--------------------------------
 	+ https://github.com/paulirish/infinitescroll
-	+ version 2.0b2.110617
+	+ version 2.0b2.110627
 	+ Copyright 2011 Paul Irish & Luke Shumard
 	+ Licensed under the MIT license
 	
@@ -177,10 +177,10 @@
 				return;
 			}
 
-            if ($.isFunction(opts.pathParse)) {
+            if (!!opts.pathParse) {
 
-                this._debug('pathParse');
-                return [path];
+                this._debug('pathParse manual');
+                return opts.pathParse;
 
             } else if (path.match(/^(.*?)\b2\b(.*?$)/)) {
                 path = path.match(/^(.*?)\b2\b(.*?$)/).slice(1);
@@ -479,7 +479,7 @@
 	                // if we're dealing with a table we can't use DIVs
 	                box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');
 
-	                desturl = ($.isFunction(opts.pathParse)) ? opts.pathParse(path.join('2'), opts.currPage) : path.join(opts.currPage);
+	                desturl = path.join(opts.currPage);
 
 	                method = (opts.dataType == 'html' || opts.dataType == 'json') ? opts.dataType : 'html+callback';
 	                if (opts.appendCallback && opts.dataType == 'html') method += '+callback'
