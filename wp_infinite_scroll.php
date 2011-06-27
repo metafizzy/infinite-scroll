@@ -466,5 +466,4 @@ if ( get_option(key_infscr_state) == infscr_state_default && get_option(key_infs
 	</p>
 	</div>
 </form>
-
 <?php }?>
