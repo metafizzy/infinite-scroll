@@ -418,7 +418,7 @@
 
         },
 
-        // grab each selector option and see if any fail
+		// grab each selector option and see if any fail
         _validate: function infscr_validate(opts) {
 
             for (var key in opts) {
@@ -560,6 +560,13 @@
 		// Unbind from scroll
 		unbind: function infscr_unbind() {
 			this._binding('unbind');
+		},
+		
+		// update options
+		update: function infscr_options(key) {
+			if ($.isPlainObject(key)) {
+				this.options = $.extend(true,this.options,key);
+			}
 		}
 
     }
@@ -625,8 +632,8 @@
 
                     if (instance) {
 
-                        // go for it
-                        // instance._update(options);
+                        // update options of current instance
+                        instance.update(options);
 
                     } else {
 
