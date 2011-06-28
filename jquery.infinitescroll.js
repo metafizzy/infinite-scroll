@@ -3,7 +3,7 @@
 	Infinite Scroll
 	--------------------------------
 	+ https://github.com/paulirish/infinitescroll
-	+ version 2.0b2.110627
+	+ version 2.0b2.110628
 	+ Copyright 2011 Paul Irish & Luke Shumard
 	+ Licensed under the MIT license
 	
@@ -239,7 +239,7 @@
             opts.isDone = true;
             opts.currPage = 1; // if you need to go back to this instance
             opts.isPaused = false;
-            this.binding('unbind');
+            this._binding('unbind');
 
         },
 
