@@ -1,8 +1,7 @@
 <?php
-
 /*
 Plugin Name: Infinite Scroll
-Version: 2.0b2.110617
+Version: 2.0b2.110628
 Plugin URI: http://www.infinite-scroll.com
 Description: Automatically loads the next page of posts into the bottom of the initial page. 
 Author: dirkhaim & Paul Irish & Beaver6813
@@ -12,6 +11,7 @@ License   : http://creativecommons.org/licenses/GPL/2.0/
 
 BUGS:
  - javascript insertion doesnt work on themes: qwiilm!, craving4green, Lush, no limits, stripedplus   
+ - Note: Above bug left over from old plugin. Needs verifying.
 */
 
 // constants for enables/disabled
@@ -95,7 +95,62 @@ function wp_inf_scroll_setup_warning()
 	{
 	echo "<div id='infinitescroll-warning' class='updated fade'><p><strong>".__('Infinite Scroll is almost ready.')."</strong> ".sprintf(__('Please <a href="%1$s">review the configuration and set the state to ON</a>.'), "options-general.php?page=wp_infinite_scroll.php")."</p></div>\n";
 	}
+function wp_inf_scroll_getAttribute($attrib, $tag)
+	{
+		//get attribute from html tag
+		$re = '/' . preg_quote($attrib) . '=([\'"])?((?(1).+?|[^\s>]+))(?(1)\1)/is';
+		if (preg_match_all($re, $tag, $match)) {
+			return $match[2];
+		}
+			return false;
+	}
+/* 
+Stripped down version of get_pagenum_link() from link-template.php
+We use this to retrieve the URL array (seperated for placement of page number).
+This saves using regex on the entire URL that could be unpredictable on some
+installations.
+Added Build: 110628 */
+function wp_inf_scroll_get_pagenum_link() {
+	global $wp_rewrite;
 
+	$request = remove_query_arg( 'paged' );
+
+	$home_root = parse_url(home_url());
+	$home_root = ( isset($home_root['path']) ) ? $home_root['path'] : '';
+	$home_root = preg_quote( trailingslashit( $home_root ), '|' );
+
+	$request = preg_replace('|^'. $home_root . '|', '', $request);
+	$request = preg_replace('|^/+|', '', $request);
+
+	if ( !$wp_rewrite->using_permalinks() || is_admin() ) {
+		$base = trailingslashit( get_bloginfo( 'url' ) );
+		$result = add_query_arg( 'paged', "|||INF-SPLITHERE|||", $base . $request );
+	} else {
+		$qs_regex = '|\?.*?$|';
+		preg_match( $qs_regex, $request, $qs_match );
+
+		if ( !empty( $qs_match[0] ) ) {
+			$query_string = $qs_match[0];
+			$request = preg_replace( $qs_regex, '', $request );
+		} else {
+			$query_string = '';
+		}
+
+		$request = preg_replace( "|$wp_rewrite->pagination_base/\d+/?$|", '', $request);
+		$request = preg_replace( '|^index\.php|', '', $request);
+		$request = ltrim($request, '/');
+
+		$base = trailingslashit( get_bloginfo( 'url' ) );
+
+		if ( $wp_rewrite->using_index_permalinks() && '' != $request )
+			$base .= 'index.php/';
+
+		$request = ( ( !empty( $request ) ) ? trailingslashit( $request ) : $request ) . user_trailingslashit( $wp_rewrite->pagination_base . "/" . "|||INF-SPLITHERE|||", 'paged' );
+		$result = $base . $request . $query_string;
+	}
+	$result = apply_filters('get_pagenum_link', $result);
+	return explode("|||INF-SPLITHERE|||",$result);
+}
 function wp_inf_scroll_init()
 	{
 	global $user_level;
@@ -143,30 +198,41 @@ function wp_inf_scroll_init()
 		$next_selector		= stripslashes(get_option(key_infscr_next_selector));
 		$debug				= (stripslashes(get_option(key_infscr_debug))==1) ? "true" : "false";
 		$current_page 		= (get_query_var('paged')) ? get_query_var('paged') : 1;
+		$pathParse			= wp_inf_scroll_get_pagenum_link();
+		$nextpage_no 		= intval($current_page) + 1;
+		$max_page 			= $wp_query->max_num_pages;
 		
-		/* I always hated the way the old plugin outputted... so did my IDE... */
-		echo "<script type=\"text/javascript\"> if (!(window.jQuery && jQuery.fn.jquery >= '1.5')){document.write(unescape(\"%3Cscript src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js' type='text/javascript'%3E%3C/script%3E\"));}</script>";
-		echo "<script type=\"text/javascript\" src=\"$plugin_dir/jquery.infinitescroll.min.js\"></script>";
-		echo "	<script type=\"text/javascript\">
-				jQuery(document).ready(function($) {
-				// Infinite Scroll jQuery+Wordpress plugin
-				$('$content_selector').infinitescroll({
-   					debug           : $debug,
-    				nextSelector    : \"$next_selector\",
-    				loadingImg      : \"$loading_image\",
-   					loadingText     : \"$loading_text\",
-    				donetext        : \"$donetext\",
-    				navSelector     : \"$navigation_selector\",
-    				contentSelector : \"$content_selector\",
-    				itemSelector    : \"$post_selector\",
-					currPage		: \"$current_page\",
-					pathParse		: [\"$site_url/?paged=\", \"\"],
-					callback		: function() { $js_calls }
-    				});
-				});	
-				</script>";
-		return true;
-    	}
+		if ( !$max_page || $max_page >= $nextpage )
+			{			
+			/* I always hated the way the old plugin outputted... so did my IDE... */
+			echo "<script type=\"text/javascript\"> if (!(window.jQuery && jQuery.fn.jquery >= '1.5')){document.write(unescape(\"%3Cscript src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js' type='text/javascript'%3E%3C/script%3E\"));}</script>";
+			echo "<script type=\"text/javascript\" src=\"$plugin_dir/jquery.infinitescroll.js\"></script>";
+			echo "	<script type=\"text/javascript\">
+					jQuery(document).ready(function($) {
+					// Infinite Scroll jQuery+Wordpress plugin
+					$('$content_selector').infinitescroll({
+						debug           : $debug,
+						nextSelector    : \"$next_selector\",
+						loadingImg      : \"$loading_image\",
+						loadingText     : \"$loading_text\",
+						donetext        : \"$donetext\",
+						navSelector     : \"$navigation_selector\",
+						contentSelector : \"$content_selector\",
+						itemSelector    : \"$post_selector\",
+						currPage		: \"$current_page\",
+						pathParse		: [\"{$pathParse[0]}\", \"{$pathParse[1]}\"],
+						callback		: function() { $js_calls }
+						});
+					});	
+					</script>";
+			return true;
+			}
+		else
+			{
+    		echo "<!-- Infinite-Scroll not added. Reason: No More Posts To Display After This -->\r\n";
+			return false;
+    		}
+		}
 	else
 		{
     	echo "<!-- Infinite-Scroll not added. Reason: $error_reason -->\r\n";
