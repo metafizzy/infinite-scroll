@@ -21,7 +21,7 @@
 	};
 	
 	$.infinitescroll.defaults = {
-		callback: function () { },
+		callback: undefined,
 		debug: false,
 		behavior: undefined,
 		binder: $(window), // used to cache the selector
@@ -151,7 +151,7 @@
 			};
 
             // callback loading
-            opts.callback = callback || function () { };
+            opts.callback = opts.callback || callback || function () { };
 
             this._setup();
 
