@@ -21,18 +21,29 @@
 	};
 	
 	$.infinitescroll.defaults = {
+		loading: {
+			finished: undefined,
+			finishedMsg: "<em>Congratulations, you've reached the end of the internet.</em>",
+			img: "http://www.infinite-scroll.com/loading.gif",
+			msg: null,
+			msgText: "<em>Loading the next set of posts...</em>",
+			selector: null,
+			speed: 'fast',
+			start: undefined
+		},
+		state: {
+			isDuringAjax: false,
+			isInvalidPage: false,
+			isDestroyed: false,
+			isDone: false, // For when it goes all the way through the archive.
+			isPaused: false,
+			currPage: 1,
+		},
 		callback: undefined,
 		debug: false,
 		behavior: undefined,
 		binder: $(window), // used to cache the selector
 		nextSelector: "div.navigation a:first",
-		loadMsgSelector: null,
-		loadingMsgRevealSpeed: 'fast', // controls how fast you want the loading message to come in, ex: 'fast', 'slow', 200 (milliseconds)
-		loadingImg: "http://www.infinite-scroll.com/loading.gif",
-		loadingText: "<em>Loading the next set of posts...</em>",
-		loadingStart: undefined,
-		loadingEnd: undefined,
-		donetext: "<em>Congratulations, you've reached the end of the internet.</em>",
 		navSelector: "div.navigation",
 		contentSelector: null, // rename to pageFragment
 		extraScrollPx: 150,
@@ -42,19 +53,10 @@
 		dataType: 'html',
 		appendCallback: true,
 		bufferPx: 40,
-		orientation: 'height',
 		errorCallback: function () { },
-		currPage: 1,
 		infid: 0, //Instance ID
-		isDuringAjax: false,
-		isInvalidPage: false,
-		isDestroyed: false,
-		isDone: false, // For when it goes all the way through the archive.
-		isPaused: false,
 		pixelsFromNavToBottom: undefined,
-		pagesLoaded: null,
 		path: undefined,
-		loadingMsg: undefined
 	};
 
 
@@ -114,8 +116,8 @@
             // contentSelector is 'page fragment' option for .load() / .ajax() calls
             opts.contentSelector = opts.contentSelector || this.element;
 
-            // loadMsgSelector - if we want to place the load message in a specific selector, defaulted to the contentSelector
-            opts.loadMsgSelector = opts.loadMsgSelector || opts.contentSelector;
+            // loading.selector - if we want to place the load message in a specific selector, defaulted to the contentSelector
+            opts.loading.selector = opts.loading.selector || opts.contentSelector;
 
             // if there's not path, return
             if (!path) { this._debug('Navigation selector not found'); return; }
@@ -123,31 +125,31 @@
             // Set the path to be a relative URL from root.
             opts.path = this._determinepath(path);
 
-            // Define loadingMsg
-            opts.loadingMsg = $('<div id="infscr-loading"><img alt="Loading..." src="' + opts.loadingImg + '" /><div>' + opts.loadingText + '</div></div>');
+            // Define loading.msg
+            opts.loading.msg = $('<div id="infscr-loading"><img alt="Loading..." src="' + opts.loading.img + '" /><div>' + opts.loading.msgText + '</div></div>');
 
-            // Preload loadingImg
-            (new Image()).src = opts.loadingImg;
+            // Preload loading.img
+            (new Image()).src = opts.loading.img;
 
             // distance from nav links to bottom
             // computed as: height of the document + top offset of container - top offset of nav link
             opts.pixelsFromNavToBottom = $(document).height() - $(opts.navSelector).offset().top;
 
-			// determine loadingStart actions
-            opts.loadingStart = opts.loadingStart || function() {
+			// determine loading.start actions
+            opts.loading.start = opts.loading.start || function() {
 				
 				$(opts.navSelector).hide();
 
-				opts.loadingMsg
-					.appendTo(opts.loadMsgSelector)
-					.show(opts.loadingMsgRevealSpeed, function () {
+				opts.loading.msg
+					.appendTo(opts.loading.selector)
+					.show(opts.loading.speed, function () {
 	                	beginAjax(opts);
 	            });
 			};
 			
-			// determine loadingEnd actions
-			opts.loadingEnd = opts.loadingEnd || function() {
-				opts.loadingMsg.fadeOut('normal');
+			// determine loading.finished actions
+			opts.loading.finished = opts.loading.finished || function() {
+				opts.loading.msg.fadeOut('normal');
 			};
 
             // callback loading
@@ -214,7 +216,7 @@
                 } else {
                     this._debug('Sorry, we couldn\'t parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.');
                     // Get rid of isInvalidPage to allow permalink to state
-                    opts.isInvalidPage = true;  //prevent it from running on this page.
+                    opts.state.isInvalidPage = true;  //prevent it from running on this page.
                 }
             }
             this._debug('determinePath', path);
@@ -243,9 +245,9 @@
                 this._showdonemsg();
             }
 
-            opts.isDone = true;
-            opts.currPage = 1; // if you need to go back to this instance
-            opts.isPaused = false;
+            opts.state.isDone = true;
+            opts.state.currPage = 1; // if you need to go back to this instance
+            opts.state.isPaused = false;
             this._binding('unbind');
 
         },
@@ -255,7 +257,7 @@
 
             var opts = this.options,
 	    		callback = this.options.callback, // GLOBAL OBJECT FOR CALLBACK
-	    		result = (opts.isDone) ? 'done' : (!opts.appendCallback) ? 'no-append' : 'append',
+	    		result = (opts.state.isDone) ? 'done' : (!opts.appendCallback) ? 'no-append' : 'append',
 	    		frag;
 	
 			// if behavior is defined and this function is extended, call that instead of default
@@ -313,16 +315,16 @@
             }
 
             // loadingEnd function
-			opts.loadingEnd.call($(opts.contentSelector)[0],opts)
+			opts.loading.finished.call($(opts.contentSelector)[0],opts)
             
 
             // smooth scroll to ease in the new content
             if (opts.animate) {
                 var scrollTo = $(window).scrollTop() + $('#infscr-loading').height() + opts.extraScrollPx + 'px';
-                $('html,body').animate({ scrollTop: scrollTo }, 800, function () { opts.isDuringAjax = false; });
+                $('html,body').animate({ scrollTop: scrollTo }, 800, function () { opts.state.isDuringAjax = false; });
             }
 
-            if (!opts.animate) opts.isDuringAjax = false; // once the call is done, we can allow it again.
+            if (!opts.animate) opts.state.isDuringAjax = false; // once the call is done, we can allow it again.
 
             callback(this,data);
 
@@ -366,19 +368,19 @@
 
             switch (pause) {
                 case 'pause':
-                    opts.isPaused = true;
+                    opts.state.isPaused = true;
                     break;
 
                 case 'resume':
-                    opts.isPaused = false;
+                    opts.state.isPaused = false;
                     break;
 
                 case 'toggle':
-                    opts.isPaused = !opts.isPaused;
+                    opts.state.isPaused = !opts.state.isPaused;
                     break;
             }
 
-            this._debug('Paused', opts.isPaused);
+            this._debug('Paused', opts.state.isPaused);
             return false;
 
         },
@@ -412,11 +414,11 @@
 				return;
 			}
 
-            opts.loadingMsg
+            opts.loading.msg
 	    		.find('img')
 	    		.hide()
 	    		.parent()
-	    		.find('div').html(opts.donetext).animate({ opacity: 1 }, 2000, function () {
+	    		.find('div').html(opts.loading.finishedMsg).animate({ opacity: 1 }, 2000, function () {
 	    		    $(this).parent().fadeOut('normal');
 	    		});
 
@@ -452,7 +454,7 @@
         // Destroy current instance of plugin
         destroy: function infscr_destroy() {
 
-            this.options.isDestroyed = true;
+            this.options.state.isDestroyed = true;
             return this._error('destroy');
 
         },
@@ -475,18 +477,18 @@
 				path = opts.path,
 				box, frag, desturl, method, condition,
 	    		pageNum = pageNum || null,
-				getPage = (!!pageNum) ? pageNum : opts.currPage;
+				getPage = (!!pageNum) ? pageNum : opts.state.currPage;
 				beginAjax = function infscr_ajax(opts) {
 					
 					// increment the URL bit. e.g. /page/3/
-	                opts.currPage++;
+	                opts.state.currPage++;
 
 	                instance._debug('heading into ajax', path);
 
 	                // if we're dealing with a table we can't use DIVs
 	                box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');
 
-	                desturl = path.join(opts.currPage);
+	                desturl = path.join(opts.state.currPage);
 
 	                method = (opts.dataType == 'html' || opts.dataType == 'json') ? opts.dataType : 'html+callback';
 	                if (opts.appendCallback && opts.dataType == 'html') method += '+callback'
@@ -528,22 +530,23 @@
 
             
 			// for manual triggers, if destroyed, get out of here
-			if (opts.isDestroyed) {
+			if (opts.state.isDestroyed) {
                 this._debug('Instance is destroyed');
                 return false;
             };
 
             // we dont want to fire the ajax multiple times
-            opts.isDuringAjax = true;
+            opts.state.isDuringAjax = true;
 
-            opts.loadingStart.call($(opts.contentSelector)[0],opts);
+            opts.loading.start.call($(opts.contentSelector)[0],opts);
 
         },
 
         // Check to see next page is needed
         scroll: function infscr_scroll() {
 
-            var opts = this.options;
+            var opts = this.options,
+				state = opts.state;
 
             // if behavior is defined and this function is extended, call that instead of default
 			if (!!opts.behavior && this['scroll_'+opts.behavior] !== undefined) {
@@ -551,7 +554,7 @@
 				return;
 			}
 
-			if (opts.isDuringAjax || opts.isInvalidPage || opts.isDone || opts.isDestroyed || opts.isPaused) return;
+			if (state.isDuringAjax || state.isInvalidPage || state.isDone || state.isDestroyed || state.isPaused) return;
 
             if (!this._nearbottom()) return;
 

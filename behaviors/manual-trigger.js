@@ -18,8 +18,8 @@ $.extend($.infinitescroll.prototype,{
 		var opts = this.options,
 			instance = this;
 			
-		// Bind loadMore link to retrieve
-		$(opts.loadMore).click(function(e) {
+		// Bind nextSelector link to retrieve
+		$(opts.nextSelector).click(function(e) {
 			if (e.which == 1 && !e.metaKey && !e.shiftKey) {
 				e.preventDefault();
 				instance.retrieve();
@@ -27,10 +27,10 @@ $.extend($.infinitescroll.prototype,{
 		});
 		
 		// Define loadingStart to never hide pager
-		instance.options.loadingStart = function (opts) {
-			opts.loadingMsg
-				.appendTo(opts.loadMsgSelector)
-				.show(opts.loadingMsgRevealSpeed, function () {
+		instance.options.loading.start = function (opts) {
+			opts.loading.msg
+				.appendTo(opts.loading.selector)
+				.show(opts.loading.speed, function () {
                 	beginAjax(opts);
             });
 		}
