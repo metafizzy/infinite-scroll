@@ -151,7 +151,14 @@
 			};
 
             // callback loading
-            opts.callback = opts.callback || callback || function () { };
+            opts.callback = function(instance,data) {
+				if (!!opts.behavior && instance['_callback_'+opts.behavior] !== undefined) {
+					instance['_callback_'+opts.behavior].call($(opts.contentSelector)[0], data);
+				}
+				if (callback) {
+					callback.call($(opts.contentSelector)[0], data);
+				}
+			};
 
             this._setup();
 
@@ -317,7 +324,7 @@
 
             if (!opts.animate) opts.isDuringAjax = false; // once the call is done, we can allow it again.
 
-            callback.call($(opts.contentSelector)[0], data);
+            callback(this,data);
 
         },
 

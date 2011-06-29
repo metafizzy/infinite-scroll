@@ -25,6 +25,15 @@ $.extend($.infinitescroll.prototype,{
 				instance.retrieve();
 			}
 		});
+		
+		// Define loadingStart to never hide pager
+		instance.options.loadingStart = function (opts) {
+			opts.loadingMsg
+				.appendTo(opts.loadMsgSelector)
+				.show(opts.loadingMsgRevealSpeed, function () {
+                	beginAjax(opts);
+            });
+		}
 	}
 	
 });

@@ -1,7 +1,7 @@
 /*
 	--------------------------------
 	Infinite Scroll Behavior
-	Masonry Integration
+	Cufon Refresh
 	--------------------------------
 	+ https://github.com/paulirish/infinitescroll/
 	+ version 2.0b2.110617
@@ -14,8 +14,8 @@
 
 $.extend($.infinitescroll.prototype,{
 	
-	_callback_masonry: function infscr_callback_masonry (newElements) {
-		$(this).masonry('appended',$(newElements));
+	_callback_cufon: function infscr_callback_cufon(newElements) {
+		Cufon.refresh(newElements);
 	}
 	
 });
