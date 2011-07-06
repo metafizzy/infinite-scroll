@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Infinite Scroll
-Version: 2.0b2.110628
+Version: 2.0b2.110706
 Plugin URI: http://www.infinite-scroll.com
 Description: Automatically loads the next page of posts into the bottom of the initial page. 
 Author: dirkhaim, Paul Irish, Beaver6813
@@ -189,7 +189,13 @@ function wp_inf_scroll_init()
 		$site_url 			= site_url();
 		$plugin_dir 		= plugins_url('infinite-scroll');
 		$js_calls			= stripslashes(get_option(key_infscr_js_calls));
-		$loading_image		= stripslashes(get_option(key_infscr_image));
+		//Fancy stuff (not) to detect https or http
+		$noscheme 			= parse_url(stripslashes(get_option(key_infscr_image)));
+		if (is_ssl())
+			$scheme			= "https://";
+		else
+			$scheme			= "http://";
+		$loading_image		= $scheme.$noscheme['host'].$noscheme['path'];	
 		$loading_text		= stripslashes(get_option(key_infscr_text));
 		$donetext			= stripslashes(get_option(key_infscr_donetext));
 		$content_selector	= stripslashes(get_option(key_infscr_content_selector));
