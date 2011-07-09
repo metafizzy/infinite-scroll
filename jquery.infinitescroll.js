@@ -3,7 +3,7 @@
 	Infinite Scroll
 	--------------------------------
 	+ https://github.com/paulirish/infinitescroll
-	+ version 2.0b2.110706
+	+ version 2.0b2.110709
 	+ Copyright 2011 Paul Irish & Luke Shumard
 	+ Licensed under the MIT license
 	
@@ -106,9 +106,8 @@
 
             // If selectors from options aren't valid, return false
             if (!this._validate(options)) { return false; }
-
             // Define options and shorthand
-            var opts = this.options = $.extend({}, $.infinitescroll.defaults, options),
+            var opts = this.options = $.extend(true, {}, $.infinitescroll.defaults, options),
 				// get the relative URL - everything past the domain name.
 				relurl = /(.*?\/\/).*?(\/.*)/,
 				path = $(opts.nextSelector).attr('href');
@@ -139,7 +138,6 @@
             opts.loading.start = opts.loading.start || function() {
 				
 				$(opts.navSelector).hide();
-
 				opts.loading.msg
 					.appendTo(opts.loading.selector)
 					.show(opts.loading.speed, function () {

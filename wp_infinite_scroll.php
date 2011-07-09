@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Infinite Scroll
-Version: 2.0b2.110706
+Version: 2.0b2.110709
 Plugin URI: http://www.infinite-scroll.com
 Description: Automatically loads the next page of posts into the bottom of the initial page. 
 Author: dirkhaim, Paul Irish, Beaver6813
@@ -211,7 +211,7 @@ function wp_inf_scroll_init()
 		if ( !$max_page || $max_page >= $nextpage )
 			{			
 			/* I always hated the way the old plugin outputted... so did my IDE... */
-			echo "<script type=\"text/javascript\"> if (!(window.jQuery && jQuery.fn.jquery >= '1.5')){document.write(unescape(\"%3Cscript src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js' type='text/javascript'%3E%3C/script%3E\"));}</script>";
+			echo "<script type=\"text/javascript\"> if (!(window.jQuery && jQuery.fn.jquery >= '1.6')){document.write(unescape(\"%3Cscript src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js' type='text/javascript'%3E%3C/script%3E\"));}</script>";
 			if($debug=="true")
 				echo "<script type=\"text/javascript\" src=\"$plugin_dir/jquery.infinitescroll.js\"></script>";
 			else
@@ -221,16 +221,20 @@ function wp_inf_scroll_init()
 					// Infinite Scroll jQuery+Wordpress plugin
 					$('$content_selector').infinitescroll({
 						debug           : $debug,
+						loading			: {
+							img			: \"$loading_image\",
+							msgText		: \"$loading_text\",
+							finishedMsg	: \"$donetext\",
+							finished	: function() { $js_calls }
+							},
+						state			: {
+							currPage	: \"$current_page\"
+							},
 						nextSelector    : \"$next_selector\",
-						loadingImg      : \"$loading_image\",
-						loadingText     : \"$loading_text\",
-						donetext        : \"$donetext\",
 						navSelector     : \"$navigation_selector\",
 						contentSelector : \"$content_selector\",
 						itemSelector    : \"$post_selector\",
-						currPage		: \"$current_page\",
-						pathParse		: [\"{$pathParse[0]}\", \"{$pathParse[1]}\"],
-						callback		: function() { $js_calls }
+						pathParse		: [\"{$pathParse[0]}\", \"{$pathParse[1]}\"]
 						});
 					});	
 					</script>";
