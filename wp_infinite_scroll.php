@@ -224,8 +224,7 @@ function wp_inf_scroll_init()
 						loading			: {
 							img			: \"$loading_image\",
 							msgText		: \"$loading_text\",
-							finishedMsg	: \"$donetext\",
-							finished	: function() { $js_calls }
+							finishedMsg	: \"$donetext\"
 							},
 						state			: {
 							currPage	: \"$current_page\"
@@ -235,7 +234,7 @@ function wp_inf_scroll_init()
 						contentSelector : \"$content_selector\",
 						itemSelector    : \"$post_selector\",
 						pathParse		: [\"{$pathParse[0]}\", \"{$pathParse[1]}\"]
-						});
+						}, function() { $js_calls } );
 					});	
 					</script>";
 			return true;
