@@ -61,13 +61,20 @@ add_option(key_infscr_viewed_options 	, false		, 'Ever Viewed Options Page');
 add_option(key_infscr_debug 	, 0		, 'Debug Mode');
 
 // adding actions
-add_action('wp_head'		, 'wp_inf_scroll_init');
-add_action('admin_menu'		, 'add_wp_inf_scroll_options_page');
-add_action("wp"				, 'wp_inf_scroll_404');	
+add_action('template_redirect'	, 'wp_inf_scroll_pre_init');
+add_action('wp_head'			, 'wp_inf_scroll_init');
+add_action('admin_menu'			, 'add_wp_inf_scroll_options_page');
+add_action("wp"					, 'wp_inf_scroll_404');	
 
 if ( get_option(key_infscr_state) == infscr_state_default && get_option(key_infscr_viewed_options) == false && !isset($_POST['submit']) )
 	add_action('admin_notices', 'wp_inf_scroll_setup_warning');	
-
+/*
+The old way of detecting for the presence of jQuery was hacktacular and wildy 
+unpredictable. We'll use Wordpresses way. */
+function wp_inf_scroll_pre_init($wp)
+	{
+	wp_enqueue_script( 'jquery' );
+	}
 /*
 Because recently (3.0) WP doesn't always throw a 404 when posts aren't found.
 Infinite-Scroll relies on 404 errors to terminate.. so we'll force them. */
@@ -94,15 +101,6 @@ function wp_inf_scroll_error($message)
 function wp_inf_scroll_setup_warning() 
 	{
 	echo "<div id='infinitescroll-warning' class='updated fade'><p><strong>".__('Infinite Scroll is almost ready.')."</strong> ".sprintf(__('Please <a href="%1$s">review the configuration and set the state to ON</a>.'), "options-general.php?page=wp_infinite_scroll.php")."</p></div>\n";
-	}
-function wp_inf_scroll_getAttribute($attrib, $tag)
-	{
-		//get attribute from html tag
-		$re = '/' . preg_quote($attrib) . '=([\'"])?((?(1).+?|[^\s>]+))(?(1)\1)/is';
-		if (preg_match_all($re, $tag, $match)) {
-			return $match[2];
-		}
-			return false;
 	}
 /* 
 Stripped down version of get_pagenum_link() from link-template.php
@@ -151,6 +149,7 @@ function wp_inf_scroll_get_pagenum_link() {
 	$result = apply_filters('get_pagenum_link', $result);
 	return explode("|||INF-SPLITHERE|||",$result);
 }
+
 function wp_inf_scroll_init()
 	{
 	global $user_level;
@@ -211,7 +210,6 @@ function wp_inf_scroll_init()
 		if ( !$max_page || $max_page >= $nextpage )
 			{			
 			/* I always hated the way the old plugin outputted... so did my IDE... */
-			echo "<script type=\"text/javascript\"> if (!(window.jQuery && jQuery.fn.jquery >= '1.6')){document.write(unescape(\"%3Cscript src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js' type='text/javascript'%3E%3C/script%3E\"));}</script>";
 			if($debug=="true")
 				echo "<script type=\"text/javascript\" src=\"$plugin_dir/jquery.infinitescroll.js\"></script>";
 			else
