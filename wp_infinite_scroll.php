@@ -119,15 +119,6 @@ function wp_inf_scroll_setup_warning()
 	{
 	echo "<div id='infinitescroll-warning' class='updated fade'><p><strong>".__('Infinite Scroll is almost ready.')."</strong> ".sprintf(__('Please <a href="%1$s">review the configuration and set the state to ON</a>.'), "options-general.php?page=wp_infinite_scroll.php")."</p></div>\n";
 	}
-function wp_inf_scroll_getAttribute($attrib, $tag)
-	{
-		//get attribute from html tag
-		$re = '/' . preg_quote($attrib) . '=([\'"])?((?(1).+?|[^\s>]+))(?(1)\1)/is';
-		if (preg_match_all($re, $tag, $match)) {
-			return $match[2];
-		}
-			return false;
-	}
 /* 
 Stripped down version of get_pagenum_link() from link-template.php
 We use this to retrieve the URL array (seperated for placement of page number).
