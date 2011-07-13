@@ -230,12 +230,14 @@ function wp_inf_scroll_init()
 			else
 				echo "<script type=\"text/javascript\" src=\"$plugin_dir/jquery.infinitescroll.min.js\"></script>";
 			echo "<script type=\"text/javascript\">
+					//We leave a function outside the infinite-scroll area so that it works with older jQuery versions
 					function infinite_scroll_callback() {
 						$js_calls	
 						}
 					jQuery(document).ready(function($) {
 					// Infinite Scroll jQuery+Wordpress plugin
-					jQuery('$content_selector').infinitescroll({
+					// Now we're inside, we should be able to use $ again
+					$('$content_selector').infinitescroll({
 						debug           : $debug,
 						loading			: {
 							img			: \"$loading_image\",
