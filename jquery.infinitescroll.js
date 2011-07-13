@@ -3,7 +3,7 @@
 	Infinite Scroll
 	--------------------------------
 	+ https://github.com/paulirish/infinitescroll
-	+ version 2.0b2.110709
+	+ version 2.0b2.110713
 	+ Copyright 2011 Paul Irish & Luke Shumard
 	+ Licensed under the MIT license
 	
@@ -689,7 +689,7 @@
 
             if (scrollTimeout) { clearTimeout(scrollTimeout); }
             scrollTimeout = setTimeout(function () {
-                jQuery.event.handle.apply(context, args);
+                $.event.handle.apply(context, args);
             }, execAsap === "execAsap" ? 0 : 100);
         }
     };
