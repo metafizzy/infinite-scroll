@@ -167,7 +167,7 @@
         // Console log wrapper
         _debug: function infscr_debug() {
 
-			if (this.options.debug) {
+			if (this.options && this.options.debug) {
                 return window.console && console.log.call(console, arguments);
             }
 
