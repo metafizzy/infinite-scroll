@@ -2,7 +2,7 @@
 	--------------------------------
 	Infinite Scroll
 	--------------------------------
-	+ https://github.com/paulirish/infinitescroll
+	+ https://github.com/paulirish/infinite-scroll
 	+ version 2.0b2.110713
 	+ Copyright 2011 Paul Irish & Luke Shumard
 	+ Licensed under the MIT license
