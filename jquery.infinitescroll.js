@@ -51,6 +51,7 @@
 		animate: false,
 		pathParse: undefined,
 		dataType: 'html',
+		extractLink: true,
 		appendCallback: true,
 		bufferPx: 40,
 		errorCallback: function () { },
@@ -215,7 +216,7 @@
                     return path;
                 } else {
                     this._debug('Sorry, we couldn\'t parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.');
-                    // Get rid of isInvalidPage to allow permalink to state
+                    //' Get rid of isInvalidPage to allow permalink to state
                     opts.state.isInvalidPage = true;  //prevent it from running on this page.
                 }
             }
@@ -279,6 +280,7 @@
 
                     if (opts.dataType == 'html') {
                         data = '<div>' + data + '</div>';
+                        if (opts.extractLink){opts.path = $(data).find(opts.nextSelector).attr("href")};
                         data = $(data).find(opts.itemSelector);
                     };
 
@@ -487,8 +489,9 @@
 
 	                // if we're dealing with a table we can't use DIVs
 	                box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');
-
-	                desturl = path.join(opts.state.currPage);
+						
+						desturl = opts.extaractLink ? path.join("") : path.join(opts.state.currPage);
+							
 
 	                method = (opts.dataType == 'html' || opts.dataType == 'json') ? opts.dataType : 'html+callback';
 	                if (opts.appendCallback && opts.dataType == 'html') method += '+callback'
