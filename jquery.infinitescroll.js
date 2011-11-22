@@ -125,8 +125,8 @@
             if (!path) { this._debug('Navigation selector not found'); return; }
 
             // Set the path to be a relative URL from root.
-            opts.path = this._determinepath(path);
-
+             opts.path= this._determinepath(path);
+				
             // Define loading.msg
             opts.loading.msg = $('<div id="infscr-loading"><img alt="Loading..." src="' + opts.loading.img + '" /><div>' + opts.loading.msgText + '</div></div>');
 
@@ -181,6 +181,12 @@
 
             var opts = this.options;
 
+			//IF extractLink link does not need it
+			
+			if(opts.extractLink){
+				return path ;
+				}
+			
 			// if behavior is defined and this function is extended, call that instead of default
 			if (!!opts.behavior && this['_determinepath_'+opts.behavior] !== undefined) {
 				this['_determinepath_'+opts.behavior].call(this,path);
@@ -280,7 +286,8 @@
 
                     if (opts.dataType == 'html') {
                         data = '<div>' + data + '</div>';
-                        if (opts.extractLink){opts.path = $(data).find(opts.nextSelector).attr("href")};
+                       
+                        
                         data = $(data).find(opts.itemSelector);
                     };
 
@@ -290,6 +297,16 @@
 
                     var children = box.children();
 
+ console.log("opts.extractLink - "+opts.extractLink);
+                        console.log("opts.extractLink - "+opts.extractLink);
+                        if (opts.extractLink){
+                        	this.options.path = $("<div>"+data+"</div>").find(opts.nextSelector).attr("href");
+                        	console.log("LINK - "+$("<div>"+data+"</div>").find(opts.nextSelector).attr("href"));
+                        	console.log("size - "+$("<div>"+data+"</div>").find(opts.nextSelector).size());
+                        	console.log("data - "+data);
+                        	console.log("opts.path - "+this.options);
+                        	};
+                        	
                     // if it didn't return anything
                     if (children.length == 0) {
                         return this._error('end');
@@ -490,8 +507,8 @@
 	                // if we're dealing with a table we can't use DIVs
 	                box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');
 						
-						desturl = opts.extaractLink ? path.join("") : path.join(opts.state.currPage);
-							
+						desturl = opts.extractLink ? path : path.join(opts.state.currPage);
+						if(!desturl){instance._error('end'); return}	
 
 	                method = (opts.dataType == 'html' || opts.dataType == 'json') ? opts.dataType : 'html+callback';
 	                if (opts.appendCallback && opts.dataType == 'html') method += '+callback'
