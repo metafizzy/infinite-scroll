@@ -51,6 +51,7 @@
 		animate: false,
 		pathParse: undefined,
 		dataType: 'html',
+		extractLink: false,
 		appendCallback: true,
 		bufferPx: 40,
 		errorCallback: function () { },
@@ -124,8 +125,8 @@
             if (!path) { this._debug('Navigation selector not found'); return; }
 
             // Set the path to be a relative URL from root.
-            opts.path = this._determinepath(path);
-
+             opts.path= this._determinepath(path);
+				
             // Define loading.msg
             opts.loading.msg = $('<div id="infscr-loading"><img alt="Loading..." src="' + opts.loading.img + '" /><div>' + opts.loading.msgText + '</div></div>');
 
@@ -180,6 +181,12 @@
 
             var opts = this.options;
 
+			//IF extractLink link does not need it
+			
+			if(opts.extractLink){
+				return path ;
+				}
+			
 			// if behavior is defined and this function is extended, call that instead of default
 			if (!!opts.behavior && this['_determinepath_'+opts.behavior] !== undefined) {
 				this['_determinepath_'+opts.behavior].call(this,path);
@@ -215,7 +222,7 @@
                     return path;
                 } else {
                     this._debug('Sorry, we couldn\'t parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.');
-                    // Get rid of isInvalidPage to allow permalink to state
+                    //' Get rid of isInvalidPage to allow permalink to state
                     opts.state.isInvalidPage = true;  //prevent it from running on this page.
                 }
             }
@@ -279,6 +286,8 @@
 
                     if (opts.dataType == 'html') {
                         data = '<div>' + data + '</div>';
+                       
+                        
                         data = $(data).find(opts.itemSelector);
                     };
 
@@ -287,7 +296,10 @@
                 case 'append':
 
                     var children = box.children();
-
+                        if (opts.extractLink){
+                        	this.options.path = $("<div>"+data+"</div>").find(opts.nextSelector).attr("href");
+                        	};
+                        	
                     // if it didn't return anything
                     if (children.length == 0) {
                         return this._error('end');
@@ -487,8 +499,9 @@
 
 	                // if we're dealing with a table we can't use DIVs
 	                box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');
-
-	                desturl = path.join(opts.state.currPage);
+						
+						desturl = opts.extractLink ? path : path.join(opts.state.currPage);
+						if(!desturl){instance._error('end'); return}	
 
 	                method = (opts.dataType == 'html' || opts.dataType == 'json') ? opts.dataType : 'html+callback';
 	                if (opts.appendCallback && opts.dataType == 'html') method += '+callback'
