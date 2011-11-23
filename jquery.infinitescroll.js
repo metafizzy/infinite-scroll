@@ -51,7 +51,7 @@
 		animate: false,
 		pathParse: undefined,
 		dataType: 'html',
-		extractLink: true,
+		extractLink: false,
 		appendCallback: true,
 		bufferPx: 40,
 		errorCallback: function () { },
