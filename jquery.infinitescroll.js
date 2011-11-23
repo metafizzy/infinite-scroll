@@ -296,15 +296,8 @@
                 case 'append':
 
                     var children = box.children();
-
- console.log("opts.extractLink - "+opts.extractLink);
-                        console.log("opts.extractLink - "+opts.extractLink);
                         if (opts.extractLink){
                         	this.options.path = $("<div>"+data+"</div>").find(opts.nextSelector).attr("href");
-                        	console.log("LINK - "+$("<div>"+data+"</div>").find(opts.nextSelector).attr("href"));
-                        	console.log("size - "+$("<div>"+data+"</div>").find(opts.nextSelector).size());
-                        	console.log("data - "+data);
-                        	console.log("opts.path - "+this.options);
                         	};
                         	
                     // if it didn't return anything
