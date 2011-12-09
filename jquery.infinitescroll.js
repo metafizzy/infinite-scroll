@@ -337,8 +337,7 @@
 
             // if behavior is defined and this function is extended, call that instead of default
 			if (!!opts.behavior && this['_nearbottom_'+opts.behavior] !== undefined) {
-				this['_nearbottom_'+opts.behavior].call(this);
-				return;
+				return this['_nearbottom_'+opts.behavior].call(this);
 			}
 
 			this._debug('math:', pixelsFromWindowBottomToBottom, opts.pixelsFromNavToBottom);
