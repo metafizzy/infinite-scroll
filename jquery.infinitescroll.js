@@ -212,6 +212,7 @@
                 // thx Jerod Fritz, vladikoff
                 if (path.match(/^(.*?page=)1(\/.*|$)/)) {
                     path = path.match(/^(.*?page=)1(\/.*|$)/).slice(1);
+		    this.options.state.currPage-=1; // if second page =1 we should adjust currPage parameter
                     return path;
                 } else {
                     this._debug('Sorry, we couldn\'t parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.');
