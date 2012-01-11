@@ -195,6 +195,9 @@ function wp_inf_scroll_init()
 		$error_reason = 'No Posts to Display';
 		$load_infinite_scroll = false;		
 		}
+	
+	/* Hook for plugins and themes to modify where and when infinite scroll will run */
+	$load_infinite_scroll = apply_filters('load_infinite_scroll', $load_infinite_scroll);
 		
 	/* Pre-flight checks complete. Are we good to fly? */	
 	if($load_infinite_scroll)
