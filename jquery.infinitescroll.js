@@ -316,15 +316,16 @@
 
             // loadingEnd function
 			opts.loading.finished.call($(opts.contentSelector)[0],opts)
-            
 
-            // smooth scroll to ease in the new content
             if (opts.animate) {
+                // smooth scroll to ease in the new content
                 var scrollTo = $(window).scrollTop() + $('#infscr-loading').height() + opts.extraScrollPx + 'px';
-                $('html,body').animate({ scrollTop: scrollTo }, 800, function () { opts.state.isDuringAjax = false; });
+                $('html,body').animate({ scrollTop: scrollTo }, 800, function () {
+                    opts.state.isDuringAjax = false;
+                });
+            } else {
+                opts.state.isDuringAjax = false; // once the call is done, we can allow it again.
             }
-
-            if (!opts.animate) opts.state.isDuringAjax = false; // once the call is done, we can allow it again.
 
             callback(this,data);
 
