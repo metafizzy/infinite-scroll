@@ -314,20 +314,21 @@
 
             }
 
-            // loadingEnd function
-			opts.loading.finished.call($(opts.contentSelector)[0],opts)
-            
-
-            // smooth scroll to ease in the new content
-            if (opts.animate) {
-                var scrollTo = $(window).scrollTop() + $('#infscr-loading').height() + opts.extraScrollPx + 'px';
-                $('html,body').animate({ scrollTop: scrollTo }, 800, function () { opts.state.isDuringAjax = false; });
-            }
-
-            if (!opts.animate) opts.state.isDuringAjax = false; // once the call is done, we can allow it again.
-
+            // allow the user to prepare the loaded data
             callback(this,data);
 
+            // loadingEnd function
+			opts.loading.finished.call($(opts.contentSelector)[0],opts)
+
+            if (opts.animate) {
+                // smooth scroll to ease in the new content
+                var scrollTo = $(window).scrollTop() + $('#infscr-loading').height() + opts.extraScrollPx + 'px';
+                $('html,body').animate({ scrollTop: scrollTo }, 800, function () {
+                    opts.state.isDuringAjax = false;
+                });
+            } else {
+                opts.state.isDuringAjax = false; // once the call is done, we can allow it again.
+            }
         },
 
         _nearbottom: function infscr_nearbottom() {
