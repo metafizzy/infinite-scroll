@@ -314,6 +314,9 @@
 
             }
 
+            // allow the user to prepare the loaded data
+            callback(this,data);
+
             // loadingEnd function
 			opts.loading.finished.call($(opts.contentSelector)[0],opts)
 
@@ -326,9 +329,6 @@
             } else {
                 opts.state.isDuringAjax = false; // once the call is done, we can allow it again.
             }
-
-            callback(this,data);
-
         },
 
         _nearbottom: function infscr_nearbottom() {
