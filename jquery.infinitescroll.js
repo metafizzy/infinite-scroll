@@ -17,9 +17,9 @@
 		
 		this.element = $(element);
 		
-		// Don't instantiate the object in the event of a failed creation
+                // Flag the object in the event of a failed creation
 		if (!this._create(options, callback)) {
-                  return false;
+                  this.failed = true;
                 }
 	
 	};
@@ -657,7 +657,12 @@
                     } else {
 
                         // initialize new instance
-                        $.data(this, 'infinitescroll', new $.infinitescroll(options, callback, this));
+                        instance = new $.infinitescroll(options, callback, this);
+
+                        // don't attach if instantiation failed
+                        if (!instance.failed) {
+                          $.data(this, 'infinitescroll', instance);
+                        }
 
                     }
 
