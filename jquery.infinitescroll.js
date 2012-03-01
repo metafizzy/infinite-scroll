@@ -16,7 +16,11 @@
 	$.infinitescroll = function infscr(options, callback, element) {
 		
 		this.element = $(element);
-		this._create(options, callback);
+		
+		// Don't instantiate the object in the event of a failed creation
+		if (!this._create(options, callback)) {
+                  return false;
+                }
 	
 	};
 	
