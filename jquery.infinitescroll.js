@@ -110,8 +110,6 @@
             if (!this._validate(options)) { return false; }
             // Define options and shorthand
             var opts = this.options = $.extend(true, {}, $.infinitescroll.defaults, options),
-				// get the relative URL - everything past the domain name.
-				relurl = /(.*?\/\/).*?(\/.*)/,
 				path = $(opts.nextSelector).attr('href');
 
             // contentSelector is 'page fragment' option for .load() / .ajax() calls
