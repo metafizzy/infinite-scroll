@@ -166,7 +166,9 @@
 			};
 
             this._setup();
-
+            
+            // Return true to indicate successful creation
+            return true;
         },
 
         // Console log wrapper
