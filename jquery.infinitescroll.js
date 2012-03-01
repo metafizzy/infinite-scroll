@@ -106,23 +106,28 @@
 		// Fundamental aspects of the plugin are initialized
 		_create: function infscr_create(options, callback) {
 
-            // If selectors from options aren't valid, return false
+            // Add custom options to defaults
+            var opts = $.extend(true, {}, $.infinitescroll.defaults, options);
+
+            // Validate selectors
             if (!this._validate(options)) { return false; }
-            // Define options and shorthand
-            var opts = this.options = $.extend(true, {}, $.infinitescroll.defaults, options),
-				path = $(opts.nextSelector).attr('href');
+            this.options = opts;
+
+            // Validate page fragment path
+            var path = $(opts.nextSelector).attr('href');
+            if (!path) {
+              this._debug('Navigation selector not found');
+              return false;
+            }
+
+            // Set the path to be a relative URL from root.
+            opts.path = this._determinepath(path);
 
             // contentSelector is 'page fragment' option for .load() / .ajax() calls
             opts.contentSelector = opts.contentSelector || this.element;
 
             // loading.selector - if we want to place the load message in a specific selector, defaulted to the contentSelector
             opts.loading.selector = opts.loading.selector || opts.contentSelector;
-
-            // if there's not path, return
-            if (!path) { this._debug('Navigation selector not found'); return; }
-
-            // Set the path to be a relative URL from root.
-            opts.path = this._determinepath(path);
 
             // Define loading.msg
             opts.loading.msg = $('<div id="infscr-loading"><img alt="Loading..." src="' + opts.loading.img + '" /><div>' + opts.loading.msgText + '</div></div>');
