@@ -135,10 +135,16 @@
             opts.loading.selector = opts.loading.selector || opts.contentSelector;
 
             // Define loading.msg
-            opts.loading.msg = $('<div id="infscr-loading"><img alt="Loading..." src="' + opts.loading.img + '" /><div>' + opts.loading.msgText + '</div></div>');
-
-            // Preload loading.img
-            (new Image()).src = opts.loading.img;
+            var parts = [];
+            if (opts.loading.img) {
+                parts.push('<div><img alt="Loading..." src="' + opts.loading.img + '" /></div>');
+                // Preload loading.img
+                (new Image()).src = opts.loading.img;
+            }
+            if (opts.loading.msgText) {
+                parts.push('<div>' + opts.loading.msgText + '</div>');
+            }
+            opts.loading.msg = $('<div id="infscr-loading">' + parts.join('') + '</div>');
 
             // distance from nav links to bottom
             // computed as: height of the document + top offset of container - top offset of nav link
@@ -499,6 +505,7 @@
 	                box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');
 
 	                desturl = path.join(opts.state.currPage);
+	                desturl = desturl + (/\?/.test(desturl) ? "&" : "?") + '_type=infinite';
 
 	                method = (opts.dataType == 'html' || opts.dataType == 'json' ) ? opts.dataType : 'html+callback';
 	                if (opts.appendCallback && opts.dataType == 'html') method += '+callback'
