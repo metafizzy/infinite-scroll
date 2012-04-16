@@ -422,13 +422,15 @@
 				return;
 			}
 
-            opts.loading.msg
-	    		.find('img')
-	    		.hide()
-	    		.parent()
-	    		.find('div').html(opts.loading.finishedMsg).animate({ opacity: 1 }, 2000, function () {
-	    		    $(this).parent().fadeOut(opts.loading.speed);
-	    		});
+            if (opts.loading.finishedMsg) {
+                opts.loading.msg
+                    .find('img').hide().parent().find('div')
+                    .html(opts.loading.finishedMsg).animate({ opacity: 1 }, 2000, function () {
+                        $(this).parent().fadeOut(opts.loading.speed);
+                    });
+            } else {
+                opts.loading.msg.fadeOut(opts.loading.speed);
+            }
 
             // user provided callback when done    
             opts.errorCallback.call($(opts.contentSelector)[0],'done');
