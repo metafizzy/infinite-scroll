@@ -1,16 +1,16 @@
-Infinite Scroll
-http://www.infinite-scroll.com/
-the jQuery and Wordpress Plugins
 
-jQuery Plugin:
-http://www.infinite-scroll.com/infinite-scroll-jquery-plugin/
-currently: version 2.0b.110415
+# Infinite Scroll
 
-Wordpress Plugin:
-http://www.infinite-scroll.com/installation/
+<http://www.infinite-scroll.com/>
+
+The jQuery and Wordpress Plugins:
+
+* jQuery Plugin <http://www.infinite-scroll.com/infinite-scroll-jquery-plugin/> `v2.0b.110415`
+* Wordpress Plugin <http://www.infinite-scroll.com/installation/>
 
 As of version 2.0, option names have changed. Here is a list:
 
+```javascript
 $('.selector').infinitescroll({
   loading: {
 		finished: undefined,
@@ -48,10 +48,12 @@ $('.selector').infinitescroll({
 	infid: 0, //Instance ID
 	pixelsFromNavToBottom: undefined,
 	path: undefined
-})
-
+});
+```
 
 In addition, you can pause infinite scroll to stop it from triggering, and later resume it.
 
-$('.selector').infinitescroll('pause')
-$('.selector').infinitescroll('resume')
+```javascript
+$('.selector').infinitescroll('pause');
+$('.selector').infinitescroll('resume');
+```
