@@ -499,7 +499,7 @@
 
 	                desturl = path.join(opts.state.currPage);
 
-	                method = (opts.dataType == 'html' || opts.dataType == 'json') ? opts.dataType : 'html+callback';
+	                method = (opts.dataType == 'html' || opts.dataType == 'json' ) ? opts.dataType : 'html+callback';
 	                if (opts.appendCallback && opts.dataType == 'html') method += '+callback'
 
 	                switch (method) {
@@ -526,11 +526,10 @@
                             });
     
                             break;
-
 	                    case 'json':
 	                        instance._debug('Using ' + (method.toUpperCase()) + ' via $.ajax() method');
                             $.ajax({
-                              dataType:'json',
+                              dataType: 'json',
                               type: 'GET',
                               url: desturl,
                               success: function(data, textStatus, jqXHR) {
@@ -543,7 +542,7 @@
                                         box.append(theData);
                                         (condition) ? instance._loadcallback(box, theData) : instance._error('end');
                                     } else {
-                                        this._debug("template must be defined.");
+                                        instance._debug("template must be defined.");
                                         instance._error('end');
                                     }
                                 } else {
@@ -552,7 +551,7 @@
                                 }
                               },
                               error: function(jqXHR, textStatus, errorThrown) {
-                                this._debug("JSON ajax request failed.");
+                                instance._debug("JSON ajax request failed.");
                                 instance._error('end');
                               }
                             });
