@@ -41,7 +41,8 @@
 			isDestroyed: false,
 			isDone: false, // For when it goes all the way through the archive.
 			isPaused: false,
-			currPage: 1
+			currPage: 1,
+			currPageIncrement: 1 // Current page increment level (fix for silverstripe, can be set to 1 by default, just does a multiplication)
 		},
 		callback: undefined,
 		debug: false,
@@ -497,7 +498,8 @@
 	                // if we're dealing with a table we can't use DIVs
 	                box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');
 
-	                desturl = path.join(opts.state.currPage);
+					// Somewhat hacky way to make infinite scroll work with silversipes weird way of doing paging. 
+	                desturl = path.join((opts.state.currPage - 1) * (opts.state.currPageIncrement || 1));
 
 	                method = (opts.dataType == 'html' || opts.dataType == 'json') ? opts.dataType : 'html+callback';
 	                if (opts.appendCallback && opts.dataType == 'html') method += '+callback'
