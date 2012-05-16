@@ -2,8 +2,8 @@
 	--------------------------------
 	Infinite Scroll
 	--------------------------------
-	+ https://github.com/paulirish/infinitescroll
-	+ version 2.0b2.110713
+	+ https://github.com/paulirish/infinite-scroll
+	+ version 2.0b2.111027
 	+ Copyright 2011 Paul Irish & Luke Shumard
 	+ Licensed under the MIT license
 	
@@ -73,6 +73,8 @@
 
             var instance = this,
 				opts = instance.options;
+				
+			opts.v = '2.0b2.111027';
 
             // if behavior is defined and this function is extended, call that instead of default
 			if (!!opts.behavior && this['_binding_'+opts.behavior] !== undefined) {
@@ -156,7 +158,7 @@
 					instance['_callback_'+opts.behavior].call($(opts.contentSelector)[0], data);
 				}
 				if (callback) {
-					callback.call($(opts.contentSelector)[0], data);
+					callback.call($(opts.contentSelector)[0], data, opts);
 				}
 			};
 
@@ -167,7 +169,7 @@
         // Console log wrapper
         _debug: function infscr_debug() {
 
-			if (this.options.debug) {
+			if (this.options && this.options.debug) {
                 return window.console && console.log.call(console, arguments);
             }
 
@@ -187,7 +189,7 @@
             if (!!opts.pathParse) {
 
                 this._debug('pathParse manual');
-                return opts.pathParse;
+                return opts.pathParse(path, this.options.state.currPage+1);
 
             } else if (path.match(/^(.*?)\b2\b(.*?$)/)) {
                 path = path.match(/^(.*?)\b2\b(.*?$)/).slice(1);
@@ -335,8 +337,7 @@
 
             // if behavior is defined and this function is extended, call that instead of default
 			if (!!opts.behavior && this['_nearbottom_'+opts.behavior] !== undefined) {
-				this['_nearbottom_'+opts.behavior].call(this);
-				return;
+				return this['_nearbottom_'+opts.behavior].call(this);
 			}
 
 			this._debug('math:', pixelsFromWindowBottomToBottom, opts.pixelsFromNavToBottom);
@@ -388,7 +389,7 @@
 		_setup: function infscr_setup() {
 			
 			var opts = this.options;
-			
+						
 			// if behavior is defined and this function is extended, call that instead of default
 			if (!!opts.behavior && this['_setup_'+opts.behavior] !== undefined) {
 				this['_setup_'+opts.behavior].call(this);
