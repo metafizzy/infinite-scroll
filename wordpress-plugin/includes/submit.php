@@ -2,7 +2,6 @@
 /**
  * Prompts users to submit CSS Selectors to WP Forums when appropriate
  * @subpackage Infinite_Scroll_Submit
- * @author Benjamin J. Balter
  * @package Infinite_Scroll
  */
 class Infinite_Scroll_Submit {
