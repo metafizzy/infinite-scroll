@@ -289,7 +289,7 @@
                     if (opts.dataType == 'html') {
                         data = '<div>' + data + '</div>';
                         data = $(data).find(opts.itemSelector);
-                    };
+                    }
 
                     break;
 
@@ -499,7 +499,7 @@
 
 	                desturl = path.join(opts.state.currPage);
 
-	                method = (opts.dataType == 'html' || opts.dataType == 'json') ? opts.dataType : 'html+callback';
+	                method = (opts.dataType == 'html' || opts.dataType == 'json' ) ? opts.dataType : 'html+callback';
 	                if (opts.appendCallback && opts.dataType == 'html') method += '+callback'
 
 	                switch (method) {
@@ -514,18 +514,47 @@
 	                        break;
 
 	                    case 'html':
+                            instance._debug('Using ' + (method.toUpperCase()) + ' via $.ajax() method');
+                            $.ajax({
+                                // params
+                                url: desturl,
+                                dataType: opts.dataType,
+                                complete: function infscr_ajax_callback(jqXHR, textStatus) {
+                                    condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
+                                    (condition) ? instance._loadcallback(box, jqXHR.responseText) : instance._error('end');
+                                }
+                            });
+    
+                            break;
 	                    case 'json':
-
 	                        instance._debug('Using ' + (method.toUpperCase()) + ' via $.ajax() method');
-	                        $.ajax({
-	                            // params
-	                            url: desturl,
-	                            dataType: opts.dataType,
-	                            complete: function infscr_ajax_callback(jqXHR, textStatus) {
-	                                condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
-	                                (condition) ? instance._loadcallback(box, jqXHR.responseText) : instance._error('end');
-	                            }
-	                        });
+                            $.ajax({
+                              dataType: 'json',
+                              type: 'GET',
+                              url: desturl,
+                              success: function(data, textStatus, jqXHR) {
+                                condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
+                                if(opts.appendCallback) {
+                                    // if appendCallback is true, you must defined template in options. 
+                                    // note that data passed into _loadcallback is already an html (after processed in opts.template(data)).
+                                    if(opts.template != undefined) {
+                                        var theData = opts.template(data);
+                                        box.append(theData);
+                                        (condition) ? instance._loadcallback(box, theData) : instance._error('end');
+                                    } else {
+                                        instance._debug("template must be defined.");
+                                        instance._error('end');
+                                    }
+                                } else {
+                                    // if appendCallback is false, we will pass in the JSON object. you should handle it yourself in your callback.
+                                    (condition) ? instance._loadcallback(box, data) : instance._error('end');
+                                }
+                              },
+                              error: function(jqXHR, textStatus, errorThrown) {
+                                instance._debug("JSON ajax request failed.");
+                                instance._error('end');
+                              }
+                            });
 	
 	                        break;
 	                }
