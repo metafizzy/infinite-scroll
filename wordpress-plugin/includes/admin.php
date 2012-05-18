@@ -2,7 +2,6 @@
 /**
  * Infinite Scroll Administrative Backend
  * @subpackage Admin
- * @author Benjamin J. Balter <ben@balter.com>
  * @package Infinite_Scroll
  */
 

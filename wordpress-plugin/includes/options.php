@@ -2,7 +2,6 @@
 /**
  * Provides interface to store and retrieve plugin and user options
  * @subpackage Infinite_Scroll_Options
- * @author Benjamin J. Balter
  * @package Infinite_Scroll
  */
 class Infinite_Scroll_Options {

@@ -18,7 +18,6 @@
  * Hierarchy of presets: 1) User specified, 2) (admin specified) custom preset, 3) community specified preset
  *
  * @subpackage Presets
- * @author Benjamin J. Balter <ben@balter.com>
  * @package Infinite_Scroll
  */
 
