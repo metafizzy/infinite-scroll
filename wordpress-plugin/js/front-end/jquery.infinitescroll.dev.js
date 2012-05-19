@@ -3,8 +3,8 @@
 	Infinite Scroll
 	--------------------------------
 	+ https://github.com/paulirish/infinite-scroll
-	+ version 2.0b2.111027
-	+ Copyright 2011 Paul Irish & Luke Shumard
+	+ version 2.0b2.120519
+	+ Copyright 2011/12 Paul Irish & Luke Shumard
 	+ Licensed under the MIT license
 	
 	+ Documentation: http://infinite-scroll.com/
@@ -16,7 +16,11 @@
 	$.infinitescroll = function infscr(options, callback, element) {
 		
 		this.element = $(element);
-		this._create(options, callback);
+		
+                // Flag the object in the event of a failed creation
+		if (!this._create(options, callback)) {
+                  this.failed = true;
+                }
 	
 	};
 	
@@ -106,25 +110,28 @@
 		// Fundamental aspects of the plugin are initialized
 		_create: function infscr_create(options, callback) {
 
-            // If selectors from options aren't valid, return false
+            // Add custom options to defaults
+            var opts = $.extend(true, {}, $.infinitescroll.defaults, options);
+
+            // Validate selectors
             if (!this._validate(options)) { return false; }
-            // Define options and shorthand
-            var opts = this.options = $.extend(true, {}, $.infinitescroll.defaults, options),
-				// get the relative URL - everything past the domain name.
-				relurl = /(.*?\/\/).*?(\/.*)/,
-				path = $(opts.nextSelector).attr('href');
+            this.options = opts;
+
+            // Validate page fragment path
+            var path = $(opts.nextSelector).attr('href');
+            if (!path) {
+              this._debug('Navigation selector not found');
+              return false;
+            }
+
+            // Set the path to be a relative URL from root.
+            opts.path = this._determinepath(path);
 
             // contentSelector is 'page fragment' option for .load() / .ajax() calls
             opts.contentSelector = opts.contentSelector || this.element;
 
             // loading.selector - if we want to place the load message in a specific selector, defaulted to the contentSelector
             opts.loading.selector = opts.loading.selector || opts.contentSelector;
-
-            // if there's not path, return
-            if (!path) { this._debug('Navigation selector not found'); return; }
-
-            // Set the path to be a relative URL from root.
-            opts.path = this._determinepath(path);
 
             // Define loading.msg
             opts.loading.msg = $('<div id="infscr-loading"><img alt="Loading..." src="' + opts.loading.img + '" /><div>' + opts.loading.msgText + '</div></div>');
@@ -163,7 +170,9 @@
 			};
 
             this._setup();
-
+            
+            // Return true to indicate successful creation
+            return true;
         },
 
         // Console log wrapper
@@ -280,7 +289,7 @@
                     if (opts.dataType == 'html') {
                         data = '<div>' + data + '</div>';
                         data = $(data).find(opts.itemSelector);
-                    };
+                    }
 
                     break;
 
@@ -389,7 +398,7 @@
 		_setup: function infscr_setup() {
 			
 			var opts = this.options;
-						
+			
 			// if behavior is defined and this function is extended, call that instead of default
 			if (!!opts.behavior && this['_setup_'+opts.behavior] !== undefined) {
 				this['_setup_'+opts.behavior].call(this);
@@ -434,9 +443,10 @@
                     this._debug('Your ' + key + ' found no elements.');
                     return false;
                 }
-                return true;
             }
-
+            
+            return true;
+            
         },
 
         /*	
@@ -489,7 +499,7 @@
 
 	                desturl = path.join(opts.state.currPage);
 
-	                method = (opts.dataType == 'html' || opts.dataType == 'json') ? opts.dataType : 'html+callback';
+	                method = (opts.dataType == 'html' || opts.dataType == 'json' ) ? opts.dataType : 'html+callback';
 	                if (opts.appendCallback && opts.dataType == 'html') method += '+callback'
 
 	                switch (method) {
@@ -504,18 +514,47 @@
 	                        break;
 
 	                    case 'html':
+                            instance._debug('Using ' + (method.toUpperCase()) + ' via $.ajax() method');
+                            $.ajax({
+                                // params
+                                url: desturl,
+                                dataType: opts.dataType,
+                                complete: function infscr_ajax_callback(jqXHR, textStatus) {
+                                    condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
+                                    (condition) ? instance._loadcallback(box, jqXHR.responseText) : instance._error('end');
+                                }
+                            });
+    
+                            break;
 	                    case 'json':
-
 	                        instance._debug('Using ' + (method.toUpperCase()) + ' via $.ajax() method');
-	                        $.ajax({
-	                            // params
-	                            url: desturl,
-	                            dataType: opts.dataType,
-	                            complete: function infscr_ajax_callback(jqXHR, textStatus) {
-	                                condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
-	                                (condition) ? instance._loadcallback(box, jqXHR.responseText) : instance._error('end');
-	                            }
-	                        });
+                            $.ajax({
+                              dataType: 'json',
+                              type: 'GET',
+                              url: desturl,
+                              success: function(data, textStatus, jqXHR) {
+                                condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
+                                if(opts.appendCallback) {
+                                    // if appendCallback is true, you must defined template in options. 
+                                    // note that data passed into _loadcallback is already an html (after processed in opts.template(data)).
+                                    if(opts.template != undefined) {
+                                        var theData = opts.template(data);
+                                        box.append(theData);
+                                        (condition) ? instance._loadcallback(box, theData) : instance._error('end');
+                                    } else {
+                                        instance._debug("template must be defined.");
+                                        instance._error('end');
+                                    }
+                                } else {
+                                    // if appendCallback is false, we will pass in the JSON object. you should handle it yourself in your callback.
+                                    (condition) ? instance._loadcallback(box, data) : instance._error('end');
+                                }
+                              },
+                              error: function(jqXHR, textStatus, errorThrown) {
+                                instance._debug("JSON ajax request failed.");
+                                instance._error('end');
+                              }
+                            });
 	
 	                        break;
 	                }
@@ -647,7 +686,12 @@
                     } else {
 
                         // initialize new instance
-                        $.data(this, 'infinitescroll', new $.infinitescroll(options, callback, this));
+                        instance = new $.infinitescroll(options, callback, this);
+
+                        // don't attach if instantiation failed
+                        if (!instance.failed) {
+                          $.data(this, 'infinitescroll', instance);
+                        }
 
                     }
 
