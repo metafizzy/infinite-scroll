@@ -3,8 +3,8 @@
 	Infinite Scroll
 	--------------------------------
 	+ https://github.com/paulirish/infinite-scroll
-	+ version 2.0b2.120311
-	+ Copyright 2011 Paul Irish & Luke Shumard
+	+ version 2.0b2.120519
+	+ Copyright 2011/12 Paul Irish & Luke Shumard
 	+ Licensed under the MIT license
 	
 	+ Documentation: http://infinite-scroll.com/
