@@ -44,7 +44,7 @@ class Infinite_Scroll_Presets {
 		add_action( 'wp_ajax_infinite-scroll-delete-preset', array( &$this, 'process_ajax_delete' ) );
 		add_filter( $this->parent->prefix . 'presets', array( &$this, 'merge_custom_presets' ) );
 		add_filter( $this->parent->prefix . 'options', array( &$this, 'default_to_presets'), 9 );
-		add_action( $this->parent->prefix . 'refesh_cache', array( &$this, 'get_presets' ) );
+		add_action( $this->parent->prefix . 'refresh_cache', array( &$this, 'get_presets' ) );
 
 	}
 
