@@ -51,7 +51,7 @@ class Infinite_Scroll_Presets {
 
 	/**
 	 * Allow for class overloading
-	 * @param string $preset the theme to retrieve
+	 * @param string $preset the theme slug to retrieve
 	 * @return array|bool the presets or false on failure
 	 */
 	function __get( $preset ) {
@@ -62,6 +62,7 @@ class Infinite_Scroll_Presets {
 	/**
 	 * Pulls preset array from cache, or retrieves and parses
 	 * @return array an array of preset objects
+	 * @todo Consider using TLC Transients in case cron isn't working
 	 */
 	function get_presets() {
 
@@ -91,33 +92,53 @@ class Infinite_Scroll_Presets {
 
 	/**
 	 * Return a theme's preset object
-	 * @param string $theme the theme to retrieve
+	 * @param string $theme the slug of theme to retrieve
 	 * @return object the preset object
 	 */
-	function get_preset( $theme ) {
-				
-		$presets = $this->get_presets();
+	function get_preset( $theme = null ) {
+	
+		if ( $theme == null )
+			$theme = get_stylesheet();
 			
+		$presets = $this->get_presets();
+		
 		//direct match found, return
 		if ( array_key_exists( $theme, $presets ) ) 
 			return $presets[ $theme ];
-			
-		$themes = get_themes();
+					
+		//no direct match found, permahps this is a child theme?
 		
-		//theme isn't installed, no way to know if it's a child
-		if ( !isset( $themes[$theme] ) )
+		//theme isn't installed, no way to know if it's a child, so skip
+		if ( !$this->theme_installed( $theme ) )
 			return false;
-				
-		$child = $themes[$theme];
+		
+		//WP version 3.4+, use the new wp_get_themes function
+		if ( function_exists( 'wp_get_theme' ) ) {
+		
+			$theme = wp_get_theme( $theme );
+
+			//not a theme or not a child
+			if ( is_wp_error( $theme ) || !is_object( $theme->parent() ) )
+				return false;
+								
+			return $this->get_preset( $theme->parent()->stylesheet );
+		
+		}
+		
+		//pre 3.4 back compat..
+		//get theme by slug
+		$name = $this->get_name( $theme );
+		$themes = get_themes();				
+		$child = $themes[ $name ];
 				
 		//not a child theme
 		if ( !isset( $child['Template'] ) || empty( $child['Template'] ) || $child['Template'] == $child['Stylesheet'] )
 			return false;
 		
 		//pull up parent data to get its name
-		$parent = $themes[$theme]['Template'];
+		$parent = $themes[$name]['Template'];
 		$parent = get_theme_data( get_theme_root( $child['Template'] ) . '/' . $child['Template'] . '/style.css' );
-		$preset = $this->get_preset( $parent['Name'] );
+		$preset = $this->get_preset( $parent['Stylesheet'] );
 		
 		//no parent preset
 		if ( !$preset )
@@ -125,7 +146,7 @@ class Infinite_Scroll_Presets {
 			
 		//rename the theme of the parent preset object for consistent return
 		$preset->theme = $theme;
-		$preset->parentPreset = $parent['Name'];
+		$preset->parentPreset = $parent['Stylesheet'];
 		
 		return $preset;
 
@@ -153,8 +174,8 @@ class Infinite_Scroll_Presets {
 	 * @uses get_preset
 	 */
 	function preset_prompt() {
-		$theme = get_current_theme();
-		$preset = $this->get_preset( $theme );
+
+		$preset = $this->get_preset( );
 
 		if ( !$preset )
 			return;
@@ -193,8 +214,7 @@ class Infinite_Scroll_Presets {
 		check_admin_referer( 'infinite-scroll-presets', 'nonce' );
 
 		//don't delete options if we don't have a preset
-		$theme = get_current_theme();
-		$preset = $this->get_preset( $theme );
+		$preset = $this->get_preset( );
 
 		if ( !$preset )
 			return;
@@ -322,7 +342,7 @@ class Infinite_Scroll_Presets {
 	function default_to_presets( $options ) {
 
 		//we don't have a preset, no need to go any further
-		if ( !( $preset = $this->get_preset( get_current_theme() ) ) )
+		if ( !( $preset = $this->get_preset( ) ) )
 			return $options;
 
 		foreach ( $this->keys as $key ) {
@@ -355,11 +375,10 @@ class Infinite_Scroll_Presets {
 				
 		$output = array();
 		
-		//convert strtolower( Plugin Name ) to stylesheet
+		//convert Theme Name to stylesheet and stuff into output array
 		foreach( $presets as $theme ) {
-			$name = ucwords( $theme->theme );
-			$theme->theme = $name;
-			$output[ $name ] = $theme;
+			$theme->theme = $this->get_stylesheet( $theme->theme );
+			$output[ $theme->theme ] = $theme;
 		}
 		
 		return $output;
@@ -427,7 +446,7 @@ class Infinite_Scroll_Presets {
 		foreach ( $this->keys as $key )
 			$theme->$key = $this->parent->options->$key;
 			
-		$theme->theme = get_current_theme();
+		$theme->theme = get_stylesheet();
 			
 		return $theme;
 		
@@ -443,8 +462,8 @@ class Infinite_Scroll_Presets {
 		$presets = array();
 		
 		//if the current theme is not a known preset or they want all
-		if ( !$this->get_preset( get_current_theme() ) || $all )
-			$presets[ get_current_theme() ] = $this->current_selectors();
+		if ( !$this->get_preset( ) || $all )
+			$presets[ get_stylesheet() ] = $this->current_selectors();
 
 		//user has access to global custom presets
 		if ( is_multisite() && is_super_admin() ) {
@@ -501,21 +520,91 @@ class Infinite_Scroll_Presets {
 	
 	/**
 	 * Determines whether a given theme is installed
-	 * @param string|object $theme either the theme name or the preset object
+	 * @param string|object $theme either the theme slug or the preset object
 	 * @return bool true if insalled, otherwise false
 	 */
 	function theme_installed( $theme ) {
+	
+		//3.4+
+		if ( function_exists( 'wp_get_theme' ) )
+			return ( wp_get_theme( $theme ) ) ? true : false;
+	
+		//pre 3.4
 		$themes = get_themes();
+		$name = $this->get_name( $theme );
 		
-		//allow objects or strings
-		if ( is_object( $theme ) )
-			$theme = $theme->theme;
+		return array_key_exists( $name, $themes );
+				
+	}
+	
+	/**
+	 * Given a theme name, returns the coresponding theme stylesheet
+	 *
+	 * Used for converting legacy CSVs which were name based to new CSVs which are stylesheet based
+	 * since 3.4 returns themes keyed to stylesheets, not names as it did pre-3.4
+	 *
+	 * @param string $theme the theme name
+	 * @return string the stylesheet
+	 */
+	function get_stylesheet( $name ) {
+	
+		//pre 3.4
+		if ( !function_exists( 'wp_get_themes' ) ) {
 		
-		return array_key_exists( $theme, $themes );
+			if ( $theme = get_theme( $name ) )		
+				return $theme->stylesheet;	
+			
+		//3.4+
+		} else {
+					
+			//we can't use wp_filter_list_object with WP_Theme objects, so filter manually
+			foreach ( wp_get_themes() as $theme )
+				if ( $theme->name = $name )
+					return $theme->stylesheet;
+	
+		}	
+		
+		return false;
 		
 	}
+	
+	/**
+	 * Given a theme stylesheet, return the coresponding theme name
+	 *
+	 * Used to normalize data between 3.3 and 3.4 where keying of themes switched from name to stylesheet
+	 *
+	 * @param string $stylesheet the theme stylesheet (slug)
+	 * @return string the theme name
+	 */
+	function get_name( $stylesheet ) {
+	
+		//3.4+
+		if ( function_exists( 'wp_get_theme' ) ) {
+			
+			if ( $theme = wp_get_theme( $stylesheet ) )
+				return $theme->name;
+			
+		
+		//pre 3.4
+		} else {
+		
+			foreach ( get_themes as $theme ) 
+				if ( $theme->stylesheet == $stylesheet )
+					return $theme->name;
+		
+		}
+		
+		//theme isn't installed, use the WP.org API to grab the name rather than risk losing data on upgrade
+		$api = themes_api( 'theme_information', array( 'slug' => $stylesheet, 'fields' => array( 'sections' => false, 'tags' => false ) ) );
+		
+		if ( is_wp_error( $api ) )
+			return false;
+			
+		return $api->name;
 
-
+	
+	}
+	
 }
 
 

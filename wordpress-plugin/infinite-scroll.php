@@ -74,8 +74,8 @@ class Infinite_Scroll {
 		add_action( 'wp_footer', array( &$this, 'footer' ), 100 ); //low priority will load after i18n and script loads
 
 		//preset cron
-		register_activation_hook( __FILE__, $this->presets->schedule );
-		register_deactivation_hook( __FILE__, $this->presets->unschedule );
+		register_activation_hook( __FILE__, array( &$this->presets, 'schedule' ) );
+		register_deactivation_hook( __FILE__, array( &$this->presets, 'unschedule' ) );
 
 		//404 fix
 		add_action( 'wp', array( &$this, 'paged_404_fix' ) );
