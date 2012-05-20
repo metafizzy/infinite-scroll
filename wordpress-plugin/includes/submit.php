@@ -31,7 +31,7 @@ class Infinite_Scroll_Submit {
 			return;
 				
 		//their current theme's preset selectors, false if none found (good)
-		$preset = $this->parent->presets->get_preset( get_current_theme() );
+		$preset = $this->parent->presets->get_preset( get_stylesheet() );
 
 		//their network-wide custom presets, false if none found (bad)
 		$custom = $this->parent->presets->get_custom_presets( );
