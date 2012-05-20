@@ -216,6 +216,20 @@ Infinite scroll is configured to die when it hits a 404 Not Found status code, s
 
 Probably not, nope.
 
+### How do I pass additional arguments such as callbacks to the Infinite Scroll script? ###
+
+To pass additional arguments to the Infinite Scroll script, add the following code to either your theme's `functions.php` or to a stand-alone plugin file. 
+
+```
+function my_infinite_scroll_options_filter( $options ) {
+     $options['callback'] = 'my_callback';
+     $options['another_parameter'] = 'another_value';
+     return $options;
+}
+
+add_filter( 'infinite_scroll_js_options', 'my_infinite_scroll_options_filter' );
+```
+
 ## Installation ##
 
 ### Automatic Install ###
