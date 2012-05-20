@@ -4,4 +4,4 @@
  * @package Infinite_Scroll
  */
 ?>
-<script>jQuery( infinite_scroll.contentSelector ).infinitescroll( infinite_scroll );</script>
+<script>jQuery( infinite_scroll.contentSelector ).infinitescroll( infinite_scroll, '<?php echo esc_attr( $this->options->callback ); ?>' );</script>
