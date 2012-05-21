@@ -73,37 +73,46 @@
 	
 	<script>
 
-	var _renderItem = function(data) {
-		return "<p>Title :" + data.title + "</p>"
-	}
-	
-	
+    function createPhotoElement(photo) {
+      return $('<div>')
+        .addClass('instagram-placeholder')
+        .attr('id', photo.id)
+        .append(
+          $('<a>')
+            .attr('target', '_blank')
+            .attr('href', photo.link)
+            .append(
+              $('<img>')
+                .addClass('instagram-image')
+                .attr('src', photo.images.thumbnail.url)
+            )
+        );
+    }
+    var insta_next_url = null;
 	$('#content').infinitescroll({
-	
-		// callback		: function () { console.log('using opts.callback'); },
 		navSelector  	: "a#next:last",
 		// nextSelector 	: "a#next:last", // if user specify nextUrl, nextSelector will be omitted 
 		itemSelector 	: "#content p",
 		debug		 	: true,
-		dataType	 	: 'json',
-		// behavior		: 'twitter',
-		appendCallback	: false, // USE FOR PREPENDING
+		dataType	 	: 'jsonp',
+		appendCallback	: false,
 		nextUrl : function(nextPage) {
-			return "mobile" + nextPage + ".json";
+			if(insta_next_url) return insta_next_url;
+			else return "https://api.instagram.com/v1/tags/food/media/recent?callback=jQuery17109647672896066536_1334849516438&_=1334849519410&client_id=4cc3fc9df774483cb575b405f3c1cc21&max_tag_id=1334874615163"
 		}
-    }, function( response ) {
-    	var jsonData = response.results;
-						$theCntr = $("#content");
-						var newElements = "";
-				        //var newItems = new Array();
-						for(var i=0;i<jsonData.length;i++) {
-				        	var item = $(_renderItem(jsonData[i]));
-				        	//item.css({ opacity: 0 });
-				        	$theCntr.append(item);
-		       				//newItems.push(item.attr('id'));
-						}
-	       				//_addMasonryItem(newItems);
-				      });
+    }, function( res ) {
+			$theCntr = $("#content");
+	        var length = typeof res.data != 'undefined' ? res.data.length : 0;
+	        var limit = 20;
+	        if(limit > length) limit = length;
+        
+			for(var i = 0; i < limit; i++) {
+				$theCntr.append(createPhotoElement(res.data[i]));
+			}
+
+			insta_next_url = res.pagination.next_url;
+      });
+
 	</script>
 
 

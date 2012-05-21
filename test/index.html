@@ -61,7 +61,8 @@
 		
 	</div>
 	
-	<a id="next" href="index2.html">next page?</a>
+	<!-- <a id="next" href="index2.html">next page?</a> -->
+	<a id="next" href="#">next page?</a>
 
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.js"></script>
 	<script>window.jQuery || document.write("<script src='jquery-1.6.1.js'>\x3C/script>")</script>
@@ -77,10 +78,13 @@
 	
 		// callback		: function () { console.log('using opts.callback'); },
 		navSelector  	: "a#next:last",
-		nextSelector 	: "a#next:last",
+		// nextSelector 	: "a#next:last",
 		itemSelector 	: "#content p",
 		debug		 	: true,
 		dataType	 	: 'html',
+		nextUrl : function(nextPage) {
+			return "index" + nextPage + ".html";
+		}
 		// behavior		: 'twitter',
 		// appendCallback	: false, // USE FOR PREPENDING
 		// pathParse     	: function( pathStr, nextPage ){ return pathStr.replace('2', nextPage ); }
