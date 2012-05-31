@@ -158,7 +158,7 @@
 				opts.loading.msg
 					.appendTo(opts.loading.selector)
 					.show(opts.loading.speed, function () {
-	                	beginAjax(opts);
+                 opts.beginAjax(opts);
 	            });
 			};
 
@@ -495,7 +495,7 @@
 				box, frag, desturl, method, condition,
 	    		pageNum = pageNum || null,
 				getPage = (!!pageNum) ? pageNum : opts.state.currPage;
-				beginAjax = function infscr_ajax(opts) {
+				opts.beginAjax = function infscr_ajax(opts) {
 
 					// increment the URL bit. e.g. /page/3/
 	                opts.state.currPage++;
