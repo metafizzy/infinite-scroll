@@ -301,7 +301,12 @@
                     if (children.length == 0) {
                         return this._error('end');
                     }
-
+					
+					// added by esmizzle 2012-01-26 - update the path to the link for the next set of elements
+					var nexturl = $(data).find(opts.nextSelector).attr('href');
+                    this._debug('nexturl: '+ nexturl)
+					this.options.path[0] = nexturl;
+					this.options.path[1] = '#pathcomplete';
 
                     // use a documentFragment because it works when content is going into a table or UL
                     frag = document.createDocumentFragment();
@@ -497,7 +502,8 @@
 	                // if we're dealing with a table we can't use DIVs
 	                box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');
 
-	                desturl = path.join(opts.state.currPage);
+					desturl = (path[1] == '#pathcomplete') ? path[0] : path.join(opts.state.currPage); // only throw the currPage in there if we need it
+	                instance._debug('desturl: '+desturl);
 
 	                method = (opts.dataType == 'html' || opts.dataType == 'json' ) ? opts.dataType : 'html+callback';
 	                if (opts.appendCallback && opts.dataType == 'html') method += '+callback'
@@ -505,11 +511,10 @@
 	                switch (method) {
 
 	                    case 'html+callback':
-
 	                        instance._debug('Using HTML via .load() method');
-	                        box.load(desturl + ' ' + opts.itemSelector, null, function infscr_ajax_callback(responseText) {
-	                            instance._loadcallback(box, responseText);
-	                        });
+							box.load(desturl + ' ' + opts.itemSelector, null, function infscr_ajax_callback(responseText) {
+								instance._loadcallback(box, responseText);
+							});
 
 	                        break;
 
