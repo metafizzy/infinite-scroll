@@ -134,15 +134,17 @@
             opts.loading.selector = opts.loading.selector || opts.contentSelector;
 
             // Define loading.msg
-            opts.loading.msg = $('<div id="infscr-loading"><div>' + opts.loading.msgText + '</div></div>');
+            if(! opts.loading.msg) {
+                opts.loading.msg = $('<div id="infscr-loading"><div>' + opts.loading.msgText + '</div></div>');
 
-            if (opts.loading.img) {
-                // Preload loading.img
-                var img = new Image();
-                img.src = opts.loading.img;
+                if (opts.loading.img) {
+                    // Preload loading.img
+                    var img = new Image();
+                    img.src = opts.loading.img;
 
-                img.alt = 'Loading...';
-                opts.loading.msg.prepend(img);
+                    img.alt = 'Loading...';
+                    opts.loading.msg.prepend(img);
+                }
             }
 
             // distance from nav links to bottom
