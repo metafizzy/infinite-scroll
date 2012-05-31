@@ -422,13 +422,17 @@
 				return;
 			}
 
-            opts.loading.msg
-	    		.find('img')
-	    		.hide()
+            var loading_img = opts.loading.msg.find('img');
+            if (opts.loading.finishedMsg.length > 0) {
+                    loading_img
+	                .hide()
 	    		.parent()
 	    		.find('div').html(opts.loading.finishedMsg).animate({ opacity: 1 }, 2000, function () {
 	    		    $(this).parent().fadeOut('normal');
 	    		});
+            } else {
+                    loading_img.parent().hide();
+            }
 
             // user provided callback when done    
             opts.errorCallback.call($(opts.contentSelector)[0],'done');
