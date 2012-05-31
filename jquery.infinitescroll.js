@@ -6,24 +6,24 @@
 	+ version 2.0b2.120519
 	+ Copyright 2011/12 Paul Irish & Luke Shumard
 	+ Licensed under the MIT license
-	
+
 	+ Documentation: http://infinite-scroll.com/
-	
+
 */
 
 (function (window, $, undefined) {
-	
+
 	$.infinitescroll = function infscr(options, callback, element) {
-		
+
 		this.element = $(element);
-		
+
                 // Flag the object in the event of a failed creation
 		if (!this._create(options, callback)) {
                   this.failed = true;
                 }
-	
+
 	};
-	
+
 	$.infinitescroll.defaults = {
 		loading: {
 			finished: undefined,
@@ -66,7 +66,7 @@
 
     $.infinitescroll.prototype = {
 
-        /*	
+        /*
         ----------------------------
         Private methods
         ----------------------------
@@ -77,7 +77,7 @@
 
             var instance = this,
 				opts = instance.options;
-				
+
 			opts.v = '2.0b2.111027';
 
             // if behavior is defined and this function is extended, call that instead of default
@@ -145,7 +145,7 @@
 
 			// determine loading.start actions
             opts.loading.start = opts.loading.start || function() {
-				
+
 				$(opts.navSelector).hide();
 				opts.loading.msg
 					.appendTo(opts.loading.selector)
@@ -153,7 +153,7 @@
 	                	beginAjax(opts);
 	            });
 			};
-			
+
 			// determine loading.finished actions
 			opts.loading.finished = opts.loading.finished || function() {
 				opts.loading.msg.fadeOut('normal');
@@ -170,7 +170,7 @@
 			};
 
             this._setup();
-            
+
             // Return true to indicate successful creation
             return true;
         },
@@ -203,7 +203,7 @@
             } else if (path.match(/^(.*?)\b2\b(.*?$)/)) {
                 path = path.match(/^(.*?)\b2\b(.*?$)/).slice(1);
 
-                // if there is any 2 in the url at all.    
+                // if there is any 2 in the url at all.
             } else if (path.match(/^(.*?)2(.*?$)/)) {
 
                 // page= is used in django:
@@ -268,7 +268,7 @@
 	    		callback = this.options.callback, // GLOBAL OBJECT FOR CALLBACK
 	    		result = (opts.state.isDone) ? 'done' : (!opts.appendCallback) ? 'no-append' : 'append',
 	    		frag;
-	
+
 			// if behavior is defined and this function is extended, call that instead of default
 			if (!!opts.behavior && this['_loadcallback_'+opts.behavior] !== undefined) {
 				this['_loadcallback_'+opts.behavior].call(this,box,data);
@@ -325,7 +325,7 @@
 
             // loadingEnd function
 			opts.loading.finished.call($(opts.contentSelector)[0],opts)
-            
+
 
             // smooth scroll to ease in the new content
             if (opts.animate) {
@@ -396,19 +396,19 @@
 		// Behavior is determined
 		// If the behavior option is undefined, it will set to default and bind to scroll
 		_setup: function infscr_setup() {
-			
+
 			var opts = this.options;
-			
+
 			// if behavior is defined and this function is extended, call that instead of default
 			if (!!opts.behavior && this['_setup_'+opts.behavior] !== undefined) {
 				this['_setup_'+opts.behavior].call(this);
 				return;
 			}
-			
+
 			this._binding('bind');
-			
+
 			return false;
-			
+
 		},
 
         // Show done message
@@ -430,7 +430,7 @@
 	    		    $(this).parent().fadeOut('normal');
 	    		});
 
-            // user provided callback when done    
+            // user provided callback when done
             opts.errorCallback.call($(opts.contentSelector)[0],'done');
 
         },
@@ -444,12 +444,12 @@
                     return false;
                 }
             }
-            
+
             return true;
-            
+
         },
 
-        /*	
+        /*
         ----------------------------
         Public methods
         ----------------------------
@@ -472,7 +472,7 @@
 		pause: function infscr_pause() {
 			this._pausing('pause');
 		},
-		
+
 		// Set pause value to false
 		resume: function infscr_resume() {
 			this._pausing('resume');
@@ -488,7 +488,7 @@
 	    		pageNum = pageNum || null,
 				getPage = (!!pageNum) ? pageNum : opts.state.currPage;
 				beginAjax = function infscr_ajax(opts) {
-					
+
 					// increment the URL bit. e.g. /page/3/
 	                opts.state.currPage++;
 
@@ -524,7 +524,7 @@
                                     (condition) ? instance._loadcallback(box, jqXHR.responseText) : instance._error('end');
                                 }
                             });
-    
+
                             break;
 	                    case 'json':
 	                        instance._debug('Using ' + (method.toUpperCase()) + ' via $.ajax() method');
@@ -535,7 +535,7 @@
                               success: function(data, textStatus, jqXHR) {
                                 condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
                                 if(opts.appendCallback) {
-                                    // if appendCallback is true, you must defined template in options. 
+                                    // if appendCallback is true, you must defined template in options.
                                     // note that data passed into _loadcallback is already an html (after processed in opts.template(data)).
                                     if(opts.template != undefined) {
                                         var theData = opts.template(data);
@@ -555,18 +555,18 @@
                                 instance._error('end');
                               }
                             });
-	
+
 	                        break;
 	                }
 				};
-				
+
 			// if behavior is defined and this function is extended, call that instead of default
 			if (!!opts.behavior && this['retrieve_'+opts.behavior] !== undefined) {
 				this['retrieve_'+opts.behavior].call(this,pageNum);
 				return;
 			}
 
-            
+
 			// for manual triggers, if destroyed, get out of here
 			if (opts.state.isDestroyed) {
                 this._debug('Instance is destroyed');
@@ -599,17 +599,17 @@
             this.retrieve();
 
         },
-		
+
 		// Toggle pause value
 		toggle: function infscr_toggle() {
 			this._pausing();
 		},
-		
+
 		// Unbind from scroll
 		unbind: function infscr_unbind() {
 			this._binding('unbind');
 		},
-		
+
 		// update options
 		update: function infscr_options(key) {
 			if ($.isPlainObject(key)) {
@@ -620,22 +620,22 @@
     }
 
 
-    /*	
+    /*
     ----------------------------
     Infinite Scroll function
     ----------------------------
-	
+
     Borrowed logic from the following...
-	
+
     jQuery UI
     - https://github.com/jquery/jquery-ui/blob/master/ui/jquery.ui.widget.js
-	
+
     jCarousel
     - https://github.com/jsor/jcarousel/blob/master/lib/jquery.jcarousel.js
-	
+
     Masonry
-    - https://github.com/desandro/masonry/blob/master/jquery.masonry.js		
-	
+    - https://github.com/desandro/masonry/blob/master/jquery.masonry.js
+
     */
 
     $.fn.infinitescroll = function infscr_init(options, callback) {
@@ -645,7 +645,7 @@
 
         switch (thisCall) {
 
-            // method 
+            // method
             case 'string':
 
                 var args = Array.prototype.slice.call(arguments, 1);
@@ -671,7 +671,7 @@
 
                 break;
 
-            // creation 
+            // creation
             case 'object':
 
                 this.each(function () {
@@ -707,7 +707,7 @@
 
 
 
-    /* 
+    /*
     * smartscroll: debounced scroll event for jQuery *
     * https://github.com/lukeshumard/smartscroll
     * Based on smartresize by @louis_remi: https://github.com/lrbabe/jquery.smartresize.js *
