@@ -60,7 +60,8 @@
 		errorCallback: function () { },
 		infid: 0, //Instance ID
 		pixelsFromNavToBottom: undefined,
-		path: undefined
+		path: undefined,
+		beforeAppendCallback : undefined
 	};
 
 
@@ -302,25 +303,27 @@
                         return this._error('end');
                     }
 
+					this._debug('contentSelector', $(opts.contentSelector)[0])
 
-                    // use a documentFragment because it works when content is going into a table or UL
+                    // previously, we would pass in the new DOM element as context for the callback
+                    // however we're now using a documentfragment, which doesnt havent parents or children,
+                    // so the context is the contentContainer guy, and we pass in an array
+                    //   of the elements collected as the first argument.
+                    data = children.get();
+					
+					if (opts.beforeAppendCallback) {
+						opts.beforeAppendCallback(this,data);
+					}
+					
+					// use a documentFragment because it works when content is going into a table or UL
                     frag = document.createDocumentFragment();
                     while (box[0].firstChild) {
                         frag.appendChild(box[0].firstChild);
                     }
 
-                    this._debug('contentSelector', $(opts.contentSelector)[0])
                     $(opts.contentSelector)[0].appendChild(frag);
-                    // previously, we would pass in the new DOM element as context for the callback
-                    // however we're now using a documentfragment, which doesnt havent parents or children,
-                    // so the context is the contentContainer guy, and we pass in an array
-                    //   of the elements collected as the first argument.
-
-                    data = children.get();
-
 
                     break;
-
             }
 
             // loadingEnd function
