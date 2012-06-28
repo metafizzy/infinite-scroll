@@ -60,7 +60,9 @@
 		errorCallback: function () { },
 		infid: 0, //Instance ID
 		pixelsFromNavToBottom: undefined,
-		path: undefined
+		path: undefined,
+        scrollMethod: 'px',
+        maxHidden: 0
 	};
 
 
@@ -341,18 +343,33 @@
 
         _nearbottom: function infscr_nearbottom() {
 
-            var opts = this.options,
-	        	pixelsFromWindowBottomToBottom = 0 + $(document).height() - (opts.binder.scrollTop()) - $(window).height();
+            var opts = this.options;
 
             // if behavior is defined and this function is extended, call that instead of default
 			if (!!opts.behavior && this['_nearbottom_'+opts.behavior] !== undefined) {
 				return this['_nearbottom_'+opts.behavior].call(this);
 			}
 
-			this._debug('math:', pixelsFromWindowBottomToBottom, opts.pixelsFromNavToBottom);
+            if (opts.scrollMethod == 'px') {
+                var pixelsFromWindowBottomToBottom = 0 + $(document).height() - (opts.binder.scrollTop()) - $(window).height();
 
-            // if distance remaining in the scroll (including buffer) is less than the orignal nav to bottom....
-            return (pixelsFromWindowBottomToBottom - opts.bufferPx < opts.pixelsFromNavToBottom);
+    			this._debug('math:', pixelsFromWindowBottomToBottom, opts.pixelsFromNavToBottom);
+
+                // if distance remaining in the scroll (including buffer) is less than the orignal nav to bottom....
+                return (pixelsFromWindowBottomToBottom - opts.bufferPx < opts.pixelsFromNavToBottom);
+            } else if (opts.scrollMethod == 'count') {
+                var fold = $(window).height() + $(window).scrollTop(),
+                    $element = $(opts.itemSelector),
+                    hidden = 0;
+
+                $.each($element, function(index, item) {
+                    if (fold <= $(item).offset().top) {
+                        hidden++;
+                    }
+                });
+
+                return (hidden <= opts.maxHidden);
+            }
 
         },
 
