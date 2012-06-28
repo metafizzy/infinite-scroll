@@ -26,6 +26,7 @@
 	
 	$.infinitescroll.defaults = {
 		loading: {
+            callback: undefined,
 			finished: undefined,
 			finishedMsg: "<em>Congratulations, you've reached the end of the internet.</em>",
 			img: "http://www.infinite-scroll.com/loading.gif",
@@ -595,6 +596,10 @@
 			if (state.isDuringAjax || state.isInvalidPage || state.isDone || state.isDestroyed || state.isPaused) return;
 
             if (!this._nearbottom()) return;
+
+            if (opts.loading.callback != undefined) {
+                opts.loading.callback();
+            }
 
             this.retrieve();
 
