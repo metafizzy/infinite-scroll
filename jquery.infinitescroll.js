@@ -363,7 +363,7 @@
                     hidden = 0;
 
                 $.each($element, function(index, item) {
-                    if (fold <= $(element).offset().top - settings.threshold) {
+                    if (fold <= $(item).offset().top - settings.threshold) {
                         hidden++;
                     }
                 });
