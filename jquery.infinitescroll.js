@@ -26,6 +26,7 @@
 	
 	$.infinitescroll.defaults = {
 		loading: {
+            callback: undefined,
 			finished: undefined,
 			finishedMsg: "<em>Congratulations, you've reached the end of the internet.</em>",
 			img: "http://www.infinite-scroll.com/loading.gif",
@@ -60,7 +61,9 @@
 		errorCallback: function () { },
 		infid: 0, //Instance ID
 		pixelsFromNavToBottom: undefined,
-		path: undefined
+		path: undefined,
+        scrollMethod: 'px',
+        maxHidden: 0
 	};
 
 
@@ -134,10 +137,16 @@
             opts.loading.selector = opts.loading.selector || opts.contentSelector;
 
             // Define loading.msg
-            opts.loading.msg = $('<div id="infscr-loading"><img alt="Loading..." src="' + opts.loading.img + '" /><div>' + opts.loading.msgText + '</div></div>');
-
-            // Preload loading.img
-            (new Image()).src = opts.loading.img;
+            var parts = [];
+            if (opts.loading.img) {
+                parts.push('<div><img alt="Loading..." src="' + opts.loading.img + '" /></div>');
+                // Preload loading.img
+                (new Image()).src = opts.loading.img;
+            }
+            if (opts.loading.msgText) {
+                parts.push('<div>' + opts.loading.msgText + '</div>');
+            }
+            opts.loading.msg = $('<div id="infscr-loading">' + parts.join('') + '</div>');
 
             // distance from nav links to bottom
             // computed as: height of the document + top offset of container - top offset of nav link
@@ -341,18 +350,33 @@
 
         _nearbottom: function infscr_nearbottom() {
 
-            var opts = this.options,
-	        	pixelsFromWindowBottomToBottom = 0 + $(document).height() - (opts.binder.scrollTop()) - $(window).height();
+            var opts = this.options;
 
             // if behavior is defined and this function is extended, call that instead of default
 			if (!!opts.behavior && this['_nearbottom_'+opts.behavior] !== undefined) {
 				return this['_nearbottom_'+opts.behavior].call(this);
 			}
 
-			this._debug('math:', pixelsFromWindowBottomToBottom, opts.pixelsFromNavToBottom);
+            if (opts.scrollMethod == 'px') {
+                var pixelsFromWindowBottomToBottom = 0 + $(document).height() - (opts.binder.scrollTop()) - $(window).height();
 
-            // if distance remaining in the scroll (including buffer) is less than the orignal nav to bottom....
-            return (pixelsFromWindowBottomToBottom - opts.bufferPx < opts.pixelsFromNavToBottom);
+    			this._debug('math:', pixelsFromWindowBottomToBottom, opts.pixelsFromNavToBottom);
+
+                // if distance remaining in the scroll (including buffer) is less than the orignal nav to bottom....
+                return (pixelsFromWindowBottomToBottom - opts.bufferPx < opts.pixelsFromNavToBottom);
+            } else if (opts.scrollMethod == 'count') {
+                var fold = $(window).height() + $(window).scrollTop(),
+                    $element = $(opts.itemSelector),
+                    hidden = 0;
+
+                $.each($element, function(index, item) {
+                    if (fold <= $(item).offset().top) {
+                        hidden++;
+                    }
+                });
+
+                return (hidden <= opts.maxHidden);
+            }
 
         },
 
@@ -498,6 +522,7 @@
 	                box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');
 
 	                desturl = path.join(opts.state.currPage);
+	                desturl = desturl + (/\?/.test(desturl) ? "&" : "?") + '_type=infinite';
 
 	                method = (opts.dataType == 'html' || opts.dataType == 'json' ) ? opts.dataType : 'html+callback';
 	                if (opts.appendCallback && opts.dataType == 'html') method += '+callback'
@@ -595,6 +620,10 @@
 			if (state.isDuringAjax || state.isInvalidPage || state.isDone || state.isDestroyed || state.isPaused) return;
 
             if (!this._nearbottom()) return;
+
+            if (opts.loading.callback != undefined) {
+                opts.loading.callback();
+            }
 
             this.retrieve();
 
