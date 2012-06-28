@@ -357,7 +357,7 @@
 				return this['_nearbottom_'+opts.behavior].call(this);
 			}
 
-            if (otps.scrollMethod == 'px') {
+            if (opts.scrollMethod == 'px') {
                 var pixelsFromWindowBottomToBottom = 0 + $(document).height() - (opts.binder.scrollTop()) - $(window).height();
 
     			this._debug('math:', pixelsFromWindowBottomToBottom, opts.pixelsFromNavToBottom);
