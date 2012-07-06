@@ -1,92 +1,92 @@
 /*
-	--------------------------------
-	Infinite Scroll
-	--------------------------------
-	+ https://github.com/paulirish/infinite-scroll
-	+ version 2.0b2.120519
-	+ Copyright 2011/12 Paul Irish & Luke Shumard
-	+ Licensed under the MIT license
-	
-	+ Documentation: http://infinite-scroll.com/
-	
+   --------------------------------
+   Infinite Scroll
+   --------------------------------
+   + https://github.com/paulirish/infinite-scroll
+   + version 2.0b2.120519
+   + Copyright 2011/12 Paul Irish & Luke Shumard
+   + Licensed under the MIT license
+
+   + Documentation: http://infinite-scroll.com/
+
 */
 
 (function (window, $, undefined) {
-	
-	$.infinitescroll = function infscr(options, callback, element) {
-		
-		this.element = $(element);
-		
-                // Flag the object in the event of a failed creation
-		if (!this._create(options, callback)) {
-                  this.failed = true;
-                }
-	
-	};
-	
-	$.infinitescroll.defaults = {
-		loading: {
-			finished: undefined,
-			finishedMsg: "<em>Congratulations, you've reached the end of the internet.</em>",
-			img: "http://www.infinite-scroll.com/loading.gif",
-			msg: null,
-			msgText: "<em>Loading the next set of posts...</em>",
-			selector: null,
-			speed: 'fast',
-			start: undefined
-		},
-		state: {
-			isDuringAjax: false,
-			isInvalidPage: false,
-			isDestroyed: false,
-			isDone: false, // For when it goes all the way through the archive.
-			isPaused: false,
-			currPage: 1
-		},
-		callback: undefined,
-		debug: false,
-		behavior: undefined,
-		binder: $(window), // used to cache the selector
-		nextSelector: "div.navigation a:first",
-		navSelector: "div.navigation",
-		contentSelector: null, // rename to pageFragment
-		extraScrollPx: 150,
-		itemSelector: "div.post",
-		animate: false,
-		pathParse: undefined,
-		dataType: 'html',
-		appendCallback: true,
-		bufferPx: 40,
-		errorCallback: function () { },
-		infid: 0, //Instance ID
-		pixelsFromNavToBottom: undefined,
-		path: undefined
-	};
+
+    $.infinitescroll = function infscr(options, callback, element) {
+
+        this.element = $(element);
+
+        // Flag the object in the event of a failed creation
+        if (!this._create(options, callback)) {
+            this.failed = true;
+        }
+
+    };
+
+    $.infinitescroll.defaults = {
+        loading: {
+            finished: undefined,
+            finishedMsg: "<em>Congratulations, you've reached the end of the internet.</em>",
+            img: "http://www.infinite-scroll.com/loading.gif",
+            msg: null,
+            msgText: "<em>Loading the next set of posts...</em>",
+            selector: null,
+            speed: 'fast',
+            start: undefined
+        },
+        state: {
+            isDuringAjax: false,
+            isInvalidPage: false,
+            isDestroyed: false,
+            isDone: false, // For when it goes all the way through the archive.
+            isPaused: false,
+            currPage: 1
+        },
+        callback: undefined,
+        debug: false,
+        behavior: undefined,
+        binder: $(window), // used to cache the selector
+        nextSelector: "div.navigation a:first",
+        navSelector: "div.navigation",
+        contentSelector: null, // rename to pageFragment
+        extraScrollPx: 150,
+        itemSelector: "div.post",
+        animate: false,
+        pathParse: undefined,
+        dataType: 'html',
+        appendCallback: true,
+        bufferPx: 40,
+        errorCallback: function () { },
+        infid: 0, //Instance ID
+        pixelsFromNavToBottom: undefined,
+        path: undefined
+    };
 
 
     $.infinitescroll.prototype = {
 
         /*	
-        ----------------------------
-        Private methods
-        ----------------------------
-        */
+            ----------------------------
+            Private methods
+            ----------------------------
+            */
 
         // Bind or unbind from scroll
         _binding: function infscr_binding(binding) {
 
             var instance = this,
-				opts = instance.options;
-				
-			opts.v = '2.0b2.111027';
+            opts = instance.options;
+
+            opts.v = '2.0b2.111027';
 
             // if behavior is defined and this function is extended, call that instead of default
-			if (!!opts.behavior && this['_binding_'+opts.behavior] !== undefined) {
-				this['_binding_'+opts.behavior].call(this);
-				return;
-			}
+            if (!!opts.behavior && this['_binding_'+opts.behavior] !== undefined) {
+                this['_binding_'+opts.behavior].call(this);
+                return;
+            }
 
-			if (binding !== 'bind' && binding !== 'unbind') {
+            if (binding !== 'bind' && binding !== 'unbind') {
                 this._debug('Binding value  ' + binding + ' not valid')
                 return false;
             }
@@ -107,8 +107,8 @@
 
         },
 
-		// Fundamental aspects of the plugin are initialized
-		_create: function infscr_create(options, callback) {
+        // Fundamental aspects of the plugin are initialized
+        _create: function infscr_create(options, callback) {
 
             // Add custom options to defaults
             var opts = $.extend(true, {}, $.infinitescroll.defaults, options);
@@ -120,8 +120,8 @@
             // Validate page fragment path
             var path = $(opts.nextSelector).attr('href');
             if (!path) {
-              this._debug('Navigation selector not found');
-              return false;
+                this._debug('Navigation selector not found');
+                return false;
             }
 
             // Set the path to be a relative URL from root.
@@ -143,34 +143,34 @@
             // computed as: height of the document + top offset of container - top offset of nav link
             opts.pixelsFromNavToBottom = $(document).height() - $(opts.navSelector).offset().top;
 
-			// determine loading.start actions
+            // determine loading.start actions
             opts.loading.start = opts.loading.start || function() {
-				
-				$(opts.navSelector).hide();
-				opts.loading.msg
-					.appendTo(opts.loading.selector)
-					.show(opts.loading.speed, function () {
-	                	beginAjax(opts);
-	            });
-			};
-			
-			// determine loading.finished actions
-			opts.loading.finished = opts.loading.finished || function() {
-				opts.loading.msg.fadeOut('normal');
-			};
+
+                $(opts.navSelector).hide();
+                opts.loading.msg
+                .appendTo(opts.loading.selector)
+                .show(opts.loading.speed, function () {
+                    beginAjax(opts);
+                });
+            };
+
+            // determine loading.finished actions
+            opts.loading.finished = opts.loading.finished || function() {
+                opts.loading.msg.fadeOut('normal');
+            };
 
             // callback loading
             opts.callback = function(instance,data) {
-				if (!!opts.behavior && instance['_callback_'+opts.behavior] !== undefined) {
-					instance['_callback_'+opts.behavior].call($(opts.contentSelector)[0], data);
-				}
-				if (callback) {
-					callback.call($(opts.contentSelector)[0], data, opts);
-				}
-			};
+                if (!!opts.behavior && instance['_callback_'+opts.behavior] !== undefined) {
+                    instance['_callback_'+opts.behavior].call($(opts.contentSelector)[0], data);
+                }
+                if (callback) {
+                    callback.call($(opts.contentSelector)[0], data, opts);
+                }
+            };
 
             this._setup();
-            
+
             // Return true to indicate successful creation
             return true;
         },
@@ -178,7 +178,7 @@
         // Console log wrapper
         _debug: function infscr_debug() {
 
-			if (this.options && this.options.debug) {
+            if (this.options && this.options.debug) {
                 return window.console && console.log.call(console, arguments);
             }
 
@@ -189,11 +189,11 @@
 
             var opts = this.options;
 
-			// if behavior is defined and this function is extended, call that instead of default
-			if (!!opts.behavior && this['_determinepath_'+opts.behavior] !== undefined) {
-				this['_determinepath_'+opts.behavior].call(this,path);
-				return;
-			}
+            // if behavior is defined and this function is extended, call that instead of default
+            if (!!opts.behavior && this['_determinepath_'+opts.behavior] !== undefined) {
+                this['_determinepath_'+opts.behavior].call(this,path);
+                return;
+            }
 
             if (!!opts.pathParse) {
 
@@ -238,11 +238,11 @@
 
             var opts = this.options;
 
-			// if behavior is defined and this function is extended, call that instead of default
-			if (!!opts.behavior && this['_error_'+opts.behavior] !== undefined) {
-				this['_error_'+opts.behavior].call(this,xhr);
-				return;
-			}
+            // if behavior is defined and this function is extended, call that instead of default
+            if (!!opts.behavior && this['_error_'+opts.behavior] !== undefined) {
+                this['_error_'+opts.behavior].call(this,xhr);
+                return;
+            }
 
             if (xhr !== 'destroy' && xhr !== 'end') {
                 xhr = 'unknown';
@@ -265,67 +265,67 @@
         _loadcallback: function infscr_loadcallback(box, data) {
 
             var opts = this.options,
-	    		callback = this.options.callback, // GLOBAL OBJECT FOR CALLBACK
-	    		result = (opts.state.isDone) ? 'done' : (!opts.appendCallback) ? 'no-append' : 'append',
-	    		frag;
-	
-			// if behavior is defined and this function is extended, call that instead of default
-			if (!!opts.behavior && this['_loadcallback_'+opts.behavior] !== undefined) {
-				this['_loadcallback_'+opts.behavior].call(this,box,data);
-				return;
-			}
+            callback = this.options.callback, // GLOBAL OBJECT FOR CALLBACK
+            result = (opts.state.isDone) ? 'done' : (!opts.appendCallback) ? 'no-append' : 'append',
+            frag;
+
+            // if behavior is defined and this function is extended, call that instead of default
+            if (!!opts.behavior && this['_loadcallback_'+opts.behavior] !== undefined) {
+                this['_loadcallback_'+opts.behavior].call(this,box,data);
+                return;
+            }
 
             switch (result) {
 
                 case 'done':
 
                     this._showdonemsg();
-                    return false;
+                return false;
 
-                    break;
+                break;
 
                 case 'no-append':
 
                     if (opts.dataType == 'html') {
-                        data = '<div>' + data + '</div>';
-                        data = $(data).find(opts.itemSelector);
-                    }
+                    data = '<div>' + data + '</div>';
+                    data = $(data).find(opts.itemSelector);
+                }
 
-                    break;
+                break;
 
                 case 'append':
 
                     var children = box.children();
 
-                    // if it didn't return anything
-                    if (children.length == 0) {
-                        return this._error('end');
-                    }
+                // if it didn't return anything
+                if (children.length == 0) {
+                    return this._error('end');
+                }
 
 
-                    // use a documentFragment because it works when content is going into a table or UL
-                    frag = document.createDocumentFragment();
-                    while (box[0].firstChild) {
-                        frag.appendChild(box[0].firstChild);
-                    }
+                // use a documentFragment because it works when content is going into a table or UL
+                frag = document.createDocumentFragment();
+                while (box[0].firstChild) {
+                    frag.appendChild(box[0].firstChild);
+                }
 
-                    this._debug('contentSelector', $(opts.contentSelector)[0])
-                    $(opts.contentSelector)[0].appendChild(frag);
-                    // previously, we would pass in the new DOM element as context for the callback
-                    // however we're now using a documentfragment, which doesnt havent parents or children,
-                    // so the context is the contentContainer guy, and we pass in an array
-                    //   of the elements collected as the first argument.
+                this._debug('contentSelector', $(opts.contentSelector)[0])
+                $(opts.contentSelector)[0].appendChild(frag);
+                // previously, we would pass in the new DOM element as context for the callback
+                // however we're now using a documentfragment, which doesnt havent parents or children,
+                // so the context is the contentContainer guy, and we pass in an array
+                //   of the elements collected as the first argument.
 
-                    data = children.get();
+                data = children.get();
 
 
-                    break;
+                break;
 
             }
 
             // loadingEnd function
-			opts.loading.finished.call($(opts.contentSelector)[0],opts)
-            
+            opts.loading.finished.call($(opts.contentSelector)[0],opts)
+
 
             // smooth scroll to ease in the new content
             if (opts.animate) {
@@ -342,32 +342,32 @@
         _nearbottom: function infscr_nearbottom() {
 
             var opts = this.options,
-	        	pixelsFromWindowBottomToBottom = 0 + $(document).height() - (opts.binder.scrollTop()) - $(window).height();
+            pixelsFromWindowBottomToBottom = 0 + $(document).height() - (opts.binder.scrollTop()) - $(window).height();
 
             // if behavior is defined and this function is extended, call that instead of default
-			if (!!opts.behavior && this['_nearbottom_'+opts.behavior] !== undefined) {
-				return this['_nearbottom_'+opts.behavior].call(this);
-			}
+            if (!!opts.behavior && this['_nearbottom_'+opts.behavior] !== undefined) {
+                return this['_nearbottom_'+opts.behavior].call(this);
+            }
 
-			this._debug('math:', pixelsFromWindowBottomToBottom, opts.pixelsFromNavToBottom);
+            this._debug('math:', pixelsFromWindowBottomToBottom, opts.pixelsFromNavToBottom);
 
             // if distance remaining in the scroll (including buffer) is less than the orignal nav to bottom....
             return (pixelsFromWindowBottomToBottom - opts.bufferPx < opts.pixelsFromNavToBottom);
 
         },
 
-		// Pause / temporarily disable plugin from firing
+        // Pause / temporarily disable plugin from firing
         _pausing: function infscr_pausing(pause) {
 
             var opts = this.options;
 
             // if behavior is defined and this function is extended, call that instead of default
-			if (!!opts.behavior && this['_pausing_'+opts.behavior] !== undefined) {
-				this['_pausing_'+opts.behavior].call(this,pause);
-				return;
-			}
+            if (!!opts.behavior && this['_pausing_'+opts.behavior] !== undefined) {
+                this['_pausing_'+opts.behavior].call(this,pause);
+                return;
+            }
 
-			// If pause is not 'pause' or 'resume', toggle it's value
+            // If pause is not 'pause' or 'resume', toggle it's value
             if (pause !== 'pause' && pause !== 'resume' && pause !== null) {
                 this._debug('Invalid argument. Toggling pause value instead');
             };
@@ -377,15 +377,15 @@
             switch (pause) {
                 case 'pause':
                     opts.state.isPaused = true;
-                    break;
+                break;
 
                 case 'resume':
                     opts.state.isPaused = false;
-                    break;
+                break;
 
                 case 'toggle':
                     opts.state.isPaused = !opts.state.isPaused;
-                    break;
+                break;
             }
 
             this._debug('Paused', opts.state.isPaused);
@@ -393,49 +393,49 @@
 
         },
 
-		// Behavior is determined
-		// If the behavior option is undefined, it will set to default and bind to scroll
-		_setup: function infscr_setup() {
-			
-			var opts = this.options;
-			
-			// if behavior is defined and this function is extended, call that instead of default
-			if (!!opts.behavior && this['_setup_'+opts.behavior] !== undefined) {
-				this['_setup_'+opts.behavior].call(this);
-				return;
-			}
-			
-			this._binding('bind');
-			
-			return false;
-			
-		},
+        // Behavior is determined
+        // If the behavior option is undefined, it will set to default and bind to scroll
+        _setup: function infscr_setup() {
+
+            var opts = this.options;
+
+            // if behavior is defined and this function is extended, call that instead of default
+            if (!!opts.behavior && this['_setup_'+opts.behavior] !== undefined) {
+                this['_setup_'+opts.behavior].call(this);
+                return;
+            }
+
+            this._binding('bind');
+
+            return false;
+
+        },
 
         // Show done message
         _showdonemsg: function infscr_showdonemsg() {
 
             var opts = this.options;
 
-			// if behavior is defined and this function is extended, call that instead of default
-			if (!!opts.behavior && this['_showdonemsg_'+opts.behavior] !== undefined) {
-				this['_showdonemsg_'+opts.behavior].call(this);
-				return;
-			}
+            // if behavior is defined and this function is extended, call that instead of default
+            if (!!opts.behavior && this['_showdonemsg_'+opts.behavior] !== undefined) {
+                this['_showdonemsg_'+opts.behavior].call(this);
+                return;
+            }
 
             opts.loading.msg
-	    		.find('img')
-	    		.hide()
-	    		.parent()
-	    		.find('div').html(opts.loading.finishedMsg).animate({ opacity: 1 }, 2000, function () {
-	    		    $(this).parent().fadeOut('normal');
-	    		});
+            .find('img')
+            .hide()
+            .parent()
+            .find('div').html(opts.loading.finishedMsg).animate({ opacity: 1 }, 2000, function () {
+                $(this).parent().fadeOut('normal');
+            });
 
             // user provided callback when done    
             opts.errorCallback.call($(opts.contentSelector)[0],'done');
 
         },
 
-		// grab each selector option and see if any fail
+        // grab each selector option and see if any fail
         _validate: function infscr_validate(opts) {
 
             for (var key in opts) {
@@ -444,21 +444,21 @@
                     return false;
                 }
             }
-            
+
             return true;
-            
+
         },
 
         /*	
-        ----------------------------
-        Public methods
-        ----------------------------
-        */
+            ----------------------------
+            Public methods
+            ----------------------------
+            */
 
-		// Bind to scroll
-		bind: function infscr_bind() {
-			this._binding('bind');
-		},
+        // Bind to scroll
+        bind: function infscr_bind() {
+            this._binding('bind');
+        },
 
         // Destroy current instance of plugin
         destroy: function infscr_destroy() {
@@ -468,71 +468,71 @@
 
         },
 
-		// Set pause value to false
-		pause: function infscr_pause() {
-			this._pausing('pause');
-		},
-		
-		// Set pause value to false
-		resume: function infscr_resume() {
-			this._pausing('resume');
-		},
+        // Set pause value to false
+        pause: function infscr_pause() {
+            this._pausing('pause');
+        },
+
+        // Set pause value to false
+        resume: function infscr_resume() {
+            this._pausing('resume');
+        },
 
         // Retrieve next set of content items
         retrieve: function infscr_retrieve(pageNum) {
 
             var instance = this,
-				opts = instance.options,
-				path = opts.path,
-				box, frag, desturl, method, condition,
-	    		pageNum = pageNum || null,
-				getPage = (!!pageNum) ? pageNum : opts.state.currPage;
-				beginAjax = function infscr_ajax(opts) {
-					
-					// increment the URL bit. e.g. /page/3/
-	                opts.state.currPage++;
+            opts = instance.options,
+            path = opts.path,
+            box, frag, desturl, method, condition,
+            pageNum = pageNum || null,
+            getPage = (!!pageNum) ? pageNum : opts.state.currPage;
+            beginAjax = function infscr_ajax(opts) {
 
-	                instance._debug('heading into ajax', path);
+                // increment the URL bit. e.g. /page/3/
+                opts.state.currPage++;
 
-	                // if we're dealing with a table we can't use DIVs
-	                box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');
+                instance._debug('heading into ajax', path);
 
-	                desturl = path.join(opts.state.currPage);
+                // if we're dealing with a table we can't use DIVs
+                box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');
 
-	                method = (opts.dataType == 'html' || opts.dataType == 'json' ) ? opts.dataType : 'html+callback';
-	                if (opts.appendCallback && opts.dataType == 'html') method += '+callback'
+                desturl = path.join(opts.state.currPage);
 
-	                switch (method) {
+                method = (opts.dataType == 'html' || opts.dataType == 'json' ) ? opts.dataType : 'html+callback';
+                if (opts.appendCallback && opts.dataType == 'html') method += '+callback'
 
-	                    case 'html+callback':
+                    switch (method) {
 
-	                        instance._debug('Using HTML via .load() method');
-	                        box.load(desturl + ' ' + opts.itemSelector, null, function infscr_ajax_callback(responseText) {
-	                            instance._loadcallback(box, responseText);
-	                        });
+                        case 'html+callback':
 
-	                        break;
+                            instance._debug('Using HTML via .load() method');
+                        box.load(desturl + ' ' + opts.itemSelector, null, function infscr_ajax_callback(responseText) {
+                            instance._loadcallback(box, responseText);
+                        });
 
-	                    case 'html':
+                        break;
+
+                        case 'html':
                             instance._debug('Using ' + (method.toUpperCase()) + ' via $.ajax() method');
-                            $.ajax({
-                                // params
-                                url: desturl,
-                                dataType: opts.dataType,
-                                complete: function infscr_ajax_callback(jqXHR, textStatus) {
-                                    condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
-                                    (condition) ? instance._loadcallback(box, jqXHR.responseText) : instance._error('end');
-                                }
-                            });
-    
-                            break;
-	                    case 'json':
-	                        instance._debug('Using ' + (method.toUpperCase()) + ' via $.ajax() method');
-                            $.ajax({
-                              dataType: 'json',
-                              type: 'GET',
-                              url: desturl,
-                              success: function(data, textStatus, jqXHR) {
+                        $.ajax({
+                            // params
+                            url: desturl,
+                            dataType: opts.dataType,
+                            complete: function infscr_ajax_callback(jqXHR, textStatus) {
+                                condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
+                                (condition) ? instance._loadcallback(box, jqXHR.responseText) : instance._error('end');
+                            }
+                        });
+
+                        break;
+                        case 'json':
+                            instance._debug('Using ' + (method.toUpperCase()) + ' via $.ajax() method');
+                        $.ajax({
+                            dataType: 'json',
+                            type: 'GET',
+                            url: desturl,
+                            success: function(data, textStatus, jqXHR) {
                                 condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
                                 if(opts.appendCallback) {
                                     // if appendCallback is true, you must defined template in options. 
@@ -549,26 +549,26 @@
                                     // if appendCallback is false, we will pass in the JSON object. you should handle it yourself in your callback.
                                     (condition) ? instance._loadcallback(box, data) : instance._error('end');
                                 }
-                              },
-                              error: function(jqXHR, textStatus, errorThrown) {
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
                                 instance._debug("JSON ajax request failed.");
                                 instance._error('end');
-                              }
-                            });
-	
-	                        break;
-	                }
-				};
-				
-			// if behavior is defined and this function is extended, call that instead of default
-			if (!!opts.behavior && this['retrieve_'+opts.behavior] !== undefined) {
-				this['retrieve_'+opts.behavior].call(this,pageNum);
-				return;
-			}
+                            }
+                        });
 
-            
-			// for manual triggers, if destroyed, get out of here
-			if (opts.state.isDestroyed) {
+                        break;
+                    }
+            };
+
+            // if behavior is defined and this function is extended, call that instead of default
+            if (!!opts.behavior && this['retrieve_'+opts.behavior] !== undefined) {
+                this['retrieve_'+opts.behavior].call(this,pageNum);
+                return;
+            }
+
+
+            // for manual triggers, if destroyed, get out of here
+            if (opts.state.isDestroyed) {
                 this._debug('Instance is destroyed');
                 return false;
             };
@@ -584,59 +584,59 @@
         scroll: function infscr_scroll() {
 
             var opts = this.options,
-				state = opts.state;
+            state = opts.state;
 
             // if behavior is defined and this function is extended, call that instead of default
-			if (!!opts.behavior && this['scroll_'+opts.behavior] !== undefined) {
-				this['scroll_'+opts.behavior].call(this);
-				return;
-			}
+            if (!!opts.behavior && this['scroll_'+opts.behavior] !== undefined) {
+                this['scroll_'+opts.behavior].call(this);
+                return;
+            }
 
-			if (state.isDuringAjax || state.isInvalidPage || state.isDone || state.isDestroyed || state.isPaused) return;
+            if (state.isDuringAjax || state.isInvalidPage || state.isDone || state.isDestroyed || state.isPaused) return;
 
             if (!this._nearbottom()) return;
 
             this.retrieve();
 
         },
-		
-		// Toggle pause value
-		toggle: function infscr_toggle() {
-			this._pausing();
-		},
-		
-		// Unbind from scroll
-		unbind: function infscr_unbind() {
-			this._binding('unbind');
-		},
-		
-		// update options
-		update: function infscr_options(key) {
-			if ($.isPlainObject(key)) {
-				this.options = $.extend(true,this.options,key);
-			}
-		}
+
+        // Toggle pause value
+        toggle: function infscr_toggle() {
+            this._pausing();
+        },
+
+        // Unbind from scroll
+        unbind: function infscr_unbind() {
+            this._binding('unbind');
+        },
+
+        // update options
+        update: function infscr_options(key) {
+            if ($.isPlainObject(key)) {
+                this.options = $.extend(true,this.options,key);
+            }
+        }
 
     }
 
 
     /*	
-    ----------------------------
-    Infinite Scroll function
-    ----------------------------
-	
-    Borrowed logic from the following...
-	
-    jQuery UI
-    - https://github.com/jquery/jquery-ui/blob/master/ui/jquery.ui.widget.js
-	
-    jCarousel
-    - https://github.com/jsor/jcarousel/blob/master/lib/jquery.jcarousel.js
-	
-    Masonry
-    - https://github.com/desandro/masonry/blob/master/jquery.masonry.js		
-	
-    */
+        ----------------------------
+        Infinite Scroll function
+        ----------------------------
+
+        Borrowed logic from the following...
+
+        jQuery UI
+        - https://github.com/jquery/jquery-ui/blob/master/ui/jquery.ui.widget.js
+
+        jCarousel
+        - https://github.com/jsor/jcarousel/blob/master/lib/jquery.jcarousel.js
+
+        Masonry
+        - https://github.com/desandro/masonry/blob/master/jquery.masonry.js		
+
+*/
 
     $.fn.infinitescroll = function infscr_init(options, callback) {
 
@@ -650,54 +650,54 @@
 
                 var args = Array.prototype.slice.call(arguments, 1);
 
-                this.each(function () {
+            this.each(function () {
 
-                    var instance = $.data(this, 'infinitescroll');
+                var instance = $.data(this, 'infinitescroll');
 
-                    if (!instance) {
-                        // not setup yet
-                        // return $.error('Method ' + options + ' cannot be called until Infinite Scroll is setup');
-						return false;
-                    }
-                    if (!$.isFunction(instance[options]) || options.charAt(0) === "_") {
-                        // return $.error('No such method ' + options + ' for Infinite Scroll');
-						return false;
-                    }
+                if (!instance) {
+                    // not setup yet
+                    // return $.error('Method ' + options + ' cannot be called until Infinite Scroll is setup');
+                    return false;
+                }
+                if (!$.isFunction(instance[options]) || options.charAt(0) === "_") {
+                    // return $.error('No such method ' + options + ' for Infinite Scroll');
+                    return false;
+                }
 
-                    // no errors!
-                    instance[options].apply(instance, args);
+                // no errors!
+                instance[options].apply(instance, args);
 
-                });
+            });
 
-                break;
+            break;
 
             // creation 
             case 'object':
 
                 this.each(function () {
 
-                    var instance = $.data(this, 'infinitescroll');
+                var instance = $.data(this, 'infinitescroll');
 
-                    if (instance) {
+                if (instance) {
 
-                        // update options of current instance
-                        instance.update(options);
+                    // update options of current instance
+                    instance.update(options);
 
-                    } else {
+                } else {
 
-                        // initialize new instance
-                        instance = new $.infinitescroll(options, callback, this);
+                    // initialize new instance
+                    instance = new $.infinitescroll(options, callback, this);
 
-                        // don't attach if instantiation failed
-                        if (!instance.failed) {
-                          $.data(this, 'infinitescroll', instance);
-                        }
-
+                    // don't attach if instantiation failed
+                    if (!instance.failed) {
+                        $.data(this, 'infinitescroll', instance);
                     }
 
-                });
+                }
 
-                break;
+            });
+
+            break;
 
         }
 
@@ -708,14 +708,14 @@
 
 
     /* 
-    * smartscroll: debounced scroll event for jQuery *
-    * https://github.com/lukeshumard/smartscroll
-    * Based on smartresize by @louis_remi: https://github.com/lrbabe/jquery.smartresize.js *
-    * Copyright 2011 Louis-Remi & Luke Shumard * Licensed under the MIT license. *
-    */
+     * smartscroll: debounced scroll event for jQuery *
+     * https://github.com/lukeshumard/smartscroll
+     * Based on smartresize by @louis_remi: https://github.com/lrbabe/jquery.smartresize.js *
+     * Copyright 2011 Louis-Remi & Luke Shumard * Licensed under the MIT license. *
+     */
 
     var event = $.event,
-		scrollTimeout;
+    scrollTimeout;
 
     event.special.smartscroll = {
         setup: function () {
@@ -727,7 +727,7 @@
         handler: function (event, execAsap) {
             // Save the context
             var context = this,
-		      args = arguments;
+            args = arguments;
 
             // set correct event type
             event.type = "smartscroll";
