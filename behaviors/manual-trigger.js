@@ -34,6 +34,26 @@ $.extend($.infinitescroll.prototype,{
                 	beginAjax(opts);
             });
 		}
+	},
+	_showdonemsg_twitter: function infscr_showdonemsg_twitter () {
+		var opts = this.options,
+			instance = this;
+		
+		//Do all the usual stuff
+		opts.loading.msg
+            .find('img')
+            .hide()
+            .parent()
+            .find('div').html(opts.loading.finishedMsg).animate({ opacity: 1 }, 2000, function () {
+                $(this).parent().fadeOut('normal');
+            });
+		
+		//And also hide the navSelector
+		 $(opts.navSelector).fadeOut('normal');
+
+		// user provided callback when done    
+		opts.errorCallback.call($(opts.contentSelector)[0],'done');
+		
 	}
 	
 });
