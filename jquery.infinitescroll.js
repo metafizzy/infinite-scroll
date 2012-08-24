@@ -63,7 +63,7 @@ $.infinitescroll.defaults = {
 
 $.infinitescroll.prototype = {
 
-    Version: '2.0b2.111027';
+    Version: '2.0b2.111027',
 
     /*
      * ----------------------------
@@ -242,10 +242,12 @@ $.infinitescroll.prototype = {
         var opts = $.extend(true, {}, $.infinitescroll.defaults, options);
 
         // Validate selectors
-        if (!this._validate(opts)) {
+        if (!this._validate(options)) {
             this._debug('Options is invalid')
             return false;
         }
+
+        this.options = opts;
 
         // Validate page fragment path
         var path = $(opts.nextSelector).attr('href');
@@ -253,8 +255,6 @@ $.infinitescroll.prototype = {
             this._debug('Navigation selector not found');
             return false;
         }
-
-        this.options = opts;
 
         // Set the path to be a relative URL from root.
         opts.path = this._determinepath(path);
@@ -266,7 +266,7 @@ $.infinitescroll.prototype = {
         opts.loading.selector = opts.loading.selector || opts.contentSelector;
 
         // Define loading.msg
-        opts.loading.msg = opts.loading.msg || $('<img alt="Loading..." src="' + opts.loading.img + '" /><div>' + opts.loading.msgText + '</div>').appendTo('div#'+opts.loading.wrapperId);
+        opts.loading.msg = opts.loading.msg || $('<div id="'+opts.loading.wrapperId+'">').html('<img alt="Loading..." src="' + opts.loading.img + '" /><div>' + opts.loading.msgText + '</div>');
 
         // Preload loading.img
         (new Image()).src = opts.loading.img;
@@ -326,9 +326,9 @@ $.infinitescroll.prototype = {
         }
 
         if (binding == 'unbind') {
-            opts.binder.unbind('smartscroll.infscr.' + opts.infid);
+            (opts.binder).unbind('smartscroll.infscr.' + opts.infid);
         } else {
-            opts.binder[binding]('smartscroll.infscr.' + opts.infid, function () {
+            (opts.binder)[binding]('smartscroll.infscr.' + opts.infid, function () {
                 instance.scroll();
             });
         };
