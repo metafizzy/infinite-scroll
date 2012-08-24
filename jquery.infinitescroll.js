@@ -63,7 +63,7 @@ $.infinitescroll.defaults = {
 
 $.infinitescroll.prototype = {
 
-    Version: '2.0b2.111027',
+    Version: '2.1',
 
     /*
      * ----------------------------
