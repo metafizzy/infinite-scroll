@@ -470,7 +470,7 @@ $.infinitescroll.prototype = {
 
         // smooth scroll to ease in the new content
         if (opts.animate) {
-            var scrollTo = $(window).scrollTop() + $('#infscr-loading').height() + opts.extraScrollPx + 'px';
+            var scrollTo = $(window).scrollTop() + $(opts.loading.wrapperId).height() + opts.extraScrollPx + 'px';
             $('html,body').animate({ scrollTop: scrollTo }, 800, function () { opts.state.isDuringAjax = false; });
         } else {
             opts.state.isDuringAjax = false; // once the call is done, we can allow it again.
