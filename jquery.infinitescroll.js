@@ -66,7 +66,7 @@
 
     $.infinitescroll.prototype = {
 
-        /*	
+        /*
             ----------------------------
             Private methods
             ----------------------------
@@ -203,7 +203,7 @@
             } else if (path.match(/^(.*?)\b2\b(.*?$)/)) {
                 path = path.match(/^(.*?)\b2\b(.*?$)/).slice(1);
 
-                // if there is any 2 in the url at all.    
+                // if there is any 2 in the url at all.
             } else if (path.match(/^(.*?)2(.*?$)/)) {
 
                 // page= is used in django:
@@ -430,7 +430,7 @@
                 $(this).parent().fadeOut('normal');
             });
 
-            // user provided callback when done    
+            // user provided callback when done
             opts.errorCallback.call($(opts.contentSelector)[0],'done');
 
         },
@@ -449,7 +449,7 @@
 
         },
 
-        /*	
+        /*
             ----------------------------
             Public methods
             ----------------------------
@@ -505,56 +505,55 @@
                     switch (method) {
 
                         case 'html+callback':
-
                             instance._debug('Using HTML via .load() method');
-                        box.load(desturl + ' ' + opts.itemSelector, null, function infscr_ajax_callback(responseText) {
-                            instance._loadcallback(box, responseText);
-                        });
+                            box.load(desturl + ' ' + opts.itemSelector, function infscr_ajax_callback(responseText) {
+                                instance._loadcallback(box, responseText);
+                            });
 
                         break;
 
                         case 'html':
                             instance._debug('Using ' + (method.toUpperCase()) + ' via $.ajax() method');
-                        $.ajax({
-                            // params
-                            url: desturl,
-                            dataType: opts.dataType,
-                            complete: function infscr_ajax_callback(jqXHR, textStatus) {
-                                condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
-                                (condition) ? instance._loadcallback(box, jqXHR.responseText) : instance._error('end');
-                            }
-                        });
+                            $.ajax({
+                                // params
+                                url: desturl,
+                                dataType: opts.dataType,
+                                complete: function infscr_ajax_callback(jqXHR, textStatus) {
+                                    condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
+                                    (condition) ? instance._loadcallback(box, jqXHR.responseText) : instance._error('end');
+                                }
+                            });
 
                         break;
                         case 'json':
                             instance._debug('Using ' + (method.toUpperCase()) + ' via $.ajax() method');
-                        $.ajax({
-                            dataType: 'json',
-                            type: 'GET',
-                            url: desturl,
-                            success: function(data, textStatus, jqXHR) {
-                                condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
-                                if(opts.appendCallback) {
-                                    // if appendCallback is true, you must defined template in options. 
-                                    // note that data passed into _loadcallback is already an html (after processed in opts.template(data)).
-                                    if(opts.template != undefined) {
-                                        var theData = opts.template(data);
-                                        box.append(theData);
-                                        (condition) ? instance._loadcallback(box, theData) : instance._error('end');
+                            $.ajax({
+                                dataType: 'json',
+                                type: 'GET',
+                                url: desturl,
+                                success: function(data, textStatus, jqXHR) {
+                                    condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
+                                    if(opts.appendCallback) {
+                                        // if appendCallback is true, you must defined template in options.
+                                        // note that data passed into _loadcallback is already an html (after processed in opts.template(data)).
+                                        if(opts.template != undefined) {
+                                            var theData = opts.template(data);
+                                            box.append(theData);
+                                            (condition) ? instance._loadcallback(box, theData) : instance._error('end');
+                                        } else {
+                                            instance._debug("template must be defined.");
+                                            instance._error('end');
+                                        }
                                     } else {
-                                        instance._debug("template must be defined.");
-                                        instance._error('end');
+                                        // if appendCallback is false, we will pass in the JSON object. you should handle it yourself in your callback.
+                                        (condition) ? instance._loadcallback(box, data) : instance._error('end');
                                     }
-                                } else {
-                                    // if appendCallback is false, we will pass in the JSON object. you should handle it yourself in your callback.
-                                    (condition) ? instance._loadcallback(box, data) : instance._error('end');
+                                },
+                                error: function(jqXHR, textStatus, errorThrown) {
+                                    instance._debug("JSON ajax request failed.");
+                                    instance._error('end');
                                 }
-                            },
-                            error: function(jqXHR, textStatus, errorThrown) {
-                                instance._debug("JSON ajax request failed.");
-                                instance._error('end');
-                            }
-                        });
+                            });
 
                         break;
                     }
@@ -620,7 +619,7 @@
     }
 
 
-    /*	
+    /*
         ----------------------------
         Infinite Scroll function
         ----------------------------
@@ -634,7 +633,7 @@
         - https://github.com/jsor/jcarousel/blob/master/lib/jquery.jcarousel.js
 
         Masonry
-        - https://github.com/desandro/masonry/blob/master/jquery.masonry.js		
+        - https://github.com/desandro/masonry/blob/master/jquery.masonry.js
 
 */
 
@@ -645,7 +644,7 @@
 
         switch (thisCall) {
 
-            // method 
+            // method
             case 'string':
 
                 var args = Array.prototype.slice.call(arguments, 1);
@@ -671,7 +670,7 @@
 
             break;
 
-            // creation 
+            // creation
             case 'object':
 
                 this.each(function () {
@@ -707,7 +706,7 @@
 
 
 
-    /* 
+    /*
      * smartscroll: debounced scroll event for jQuery *
      * https://github.com/lukeshumard/smartscroll
      * Based on smartresize by @louis_remi: https://github.com/lrbabe/jquery.smartresize.js *
