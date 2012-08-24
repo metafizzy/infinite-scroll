@@ -13,14 +13,15 @@ As of version 2.0, option names have changed. Here is a list:
 ```javascript
 $('.selector').infinitescroll({
   loading: {
-    finished: undefined,
-    finishedMsg: "<em>Congratulations, you've reached the end of the internet.</em>",
+    wrapperId: "infscr-loading",
     img: "http://www.infinite-scroll.com/loading.gif",
     msg: null,
     msgText: "<em>Loading the next set of posts...</em>",
+    finishedMsg: "<em>Congratulations, you've reached the end of the internet.</em>",
     selector: null,
-    speed: 'fast',
-    start: undefined
+    start: undefined,
+    finished: undefined,
+    speed: 'fast'
   },
   state: {
     isDuringAjax: false,
@@ -30,24 +31,24 @@ $('.selector').infinitescroll({
     isPaused: false,
     currPage: 1
   },
-  callback: undefined,
-  debug: false,
-  behavior: undefined,
+  infid: 0, //Instance ID
   binder: $(window), // used to cache the selector
+  callback: undefined,
+  behavior: undefined,
+  itemSelector: "div.post",
   nextSelector: "div.navigation a:first",
   navSelector: "div.navigation",
   contentSelector: null, // rename to pageFragment
   extraScrollPx: 150,
-  itemSelector: "div.post",
   animate: false,
   pathParse: undefined,
   dataType: 'html',
   appendCallback: true,
   bufferPx: 40,
   errorCallback: function () { },
-  infid: 0, //Instance ID
   pixelsFromNavToBottom: undefined,
-  path: undefined
+  path: undefined,
+  debug: false
 });
 ```
 
