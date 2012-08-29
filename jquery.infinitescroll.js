@@ -60,7 +60,8 @@
         errorCallback: function () { },
         infid: 0, //Instance ID
         pixelsFromNavToBottom: undefined,
-        path: undefined
+        path: undefined,
+        ajaxType: 'post'
     };
 
 
@@ -507,8 +508,13 @@
                         case 'html+callback':
 
                             instance._debug('Using HTML via .load() method');
-                        box.load(desturl + ' ' + opts.itemSelector, null, function infscr_ajax_callback(responseText) {
+                        $.ajax({
+                          url: desturl,
+                          type: opts.ajaxType,
+                          success: function(responseText) {
+                            box.html($(responseText).find(opts.itemSelector));
                             instance._loadcallback(box, responseText);
+                          }
                         });
 
                         break;
