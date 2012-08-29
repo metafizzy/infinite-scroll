@@ -1,11 +1,10 @@
-
 # Infinite Scroll
 
 <http://www.infinite-scroll.com/>
 
 The jQuery and Wordpress Plugins:
 
-* jQuery Plugin <http://www.infinite-scroll.com/infinite-scroll-jquery-plugin/> `v2.0b.110415`
+* jQuery Plugin <http://www.infinite-scroll.com/infinite-scroll-jquery-plugin/> `2.0b2.120519`
 * Wordpress Plugin <http://www.infinite-scroll.com/installation/>
 
 As of version 2.0, option names have changed. Here is a list:
