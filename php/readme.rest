@@ -1,0 +1,231 @@
+Many PHP programmers would like to implement infinite scrolling with their code. 
+This document provides information to use infinite scroll plugin with server side PHP scripts. 
+We start with a traditional pagination scheme that is not dependent on this plugin and convert 
+the page to use infinite scrolling pattern.
+
+
+A naive pagination scheme
+--------------------------------
+A naive implementation of  pagination would require
+ - a page_number variable to keep track of what page we are on
+ - page_size variable to know how many records we want to fetch on each page
+
+You pass the page_number variable to server side script that would use it to find offset 
+into some database table and bring offset + page_size records for display. 
+page_size is a constant so the only variable that you need to pass back to script is page_number. 
+
+Page#1 ::
+
+    <html>
+        <head> </head>
+        <body>
+            <!-- page content -->
+            <a href="/site/posts.php?page_number=2"> Next </a>
+        </body>
+    </html>
+
+Page #2 ::
+
+    <html>
+        <head> </head>
+        <body>
+            <!-- page content -->
+            <a href="/site/posts.php?page_number=1">Previous</a>
+            <a href="/site/posts.php?page_number=3"> Next </a>
+
+        </body>
+    </html>
+
+
+
+
+This naive pagination scheme will not perform well as you go deep into pages, 
+when page_number is say 10 or 20. Reason is that inside your database you have to 
+scan a lot of rows before you can locate what you are interested in. 
+However let's see how to convert this traditional pagination scheme to infinite scrolling 
+pattern first. Later on we will see how to convert a better performing pagination scheme.
+
+
+Convert naive pagination scheme to infinite scrolling
+---------------------------------------------------------
+Typically you load the infinite scrolling plugin like the below in your page #1 
+
+::
+
+
+    <html>
+        <head> </head>
+        <body>
+        <div class="container">
+            <!-- page content -->
+            <div id="scroll-loading"> </div>
+
+        </div>  <!-- container -->
+        <ul class="pager"> <li> <a rel="next" href="<?php echo $nextPageUrl ?>">Next &rarr;</a> <li> </ul>
+        <!-- include required javascript files -->
+
+        <script type="text/javascript">
+           
+            $(function(){
+                var $container = $('#tiles');
+                $container.infinitescroll(
+                    {
+                        navSelector  	: '.pager',
+                        nextSelector 	: '.pager a[rel="next"]',
+                        itemSelector : '.tile',
+                        bufferPx : 80,
+
+                        loading : {
+                            selector : "#scroll-loading",
+                            img : "/css/asset/sc/round_loader.gif",
+                            msgText: "<em>Please wait. Loading more items...</em>",
+                            finishedMsg : "<b> You have reached the end of this page </b>",
+                            speed: "slow"
+
+                        }
+
+                    }
+                );
+            });
+
+        </script>
+        </body>
+    </html>
+
+
+The plugin is loaded in page #1. When you scroll past content of page #1, the plugin will issue an
+ajax request to load content from a URL and append the retrieved content to current page,
+
+Now the Question is, **How does the plugin creates this URL to fetch content for next page?**
+
+The plugin can detect when the user has scrolled past page #1, so it has one variable as its disposal- 
+the current page number, like, 2, or 3 or 4 (N). The plugin can keep updating this variable.
+
+Another variable that the plugin uses is the NextSelector. We supply this NextSelector to plugin.
+The plugin will look at the href attribute of NextSelector and parse it to obtain a base_path. So let's say the
+href of NextSelector in our page #1 is something like */home/page/2*. The plugin will parse this string, 
+namely, */home/page/2* and conclude that the base_path is */home/page/* 
+
+Now on scrolling, plugin will keep appending the current_page_number [1,2..N] to this base_path.
+So when you are past page #1, plugin will try to fetch content from */home/page/2*, when you scroll
+past the end of page again, plugin will fetch content from */home/page/3* and so on. The plugin is just
+doing a simple base_path.join(current_page_number) to create next URLs.
+
+Please note two important things here
+
+* plugin is actually trying to guess the base_path from our NextSelector in page #1.
+* What you sent back as NextSelector in page#2 has no effect on this URL creation scheme
+
+
+Now you can see the issues with using this plugin as it is. The problem is that there can be an 
+infinite variety of URL structure depending on how you are doing pagination inside your PHP code 
+and how many variables you do need. My way of doing pagination is different from your way 
+of doing pagination. Same holds for frameworks. Drupal pagination scheme may be different 
+from Djanga and wordpress etc.
+
+For example, 
+
++ /home/page/1
++ /home/?page=1
++ /home/page/number=1
+
+can all be valid pagination schemes. The plugin cannot possibly cope with all these URL structures. 
+Given a next URL, it cannot always deduce the "base_path". Please look at **_determinePath()** method 
+of plugin to see what kind of URL schemes it can cope with. Like in example #3 above, the plugin may not
+know that we are using "number" as proxy for page_number. As it is, the plugin cannot "read your mind"
+
+It can parse simple URL structures and known "page_number" variables, like __page2.html__ or __page=2__ 
+but you have to provide your own implementation of NextSelector parsing to plugin if your URL 
+structure is complicated or something that the plugin cannot handle. Extending an implementation 
+on the fly is the biggest advantageof Javascript and providing your own implementation of 
+determining base_path should not be difficult.
+
+
+Pagination with performance
+------------------------------
+
+The above discussion was about a naive pagination implementation when you work with a single variable,
+page_number on the server side. However any non-trivial implementation of PHP pagination will work
+with two variables
+
+* page_number
+* last_record_id
+
+The problem with naive pagination implementation is that you are working with a single variable,
+an offset (page_number*page_size) that can turn into a big number as page_number increases 
+(or you go deep into pages). That in turn means that you are scanning through a lot of records and you
+do not need them to show current page. 
+
+The remedy is to pass a "last_record_id" together with the page_number to server side script. It is
+much faster to locate the records now ( because you just want records that are greater than that last_record_id)
+
+The next URL now is of form **/home/page?gpa=43l&gpage=2"**, where
+
+* gpa is last_record_id
+* gpage is the current page_number
+
+Now you can see that the plugin has to extract "next URL to fetch " from every page (vs. forming it from page #1)
+as the variable gpa will keep changing. The infinite scroll plugin will require some changes
+(extending the base plugin) to work with this pagination scheme. 
+
+
+
+
+Convert pagination with performance to infinite scrolling
+-------------------------------------------------------------
+
+To convert this pagination scheme to infinite scrolling pattern - we need following
+
++ A variable to store next URL (as we scroll past the page and try to fetch new content)
++ A custom implementation retrieve function to parse and extract 
+    - next page content
+    - next URL
+
+
+Page#1 ::
+
+    <html>
+        <head> </head>
+        <body>
+            <!-- page content -->
+            <a href="/site/posts.php?gpa=100&gpage=2"> Next </a>
+        </body>
+    </html>
+
+Page #2 ::
+
+    <html>
+        <head> </head>
+        <body>
+            <!-- page content -->
+            <a href="/site/posts.php?gpa=50&gpage=3"> Next </a>
+
+        </body>
+    </html>
+
+
+A hacked up version of infinite scroll plugin to store nextUrl and parse nextURL on each page fetch is
+at https://gist.github.com/3706744. You can see a diff of this implementation with infinite scroll 
+plugin on github. Ideally you should never hack the plugin file and use extension mechanisms to provide
+your own implementation.
+
+
+
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+ 
