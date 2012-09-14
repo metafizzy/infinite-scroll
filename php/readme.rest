@@ -140,6 +140,11 @@ structure is complicated or something that the plugin cannot handle. Extending a
 on the fly is the biggest advantageof Javascript and providing your own implementation of 
 determining base_path should not be difficult.
 
+A sample script (posts.php) is provided that works with plugin out of the box. However note the restriction
+
+- Your next URL inside page #1 has to be in form that is recognized by plugin
+- otherwise you need to supply your own pathParse method
+
 
 Pagination with performance
 ------------------------------
@@ -208,6 +213,15 @@ A hacked up version of infinite scroll plugin to store nextUrl and parse nextURL
 at https://gist.github.com/3706744. You can see a diff of this implementation with infinite scroll 
 plugin on github. Ideally you should never hack the plugin file and use extension mechanisms to provide
 your own implementation.
+
+
+A sample script (posts2.php) is provided that 
+
+- Uses pathParse to return next URL for page #2
+- Uses a custom retrieve function to set next URL from retrieved page content for next fetch
+
+
+
 
 
 
