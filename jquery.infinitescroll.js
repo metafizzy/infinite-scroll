@@ -54,6 +54,7 @@
         itemSelector: "div.post",
         animate: false,
         pathParse: undefined,
+        pathMod: undefined,
         dataType: 'html',
         appendCallback: true,
         bufferPx: 40,
@@ -87,7 +88,7 @@
             }
 
             if (binding !== 'bind' && binding !== 'unbind') {
-                this._debug('Binding value  ' + binding + ' not valid')
+                this._debug('Binding value  ' + binding + ' not valid');
                 return false;
             }
 
@@ -309,7 +310,7 @@
                     frag.appendChild(box[0].firstChild);
                 }
 
-                this._debug('contentSelector', $(opts.contentSelector)[0])
+                this._debug('contentSelector', $(opts.contentSelector)[0]);
                 $(opts.contentSelector)[0].appendChild(frag);
                 // previously, we would pass in the new DOM element as context for the callback
                 // however we're now using a documentfragment, which doesnt havent parents or children,
@@ -324,7 +325,7 @@
             }
 
             // loadingEnd function
-            opts.loading.finished.call($(opts.contentSelector)[0],opts)
+            opts.loading.finished.call($(opts.contentSelector)[0],opts);
 
 
             // smooth scroll to ease in the new content
@@ -498,9 +499,11 @@
                 box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');
 
                 desturl = path.join(opts.state.currPage);
+                
+                if(opts.pathMod && typeof(opts.pathMod == 'function')) desturl = opts.pathMod(desturl);
 
                 method = (opts.dataType == 'html' || opts.dataType == 'json' ) ? opts.dataType : 'html+callback';
-                if (opts.appendCallback && opts.dataType == 'html') method += '+callback'
+                if (opts.appendCallback && opts.dataType == 'html') method += '+callback';
 
                     switch (method) {
 
@@ -617,7 +620,7 @@
             }
         }
 
-    }
+    };
 
 
     /*	
