@@ -31,6 +31,8 @@
             img: "http://www.infinite-scroll.com/loading.gif",
             msg: null,
             msgText: "<em>Loading the next set of posts...</em>",
+            // allows dev to style loading div. e.g., to position:absolute so it takes no space
+            style: null,
             selector: null,
             speed: 'fast',
             start: undefined
@@ -134,7 +136,8 @@
             opts.loading.selector = opts.loading.selector || opts.contentSelector;
 
             // Define loading.msg
-            opts.loading.msg = opts.loading.msg || $('<div id="infscr-loading"><img alt="Loading..." src="' + opts.loading.img + '" /><div>' + opts.loading.msgText + '</div></div>');
+            // added style option to allow div to be positioned absolutely and take up "no space"
+            opts.loading.msg = opts.loading.msg || $('<div id="infscr-loading" '+ opts.loading.style +'><img alt="Loading..." src="' + opts.loading.img + '" /><div>' + opts.loading.msgText + '</div></div>');
 
             // Preload loading.img
             (new Image()).src = opts.loading.img;
