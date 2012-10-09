@@ -510,9 +510,6 @@
                         case 'html+callback':
 
                             instance._debug('Using HTML via .load() method');
-                            console.log(opts.itemSelector);
-                            console.log(box);
-
                         box.load(desturl + ' ' + opts.itemSelector, null, function infscr_ajax_callback(responseText) {
                             instance._loadcallback(box, responseText);
                         });
