@@ -361,7 +361,7 @@
 
         },
 
-        _updateUrlForPageIfNeeded: function infscr_checkWithinPageBounds() {
+        _updateUrlForPageIfNeeded: function infscr_updateUrlForPageIfNeeded() {
             var opts = this.options;
 
             // if behavior is defined and this function is extended, call that instead of default
