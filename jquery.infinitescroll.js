@@ -41,6 +41,7 @@
             isDestroyed: false,
             isDone: false, // For when it goes all the way through the archive.
             isPaused: false,
+            currentViewPage: 1,
             currPage: 1
         },
         callback: undefined,
@@ -168,6 +169,9 @@
                     callback.call($(opts.contentSelector)[0], data, opts);
                 }
             };
+            
+            // Init page-break array for History
+            opts.pageBreakPxLocation = [this._calculateCurrentPageBreakPx()];
 
             this._setup();
 
@@ -308,7 +312,7 @@
                 while (box[0].firstChild) {
                     frag.appendChild(box[0].firstChild);
                 }
-
+                
                 this._debug('contentSelector', $(opts.contentSelector)[0])
                 $(opts.contentSelector)[0].appendChild(frag);
                 // previously, we would pass in the new DOM element as context for the callback
@@ -316,8 +320,9 @@
                 // so the context is the contentContainer guy, and we pass in an array
                 //   of the elements collected as the first argument.
 
-                data = children.get();
+                opts.pageBreakPxLocation[opts.pageBreakPxLocation.length] = this._calculateCurrentPageBreakPx();
 
+                data = children.get();
 
                 break;
 
@@ -353,6 +358,38 @@
 
             // if distance remaining in the scroll (including buffer) is less than the orignal nav to bottom....
             return (pixelsFromWindowBottomToBottom - opts.bufferPx < opts.pixelsFromNavToBottom);
+
+        },
+
+        _updateUrlForPageIfNeeded: function infscr_checkWithinPageBounds() {
+            var opts = this.options;
+
+            // if behavior is defined and this function is extended, call that instead of default
+            if (!!opts.behavior && this['_checkWithinPageBounds_'+opts.behavior] !== undefined) {
+                return this['_checkWithinPageBounds_'+opts.behavior].call(this);
+            }
+            
+            for (var iteratorLocation = 0; iteratorLocation < opts.pageBreakPxLocation.length; iteratorLocation++) {
+                var scrolledPastThisPageBreak = ((opts.binder.scrollTop()) >= (opts.pageBreakPxLocation[iteratorLocation]));
+                
+                if (scrolledPastThisPageBreak) {
+                    var thereIsNoNextPageBreakStored = (iteratorLocation+1 === opts.pageBreakPxLocation.length);
+                    var notYetScrolledToNextPageBreak = (opts.binder.scrollTop()) < opts.pageBreakPxLocation[iteratorLocation+1];
+                    
+                    if (thereIsNoNextPageBreakStored || notYetScrolledToNextPageBreak) {
+                        this._debug('reached a new page, last');
+                        var pageNumberForThisLocation = iteratorLocation+2;
+                        var urlNeedsUpdating = opts.state.currentViewPage !== pageNumberForThisLocation;
+
+                        if (urlNeedsUpdating) {
+                            opts.state.currentViewPage = pageNumberForThisLocation;
+                            var newUrl = opts.path.join(pageNumberForThisLocation);
+                            window.history.replaceState(null,null, newUrl);
+                            return;
+                        }
+                    }
+                }
+            }
 
         },
 
@@ -447,6 +484,12 @@
 
             return true;
 
+        },
+        
+        _calculateCurrentPageBreakPx: function infscr_calculateCurrentPageBreakPx() {
+            var opts = this.options;
+
+            return 0 + $(document).height() - opts.pixelsFromNavToBottom;
         },
 
         /*	
@@ -593,6 +636,8 @@
             }
 
             if (state.isDuringAjax || state.isInvalidPage || state.isDone || state.isDestroyed || state.isPaused) return;
+
+            this._updateUrlForPageIfNeeded();
 
             if (!this._nearbottom()) return;
 
