@@ -63,7 +63,9 @@
         errorCallback: function () { },
         infid: 0, //Instance ID
         pixelsFromNavToBottom: undefined,
-        path: undefined
+        path: undefined,
+        //custom
+        savePreviousPage: false //save the page of the latest load into URL
     };
 
 
@@ -203,6 +205,27 @@
 				// IE8
 				Function.prototype.call.call(console.log, console, Array.prototype.slice.call(arguments));
 			}
+        },
+
+        // If savePreviousPage is set to true, save the page of the latest
+        // load into the URL. This allows user to use the back button
+        // NOTE: this will not work for browsers that do not support HTML5 pushstate
+        _savepreviouspage: function infscr_savestate(path) {
+
+            var opts = this.options;
+            var methodName = "_savepreviouspage_";
+
+            // if behavior is defined and this function is extended, call that instead of default
+            if (opts.savePreviousPage && !!opts.behavior &&
+                                this[ methodName + opts.behavior] !== undefined) {
+                this[methodName + opts.behavior].call(this, path);
+                return;
+            }
+
+            if (opts.savePreviousPage && window.history && history.replaceState) {
+                history.replaceState({infiniteScroll:true}, null, path);
+                this._debug("Saving into infiniteScroll state: ", path);
+            }
         },
 
         // find the number to increment in the path.
@@ -519,6 +542,7 @@
                 box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');
 
                 desturl = path.join(opts.state.currPage);
+                instance._savepreviouspage(desturl);
 
                 method = (opts.dataType == 'html' || opts.dataType == 'json' ) ? opts.dataType : 'html+callback';
                 if (opts.appendCallback && opts.dataType == 'html') method += '+callback'
@@ -655,7 +679,7 @@
         - https://github.com/jsor/jcarousel/blob/master/lib/jquery.jcarousel.js
 
         Masonry
-        - https://github.com/desandro/masonry/blob/master/jquery.masonry.js		
+        - https://github.com/desandro/masonry/blob/master/jquery.masonry.js
 
 */
 
@@ -728,7 +752,7 @@
 
 
 
-    /* 
+    /*
      * smartscroll: debounced scroll event for jQuery *
      * https://github.com/lukeshumard/smartscroll
      * Based on smartresize by @louis_remi: https://github.com/lrbabe/jquery.smartresize.js *

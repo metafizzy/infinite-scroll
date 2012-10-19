@@ -1,4 +1,3 @@
-
 # Infinite Scroll
 
 <http://www.infinite-scroll.com/>
@@ -47,7 +46,8 @@ $('.selector').infinitescroll({
   errorCallback: function () { },
   infid: 0, //Instance ID
   pixelsFromNavToBottom: undefined,
-  path: undefined
+  path: undefined,
+  savePreviousPage: false //save the page of the latest load into URL
 });
 ```
 
