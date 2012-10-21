@@ -40,6 +40,7 @@ $('.selector').infinitescroll({
   extraScrollPx: 150,
   itemSelector: "div.post",
   animate: false,
+  pathParseOnce: false, // If true, pathParse will be called again before loading items 
   pathParse: undefined,
   dataType: 'html',
   appendCallback: true,
