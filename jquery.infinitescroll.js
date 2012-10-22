@@ -24,7 +24,6 @@
         if (!this._create(options, callback)) {
             this.failed = true;
         }
-
     };
 
     $.infinitescroll.defaults = {
@@ -94,20 +93,15 @@
                 return false;
             }
 
-            if (binding == 'unbind') {
-
+            if (binding === 'unbind') {
                 (this.options.binder).unbind('smartscroll.infscr.' + instance.options.infid);
-
             } else {
-
                 (this.options.binder)[binding]('smartscroll.infscr.' + instance.options.infid, function () {
                     instance.scroll();
                 });
-
-            };
+            }
 
             this._debug('Binding', binding);
-
         },
 
         // Fundamental aspects of the plugin are initialized
@@ -144,8 +138,9 @@
 
             // distance from nav links to bottom
             // computed as: height of the document + top offset of container - top offset of nav link
-            if(opts.pixelsFromNavToBottom == undefined)
-                opts.pixelsFromNavToBottom = $(document).height() - $(opts.navSelector).offset().top;
+            if(opts.pixelsFromNavToBottom === undefined) {
+				opts.pixelsFromNavToBottom = $(document).height() - $(opts.navSelector).offset().top;
+			}
 
             // determine loading.start actions
             opts.loading.start = opts.loading.start || function() {
@@ -271,7 +266,7 @@
 
             this._debug('Error', xhr);
 
-            if (xhr == 'end') {
+            if (xhr === 'end') {
                 this._showdonemsg();
             }
 
@@ -307,7 +302,7 @@
 
                 case 'no-append':
 
-                    if (opts.dataType == 'html') {
+                    if (opts.dataType === 'html') {
                     data = '<div>' + data + '</div>';
                     data = $(data).find(opts.itemSelector);
                 }
@@ -319,7 +314,7 @@
                     var children = box.children();
 
                 // if it didn't return anything
-                if (children.length == 0) {
+                if (children.length === 0) {
                     return this._error('end');
                 }
 
@@ -345,8 +340,7 @@
             }
 
             // loadingEnd function
-            opts.loading.finished.call($(opts.contentSelector)[0],opts)
-
+            opts.loading.finished.call($(opts.contentSelector)[0],opts);
 
             // smooth scroll to ease in the new content
             if (opts.animate) {
@@ -354,10 +348,12 @@
                 $('html,body').animate({ scrollTop: scrollTo }, 800, function () { opts.state.isDuringAjax = false; });
             }
 
-            if (!opts.animate) opts.state.isDuringAjax = false; // once the call is done, we can allow it again.
+            if (!opts.animate) {
+				// once the call is done, we can allow it again.
+				opts.state.isDuringAjax = false;
+			}
 
             callback(this,data);
-
         },
 
         _nearbottom: function infscr_nearbottom() {
@@ -391,9 +387,9 @@
             // If pause is not 'pause' or 'resume', toggle it's value
             if (pause !== 'pause' && pause !== 'resume' && pause !== null) {
                 this._debug('Invalid argument. Toggling pause value instead');
-            };
+            }
 
-            pause = (pause && (pause == 'pause' || pause == 'resume')) ? pause : 'toggle';
+            pause = (pause && (pause === 'pause' || pause === 'resume')) ? pause : 'toggle';
 
             switch (pause) {
                 case 'pause':
@@ -520,8 +516,10 @@
 
                 desturl = path.join(opts.state.currPage);
 
-                method = (opts.dataType == 'html' || opts.dataType == 'json' ) ? opts.dataType : 'html+callback';
-                if (opts.appendCallback && opts.dataType == 'html') method += '+callback'
+                method = (opts.dataType === 'html' || opts.dataType === 'json' ) ? opts.dataType : 'html+callback';
+                if (opts.appendCallback && opts.dataType === 'html') {
+					method += '+callback';
+				}
 
                     switch (method) {
 
@@ -558,7 +556,7 @@
                                 if(opts.appendCallback) {
                                     // if appendCallback is true, you must defined template in options. 
                                     // note that data passed into _loadcallback is already an html (after processed in opts.template(data)).
-                                    if(opts.template != undefined) {
+                                    if(opts.template !== undefined) {
                                         var theData = opts.template(data);
                                         box.append(theData);
                                         (condition) ? instance._loadcallback(box, theData) : instance._error('end');
@@ -592,7 +590,7 @@
             if (opts.state.isDestroyed) {
                 this._debug('Instance is destroyed');
                 return false;
-            };
+            }
 
             // we dont want to fire the ajax multiple times
             opts.state.isDuringAjax = true;
@@ -613,9 +611,13 @@
                 return;
             }
 
-            if (state.isDuringAjax || state.isInvalidPage || state.isDone || state.isDestroyed || state.isPaused) return;
+            if (state.isDuringAjax || state.isInvalidPage || state.isDone || state.isDestroyed || state.isPaused) {
+				return;
+			}
 
-            if (!this._nearbottom()) return;
+            if (!this._nearbottom()) {
+				return;
+			}
 
             this.retrieve();
 
@@ -638,7 +640,7 @@
             }
         }
 
-    }
+    };
 
 
     /*	
@@ -723,7 +725,6 @@
         }
 
         return this;
-
     };
 
 
