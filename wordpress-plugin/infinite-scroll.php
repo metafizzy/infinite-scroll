@@ -55,10 +55,10 @@ class Infinite_Scroll {
 
 		self::$instance = &$this;
 		$this->file    = __FILE__;
-		$this->admin   = new Infinite_Scroll_Admin( &$this );
-		$this->options = new Infinite_Scroll_Options( &$this );
-		$this->presets = new Infinite_Scroll_Presets( &$this );
-		$this->submit = new Infinite_Scroll_Submit( &$this );
+		$this->admin   = new Infinite_Scroll_Admin( $this );
+		$this->options = new Infinite_Scroll_Options( $this );
+		$this->presets = new Infinite_Scroll_Presets( $this );
+		$this->submit = new Infinite_Scroll_Submit( $this );
 
 		//upgrade db
 		add_action( 'admin_init', array( &$this, 'upgrade_check' ) );
@@ -90,7 +90,7 @@ class Infinite_Scroll {
 
 		//option keys map to javascript options and are passed directly via wp_localize_script
 		$this->options->defaults = array(
-			'loading' => array( 
+			'loading' => array(
 				'msgText'         => __( '<em>Loading...</em>', 'infinite-scroll' ),
 				'finishedMsg'     => __( '<em>No additional posts.</em>', 'infinite-scroll' ),
 			),
@@ -184,24 +184,24 @@ class Infinite_Scroll {
 		//really old legacy options storage
 		//each option is stored as its own option in the options table
 		if ( !$old ) {
-		
+
 			//loop through options and attempt to find
 			foreach ( array_keys( $map ) as $option ) {
-				
+
 				$legacy = get_option( 'infscr_' . $option );
-				
+
 				if ( !$legacy )
 					continue;
-				
+
 				//move to new option array and delete old
 				$new[ $map[ $option ] ] = $legacy;
 				delete_option( 'infscr_' . $option );
-					
+
 			}
-		
+
 		}
-		
-		
+
+
 		//pre 2.5 options storage
 		//all stuffed in a single array, but not properly keyed
 		foreach ( $map as $from => $to ) {
@@ -212,17 +212,17 @@ class Infinite_Scroll {
 			$new[ $to ] = $old[ 'infscr_' . $from ];
 
 		}
-		
+
 		//regardless of which upgrade we did, move loading string to array
 		$new['loading'] = array( );
-		
+
 		foreach ( array( 'finishedMsg', 'msgText' ) as $field ) {
 			if ( isset( $new[$field] ) ) {
 				$new['loading'][$field] = $new[$field];
 				unset( $new[$field] );
 			}
 		}
-		
+
 		//don't pass an empty array so the default filter can properly set defaults
 		if ( empty( $new['loading'] ) )
 			unset( $new['loading'] );
@@ -232,7 +232,7 @@ class Infinite_Scroll {
 
 		//migrate presets
 		if ( $from < 2.5 )
-			$this->presets->migrate();		
+			$this->presets->migrate();
 
 	}
 
