@@ -210,8 +210,7 @@
 
             // if behavior is defined and this function is extended, call that instead of default
             if (!!opts.behavior && this['_determinepath_'+opts.behavior] !== undefined) {
-                this['_determinepath_'+opts.behavior].call(this,path);
-                return;
+                return this['_determinepath_'+opts.behavior].call(this,path);
             }
 
             if (!!opts.pathParse) {
