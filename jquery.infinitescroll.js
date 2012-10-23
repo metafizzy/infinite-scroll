@@ -490,12 +490,11 @@
 			// increment the URL bit. e.g. /page/3/
 			opts.state.currPage++;
 
-			instance._debug('heading into ajax', path);
-
 			// if we're dealing with a table we can't use DIVs
 			box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');
 
-			desturl = path.join(opts.state.currPage);
+			desturl = typeof path == 'function' ? path(opts.state.currPage) : path.join(opts.state.currPage);
+			instance._debug('heading into ajax', desturl);
 
 			method = (opts.dataType === 'html' || opts.dataType === 'json' ) ? opts.dataType : 'html+callback';
 			if (opts.appendCallback && opts.dataType === 'html') {
