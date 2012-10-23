@@ -44,7 +44,6 @@
             isPaused: false,
             currPage: 1
         },
-        callback: undefined,
         debug: false,
         behavior: undefined,
         binder: $(window), // used to cache the selector
@@ -162,6 +161,7 @@
                 if (!!opts.behavior && instance['_callback_'+opts.behavior] !== undefined) {
                     instance['_callback_'+opts.behavior].call($(opts.contentSelector)[0], data);
                 }
+
                 if (callback) {
                     callback.call($(opts.contentSelector)[0], data, opts);
                 }

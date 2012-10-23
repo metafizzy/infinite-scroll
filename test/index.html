@@ -74,12 +74,10 @@
 	
 	
 	$('#content').infinitescroll({
-	
-		// callback		: function () { console.log('using opts.callback'); },
 		navSelector  	: "a#next:last",
 		nextSelector 	: "a#next:last",
 		itemSelector 	: "#content p",
-		debug		 	: false,
+		debug		 	: true,
 		dataType	 	: 'html'
 		// behavior		: 'twitter',
 		// appendCallback	: false, // USE FOR PREPENDING
@@ -91,7 +89,7 @@
     	// $(this).prepend(newElements);
     	//
     	//END OF PREPENDING
-    	
+
     	window.console && console.log('context: ',this);
     	window.console && console.log('returned: ', newElements);
     	
