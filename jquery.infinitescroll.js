@@ -11,13 +11,12 @@
    + Licensed under the MIT license
 
    + Documentation: http://infinite-scroll.com/
-
 */
 
 (function (window, $, undefined) {
+	"use strict";
 
     $.infinitescroll = function infscr(options, callback, element) {
-
         this.element = $(element);
 
         // Flag the object in the event of a failed creation
@@ -64,7 +63,6 @@
         pixelsFromNavToBottom: undefined,
         path: undefined
     };
-
 
     $.infinitescroll.prototype = {
 
@@ -142,15 +140,16 @@
 				opts.pixelsFromNavToBottom = $(document).height() - $(opts.navSelector).offset().top;
 			}
 
+			var self = this;
+
             // determine loading.start actions
             opts.loading.start = opts.loading.start || function() {
-
                 $(opts.navSelector).hide();
                 opts.loading.msg
                 .appendTo(opts.loading.selector)
-                .show(opts.loading.speed, function () {
-                    beginAjax(opts);
-                });
+                .show(opts.loading.speed, $.proxy(function() {
+					this.beginAjax(opts);
+				}, self));
             };
 
             // determine loading.finished actions
@@ -186,6 +185,10 @@
 
         // Console log wrapper
         _debug: function infscr_debug() {
+			if (true !== this.options.debug) {
+				return;
+			}
+
 			if (typeof console !== 'undefined' && typeof console.log === 'function') {
 				// Modern browsers
 				// Single argument, which is a string
@@ -291,53 +294,41 @@
                 return;
             }
 
-            switch (result) {
+			switch (result) {
+				case 'done':
+					this._showdonemsg();
+					return false;
 
-                case 'done':
+				case 'no-append':
+					if (opts.dataType === 'html') {
+						data = '<div>' + data + '</div>';
+						data = $(data).find(opts.itemSelector);
+					}
+					break;
 
-                    this._showdonemsg();
-                return false;
+				case 'append':
+					var children = box.children();
+					// if it didn't return anything
+					if (children.length === 0) {
+						return this._error('end');
+					}
 
-                break;
+					// use a documentFragment because it works when content is going into a table or UL
+					frag = document.createDocumentFragment();
+					while (box[0].firstChild) {
+						frag.appendChild(box[0].firstChild);
+					}
 
-                case 'no-append':
+					this._debug('contentSelector', $(opts.contentSelector)[0]);
+					$(opts.contentSelector)[0].appendChild(frag);
+					// previously, we would pass in the new DOM element as context for the callback
+					// however we're now using a documentfragment, which doesnt havent parents or children,
+					// so the context is the contentContainer guy, and we pass in an array
+					//   of the elements collected as the first argument.
 
-                    if (opts.dataType === 'html') {
-                    data = '<div>' + data + '</div>';
-                    data = $(data).find(opts.itemSelector);
-                }
-
-                break;
-
-                case 'append':
-
-                    var children = box.children();
-
-                // if it didn't return anything
-                if (children.length === 0) {
-                    return this._error('end');
-                }
-
-
-                // use a documentFragment because it works when content is going into a table or UL
-                frag = document.createDocumentFragment();
-                while (box[0].firstChild) {
-                    frag.appendChild(box[0].firstChild);
-                }
-
-                this._debug('contentSelector', $(opts.contentSelector)[0]);
-                $(opts.contentSelector)[0].appendChild(frag);
-                // previously, we would pass in the new DOM element as context for the callback
-                // however we're now using a documentfragment, which doesnt havent parents or children,
-                // so the context is the contentContainer guy, and we pass in an array
-                //   of the elements collected as the first argument.
-
-                data = children.get();
-
-
-                break;
-
-            }
+					data = children.get();
+					break;
+			}
 
             // loadingEnd function
             opts.loading.finished.call($(opts.contentSelector)[0],opts);
@@ -449,7 +440,6 @@
 
             // user provided callback when done    
             opts.errorCallback.call($(opts.contentSelector)[0],'done');
-
         },
 
         // grab each selector option and see if any fail
@@ -495,96 +485,108 @@
             this._pausing('resume');
         },
 
+		beginAjax: function infscr_ajax(opts) {
+			var instance = this,
+				path = opts.path,
+				box, desturl, method, condition;
+
+			// increment the URL bit. e.g. /page/3/
+			opts.state.currPage++;
+
+			instance._debug('heading into ajax', path);
+
+			// if we're dealing with a table we can't use DIVs
+			box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');
+
+			desturl = path.join(opts.state.currPage);
+
+			method = (opts.dataType === 'html' || opts.dataType === 'json' ) ? opts.dataType : 'html+callback';
+			if (opts.appendCallback && opts.dataType === 'html') {
+				method += '+callback';
+			}
+
+			switch (method) {
+
+				case 'html+callback':
+
+					instance._debug('Using HTML via .load() method');
+					box.load(desturl + ' ' + opts.itemSelector, null, function infscr_ajax_callback(responseText) {
+						instance._loadcallback(box, responseText);
+					});
+
+					break;
+
+				case 'html':
+					instance._debug('Using ' + (method.toUpperCase()) + ' via $.ajax() method');
+					$.ajax({
+						// params
+						url: desturl,
+						dataType: opts.dataType,
+						complete: function infscr_ajax_callback(jqXHR, textStatus) {
+							condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
+							if (condition) {
+								instance._loadcallback(box, jqXHR.responseText);
+							} else {
+								instance._error('end');
+							}
+						}
+					});
+
+					break;
+				case 'json':
+					instance._debug('Using ' + (method.toUpperCase()) + ' via $.ajax() method');
+					$.ajax({
+						dataType: 'json',
+						type: 'GET',
+						url: desturl,
+						success: function (data, textStatus, jqXHR) {
+							condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
+							if (opts.appendCallback) {
+								// if appendCallback is true, you must defined template in options.
+								// note that data passed into _loadcallback is already an html (after processed in opts.template(data)).
+								if (opts.template !== undefined) {
+									var theData = opts.template(data);
+									box.append(theData);
+									if (condition) {
+										instance._loadcallback(box, theData);
+									} else {
+										instance._error('end');
+									}
+								} else {
+									instance._debug("template must be defined.");
+									instance._error('end');
+								}
+							} else {
+								// if appendCallback is false, we will pass in the JSON object. you should handle it yourself in your callback.
+								if (condition) {
+									instance._loadcallback(box, data);
+								} else {
+									instance._error('end');
+								}
+							}
+						},
+						error: function() {
+							instance._debug("JSON ajax request failed.");
+							instance._error('end');
+						}
+					});
+
+					break;
+			}
+		},
+
         // Retrieve next set of content items
         retrieve: function infscr_retrieve(pageNum) {
+			pageNum = pageNum || null;
 
-            var instance = this,
-            opts = instance.options,
-            path = opts.path,
-            box, frag, desturl, method, condition,
-            pageNum = pageNum || null,
-            getPage = (!!pageNum) ? pageNum : opts.state.currPage;
-            beginAjax = function infscr_ajax(opts) {
-
-                // increment the URL bit. e.g. /page/3/
-                opts.state.currPage++;
-
-                instance._debug('heading into ajax', path);
-
-                // if we're dealing with a table we can't use DIVs
-                box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');
-
-                desturl = path.join(opts.state.currPage);
-
-                method = (opts.dataType === 'html' || opts.dataType === 'json' ) ? opts.dataType : 'html+callback';
-                if (opts.appendCallback && opts.dataType === 'html') {
-					method += '+callback';
-				}
-
-                    switch (method) {
-
-                        case 'html+callback':
-
-                            instance._debug('Using HTML via .load() method');
-                        box.load(desturl + ' ' + opts.itemSelector, null, function infscr_ajax_callback(responseText) {
-                            instance._loadcallback(box, responseText);
-                        });
-
-                        break;
-
-                        case 'html':
-                            instance._debug('Using ' + (method.toUpperCase()) + ' via $.ajax() method');
-                        $.ajax({
-                            // params
-                            url: desturl,
-                            dataType: opts.dataType,
-                            complete: function infscr_ajax_callback(jqXHR, textStatus) {
-                                condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
-                                (condition) ? instance._loadcallback(box, jqXHR.responseText) : instance._error('end');
-                            }
-                        });
-
-                        break;
-                        case 'json':
-                            instance._debug('Using ' + (method.toUpperCase()) + ' via $.ajax() method');
-                        $.ajax({
-                            dataType: 'json',
-                            type: 'GET',
-                            url: desturl,
-                            success: function(data, textStatus, jqXHR) {
-                                condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
-                                if(opts.appendCallback) {
-                                    // if appendCallback is true, you must defined template in options. 
-                                    // note that data passed into _loadcallback is already an html (after processed in opts.template(data)).
-                                    if(opts.template !== undefined) {
-                                        var theData = opts.template(data);
-                                        box.append(theData);
-                                        (condition) ? instance._loadcallback(box, theData) : instance._error('end');
-                                    } else {
-                                        instance._debug("template must be defined.");
-                                        instance._error('end');
-                                    }
-                                } else {
-                                    // if appendCallback is false, we will pass in the JSON object. you should handle it yourself in your callback.
-                                    (condition) ? instance._loadcallback(box, data) : instance._error('end');
-                                }
-                            },
-                            error: function(jqXHR, textStatus, errorThrown) {
-                                instance._debug("JSON ajax request failed.");
-                                instance._error('end');
-                            }
-                        });
-
-                        break;
-                    }
-            };
+			var instance = this,
+            opts = instance.options;
 
             // if behavior is defined and this function is extended, call that instead of default
             if (!!opts.behavior && this['retrieve_'+opts.behavior] !== undefined) {
                 this['retrieve_'+opts.behavior].call(this,pageNum);
                 return;
             }
-
 
             // for manual triggers, if destroyed, get out of here
             if (opts.state.isDestroyed) {
@@ -596,7 +598,6 @@
             opts.state.isDuringAjax = true;
 
             opts.loading.start.call($(opts.contentSelector)[0],opts);
-
         },
 
         // Check to see next page is needed
@@ -639,7 +640,6 @@
                 this.options = $.extend(true,this.options,key);
             }
         }
-
     };
 
 
@@ -670,27 +670,25 @@
 
             // method 
             case 'string':
-
                 var args = Array.prototype.slice.call(arguments, 1);
 
-            this.each(function () {
+				this.each(function () {
+					var instance = $.data(this, 'infinitescroll');
 
-                var instance = $.data(this, 'infinitescroll');
+					if (!instance) {
+						// not setup yet
+						// return $.error('Method ' + options + ' cannot be called until Infinite Scroll is setup');
+						return false;
+					}
 
-                if (!instance) {
-                    // not setup yet
-                    // return $.error('Method ' + options + ' cannot be called until Infinite Scroll is setup');
-                    return false;
-                }
-                if (!$.isFunction(instance[options]) || options.charAt(0) === "_") {
-                    // return $.error('No such method ' + options + ' for Infinite Scroll');
-                    return false;
-                }
+					if (!$.isFunction(instance[options]) || options.charAt(0) === "_") {
+						// return $.error('No such method ' + options + ' for Infinite Scroll');
+						return false;
+					}
 
-                // no errors!
-                instance[options].apply(instance, args);
-
-            });
+					// no errors!
+					instance[options].apply(instance, args);
+				});
 
             break;
 
