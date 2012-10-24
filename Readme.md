@@ -40,7 +40,6 @@ $('.selector').infinitescroll({
   extraScrollPx: 150,
   itemSelector: "div.post",
   animate: false,
-  pathParseOnce: false, // If true, pathParse will be called again before loading items 
   pathParse: undefined,
   dataType: 'html',
   appendCallback: true,
@@ -58,3 +57,33 @@ In addition, you can pause infinite scroll to stop it from triggering, and later
 $('.selector').infinitescroll('pause');
 $('.selector').infinitescroll('resume');
 ```
+
+## Examples
+
+### Scrolling inside an element
+
+To scroll inside an element having _overflow_, use the _local_ behavior. 
+
+<pre>
+$('.selector').infinitescroll({
+  behavior: 'local',
+  // other options
+});
+</pre>
+
+### Loading content with AJAX
+
+As explained on the website, Infinite Scroll is designed for progressive enhancement, using existing pagination links. 
+
+However, it is still possible to load the content dynamically using AJAX.
+
+<pre>
+$('.selector').infinitescroll({
+  // other options
+  dataType: 'json',
+  appendCallback: false
+}, function(data, opts) {
+  var page = opts.state.currPage; // Get current page
+  // Load content with AJAX and insert it into the DOM
+});
+</pre>
