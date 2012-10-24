@@ -57,7 +57,6 @@
         itemSelector: "div.post",
         animate: false,
         pathParse: undefined,
-        pathParseOnce: true, 
         dataType: 'html',
         appendCallback: true,
         bufferPx: 40,
@@ -505,7 +504,7 @@
 
             var instance = this,
             opts = instance.options,
-            path = opts.pathParseOnce ? opts.path : this._determinepath($(opts.nextSelector).attr('href')), 
+            path = opts.path, 
             box, frag, desturl, method, condition,
             pageNum = pageNum || null,
             getPage = (!!pageNum) ? pageNum : opts.state.currPage;
