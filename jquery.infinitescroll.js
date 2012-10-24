@@ -504,7 +504,7 @@
 
             var instance = this,
             opts = instance.options,
-            path = opts.path, 
+            path = opts.path,
             box, frag, desturl, method, condition,
             pageNum = pageNum || null,
             getPage = (!!pageNum) ? pageNum : opts.state.currPage;
