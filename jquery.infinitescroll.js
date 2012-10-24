@@ -107,8 +107,10 @@
 
             // Add custom options to defaults
             var opts = $.extend(true, {}, $.infinitescroll.defaults, options);
+			var $window = $(window);
+			var instance = this;
 
-            // Validate selectors
+			// Validate selectors
             if (!this._validate(options)) { return false; }
             this.options = opts;
 
@@ -167,8 +169,8 @@
                     callback.call($(opts.contentSelector)[0], data, opts);
                 }
 
-				if (opts.prefill && $(document).height() <= $(window).height()) {
-					instance.scroll();
+				if (opts.prefill) {
+					$window.bind("resize.infinite-scroll", instance._prefill);
 				}
             };
 
@@ -184,13 +186,38 @@
 
             this._setup();
 
-			if (opts.prefill && $(document).height() <= $(window).height()) {
-				this.scroll();
-			}
+			// Setups the prefill method for use
+			this._prefill();
 
             // Return true to indicate successful creation
             return true;
         },
+
+		_prefill: function infscr_prefill() {
+			var instance = this;
+			var $document = $(document);
+			var $window = $(window);
+
+			function needsPrefill() {
+				return ($document.height() <= $window.height());
+			}
+
+			this._prefill = function() {
+				if (needsPrefill()) {
+					instance.scroll();
+				}
+
+				$window.bind("resize.infinite-scroll", function() {
+					if (needsPrefill()) {
+						$window.unbind("resize.infinite-scroll");
+						instance.scroll();
+					}
+				});
+			};
+
+			// Call self after setting up the new function
+			this._prefill();
+		},
 
         // Console log wrapper
         _debug: function infscr_debug() {
