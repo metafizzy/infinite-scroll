@@ -71,19 +71,20 @@ $('.selector').infinitescroll({
 });
 </pre>
 
-### Loading content with AJAX
+### Loading JSON data
 
-As explained on the website, Infinite Scroll is designed for progressive enhancement, using existing pagination links. 
+As explained on the website, Infinite Scroll is designed for progressive enhancement, using existing pagination links. However, it is still possible work with JSON data. 
 
-However, it is still possible to load the content dynamically using AJAX.
+It means the _nextSelector_ href will be called via AJAX, expecting JSON data, which will be passed to the callback function. 
 
 <pre>
 $('.selector').infinitescroll({
   // other options
   dataType: 'json',
   appendCallback: false
-}, function(data, opts) {
-  var page = opts.state.currPage; // Get current page
-  // Load content with AJAX and insert it into the DOM
+}, function(json, opts) {
+  // Get current page
+  var page = opts.state.currPage; 
+  // Do something with JSON data, create DOM elements, etc ..
 });
 </pre>
