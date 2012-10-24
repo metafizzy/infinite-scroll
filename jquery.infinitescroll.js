@@ -45,7 +45,7 @@
             currPage: 1
         },
         debug: false,
-        behavior: undefined,
+		behavior: undefined,
         binder: $(window), // used to cache the selector
         nextSelector: "div.navigation a:first",
         navSelector: "div.navigation",
@@ -60,8 +60,9 @@
         errorCallback: function () { },
         infid: 0, //Instance ID
         pixelsFromNavToBottom: undefined,
-        path: undefined
-    };
+        path: undefined,
+		prefill: false // When the document is smaller than the window, load data until the document is larger or links are exhausted
+	};
 
     $.infinitescroll.prototype = {
 
@@ -156,7 +157,7 @@
                 opts.loading.msg.fadeOut('normal');
             };
 
-            // callback loading
+			// callback loading
             opts.callback = function(instance,data) {
                 if (!!opts.behavior && instance['_callback_'+opts.behavior] !== undefined) {
                     instance['_callback_'+opts.behavior].call($(opts.contentSelector)[0], data);
@@ -165,6 +166,10 @@
                 if (callback) {
                     callback.call($(opts.contentSelector)[0], data, opts);
                 }
+
+				if (opts.prefill && $(document).height() <= $(window).height()) {
+					instance.scroll();
+				}
             };
 
 			if (options.debug) {
@@ -178,6 +183,10 @@
 			}
 
             this._setup();
+
+			if (opts.prefill && $(document).height() <= $(window).height()) {
+				this.scroll();
+			}
 
             // Return true to indicate successful creation
             return true;

@@ -46,7 +46,8 @@ $('.selector').infinitescroll({
 	errorCallback: function () { },
 	infid: 0, //Instance ID
 	pixelsFromNavToBottom: undefined,
-	path: undefined
+	path: undefined,
+	prefill: false // When the document is smaller than the window, load data until the document is larger or links are exhausted
 });
 ```
 
