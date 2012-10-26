@@ -57,3 +57,34 @@ In addition, you can pause infinite scroll to stop it from triggering, and later
 $('.selector').infinitescroll('pause');
 $('.selector').infinitescroll('resume');
 ```
+
+## Examples
+
+### Scrolling inside an element
+
+To scroll inside an element having _overflow_, use the _local_ behavior. 
+
+<pre>
+$('.selector').infinitescroll({
+  behavior: 'local',
+  // other options
+});
+</pre>
+
+### Loading JSON data
+
+As explained on the website, Infinite Scroll is designed for progressive enhancement, using existing pagination links. However, it is still possible work with JSON data. 
+
+It means the _nextSelector_ href will be called via AJAX, expecting JSON data, which will be passed to the callback function. 
+
+<pre>
+$('.selector').infinitescroll({
+  // other options
+  dataType: 'json',
+  appendCallback: false
+}, function(json, opts) {
+  // Get current page
+  var page = opts.state.currPage; 
+  // Do something with JSON data, create DOM elements, etc ..
+});
+</pre>
