@@ -60,7 +60,7 @@
         errorCallback: function () { },
         infid: 0, //Instance ID
         pixelsFromNavToBottom: undefined,
-        path: undefined,
+        path: undefined, // Either parts of a URL as an array (e.g. ["/page/", "/"] or a function that takes in the page number and returns a URL
 		prefill: false // When the document is smaller than the window, load data until the document is larger or links are exhausted
 	};
 
@@ -122,7 +122,7 @@
             }
 
             // Set the path to be a relative URL from root.
-            opts.path = this._determinepath(path);
+            opts.path = opts.path || this._determinepath(path);
 
             // contentSelector is 'page fragment' option for .load() / .ajax() calls
             opts.contentSelector = opts.contentSelector || this.element;
@@ -529,7 +529,8 @@
 			// if we're dealing with a table we can't use DIVs
 			box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');
 
-			desturl = typeof path == 'function' ? path(opts.state.currPage) : path.join(opts.state.currPage);
+			console.log(path);
+			desturl = (typeof path === 'function') ? path(opts.state.currPage) : path.join(opts.state.currPage);
 			instance._debug('heading into ajax', desturl);
 
 			method = (opts.dataType === 'html' || opts.dataType === 'json' ) ? opts.dataType : 'html+callback';
