@@ -62,22 +62,22 @@ $('.selector').infinitescroll('resume');
 
 ### Scrolling inside an element
 
-To scroll inside an element having _overflow_, use the _local_ behavior. 
+To scroll inside an element having `overflow`, use the `local` behavior.
 
-<pre>
+```javascript
 $('.selector').infinitescroll({
   behavior: 'local',
   // other options
 });
-</pre>
+```
 
 ### Loading JSON data
 
 As explained on the website, Infinite Scroll is designed for progressive enhancement, using existing pagination links. However, it is still possible work with JSON data. 
 
-It means the _nextSelector_ href will be called via AJAX, expecting JSON data, which will be passed to the callback function. 
+It means the `nextSelector` href will be called via AJAX, expecting JSON data, which will be passed to the callback function.
 
-<pre>
+```javascript
 $('.selector').infinitescroll({
   // other options
   dataType: 'json',
@@ -87,4 +87,4 @@ $('.selector').infinitescroll({
   var page = opts.state.currPage; 
   // Do something with JSON data, create DOM elements, etc ..
 });
-</pre>
+```
