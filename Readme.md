@@ -1,4 +1,3 @@
-
 # Infinite Scroll
 
 <http://www.infinite-scroll.com/>
@@ -46,7 +45,7 @@ $('.selector').infinitescroll({
 	errorCallback: function () { },
 	infid: 0, //Instance ID
 	pixelsFromNavToBottom: undefined,
-	path: undefined,
+	path: undefined, // Can either be an array of URL parts (e.g. ["/page/", "/"]) or a function that accepts the page number and returns a URL
 	prefill: false // When the document is smaller than the window, load data until the document is larger or links are exhausted
 });
 ```
