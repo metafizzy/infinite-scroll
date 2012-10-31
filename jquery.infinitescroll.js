@@ -187,7 +187,9 @@
             this._setup();
 
 			// Setups the prefill method for use
-			this._prefill();
+			if (opts.prefill) {
+				this._prefill();
+			}
 
             // Return true to indicate successful creation
             return true;
