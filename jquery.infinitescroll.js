@@ -531,7 +531,6 @@
 			// if we're dealing with a table we can't use DIVs
 			box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');
 
-			console.log(path);
 			desturl = (typeof path === 'function') ? path(opts.state.currPage) : path.join(opts.state.currPage);
 			instance._debug('heading into ajax', desturl);
 
