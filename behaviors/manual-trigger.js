@@ -31,7 +31,7 @@ $.extend($.infinitescroll.prototype,{
 			opts.loading.msg
 				.appendTo(opts.loading.selector)
 				.show(opts.loading.speed, function () {
-                	beginAjax(opts);
+                	instance.beginAjax(opts);
             });
 		}
 	},
