@@ -156,7 +156,7 @@
 
             // determine loading.finished actions
             opts.loading.finished = opts.loading.finished || function() {
-                opts.loading.msg.fadeOut('normal');
+                opts.loading.msg.fadeOut(opts.loading.speed);
             };
 
 			// callback loading
@@ -472,7 +472,7 @@
             .hide()
             .parent()
             .find('div').html(opts.loading.finishedMsg).animate({ opacity: 1 }, 2000, function () {
-                $(this).parent().fadeOut('normal');
+                $(this).parent().fadeOut(opts.loading.speed);
             });
 
             // user provided callback when done    
