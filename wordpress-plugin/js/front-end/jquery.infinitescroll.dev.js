@@ -107,12 +107,14 @@
 
             // Add custom options to defaults
             var opts = $.extend(true, {}, $.infinitescroll.defaults, options);
+			this.options = opts;
 			var $window = $(window);
 			var instance = this;
 
 			// Validate selectors
-            if (!this._validate(options)) { return false; }
-            this.options = opts;
+            if (!instance._validate(options)) {
+				return false;
+			}
 
             // Validate page fragment path
             var path = $(opts.nextSelector).attr('href');

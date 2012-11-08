@@ -74,12 +74,16 @@
 	
 	
 	$('#content').infinitescroll({
-		navSelector  	: "a#next:last",
+		navSelector  	: "p#next:last",
 		nextSelector 	: "a#next:last",
 		itemSelector 	: "#content p",
 		debug		 	: true,
 		dataType	 	: 'html',
-		prefill			: true
+//		prefill			: true,
+//		path: ["http://nuvique/infinite-scroll/test/index", ".html"]
+		path: function(index) {
+			return "http://nuvique/infinite-scroll/test/index" + index + ".html";
+		}
 		// behavior		: 'twitter',
 		// appendCallback	: false, // USE FOR PREPENDING
 		// pathParse     	: function( pathStr, nextPage ){ return pathStr.replace('2', nextPage ); }
@@ -90,9 +94,6 @@
     	// $(this).prepend(newElements);
     	//
     	//END OF PREPENDING
-
-		console.log("CALLED");
-		console.log(arguments);
 
 //    	window.console && console.log('context: ',this);
 //    	window.console && console.log('returned: ', newElements);
