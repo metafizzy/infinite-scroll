@@ -171,7 +171,7 @@
             };
             
             // Init page-break array for History
-            opts.pageBreakPxLocation = [this._calculateCurrentPageBreakPx()];
+            opts.pageBreakPxLocation = [0, this._calculateCurrentPageBreakPx()];
 
             this._setup();
 
@@ -371,26 +371,32 @@
             
             for (var iteratorLocation = 0; iteratorLocation < opts.pageBreakPxLocation.length; iteratorLocation++) {
                 var scrolledPastThisPageBreak = ((opts.binder.scrollTop()) >= (opts.pageBreakPxLocation[iteratorLocation]));
+                var pageNumberForIteratorLocation = iteratorLocation+1;
                 
                 if (scrolledPastThisPageBreak) {
                     var thereIsNoNextPageBreakStored = (iteratorLocation+1 === opts.pageBreakPxLocation.length);
                     var notYetScrolledToNextPageBreak = (opts.binder.scrollTop()) < opts.pageBreakPxLocation[iteratorLocation+1];
                     
                     if (thereIsNoNextPageBreakStored || notYetScrolledToNextPageBreak) {
-                        this._debug('reached a new page, last');
-                        var pageNumberForThisLocation = iteratorLocation+2;
-                        var urlNeedsUpdating = opts.state.currentViewPage !== pageNumberForThisLocation;
+                        var urlNeedsUpdating = opts.state.currentViewPage !== pageNumberForIteratorLocation;
 
                         if (urlNeedsUpdating) {
-                            opts.state.currentViewPage = pageNumberForThisLocation;
-                            var newUrl = opts.path.join(pageNumberForThisLocation);
-                            window.history.replaceState(null,null, newUrl);
+                            this._updateUrl(pageNumberForIteratorLocation);
                             return;
                         }
                     }
                 }
             }
 
+        },
+        
+        _updateUrl: function infscr_updateurl(pageNum) {
+            this._debug('url needs update to ' + pageNum);
+            var opts = this.options;
+            
+            opts.state.currentViewPage = pageNum;
+            var newUrl = opts.path.join(pageNum);
+            window.history.replaceState(null,null, newUrl);
         },
 
         // Pause / temporarily disable plugin from firing
