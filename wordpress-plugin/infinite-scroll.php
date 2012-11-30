@@ -171,7 +171,7 @@ class Infinite_Scroll {
 			'js_calls' => 'callback',
 			'image' => 'img',
 			'text' => 'msgText',
-			'dontetext' => 'finishedMsg',
+			'donetext' => 'finishedMsg',
 			'content_selector' => 'contentSelector',
 			'post_selector' => 'itemSelector',
 			'nav_selector' => 'navSelector',

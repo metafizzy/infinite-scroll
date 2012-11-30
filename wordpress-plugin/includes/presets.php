@@ -527,7 +527,7 @@ class Infinite_Scroll_Presets {
 	
 		//3.4+
 		if ( function_exists( 'wp_get_theme' ) )
-			return ( wp_get_theme( $theme ) ) ? true : false;
+			return wp_get_theme( $theme->theme )->exists();
 	
 		//pre 3.4
 		$themes = get_themes();
