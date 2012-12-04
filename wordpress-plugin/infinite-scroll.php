@@ -122,7 +122,6 @@ class Infinite_Scroll {
 
 		$options = apply_filters( $this->prefix . 'js_options', $this->options->get_options() );
 		wp_localize_script( $this->slug, $this->slug_, $options );
-
 	}
 
 	/**

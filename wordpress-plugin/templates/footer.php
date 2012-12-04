@@ -4,4 +4,4 @@
  * @package Infinite_Scroll
  */
 ?>
-<script>jQuery( infinite_scroll.contentSelector ).infinitescroll( infinite_scroll, infinite_scroll.callback );</script>
+<script type="text/javascript">jQuery( infinite_scroll.contentSelector ).infinitescroll( infinite_scroll, function(data) { eval(infinite_scroll.callback); });</script>

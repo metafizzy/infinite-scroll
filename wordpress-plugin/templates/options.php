@@ -48,6 +48,17 @@
 			<span class="description"><?php _e( 'Div containing an individual post', 'infinite-scroll' ); ?></span>
 		</td>
 	</tr>
+
+	<tr valign="top">
+		<th scope="row">
+			<?php _e("Callback", "infinite-scroll"); ?>
+		</th>
+		<td>
+			<textarea name="infinite_scroll[callback]" id="infinite_scroll[callback]" rows="6" cols="80"><?php print($this->parent->options->callback); ?></textarea><br />
+			<span class="description"><?php _e("Code that is called after each new page is loaded", "infinite-scroll"); ?></span>
+		</td>
+	</tr>
+
 	<?php $this->parent->submit->prompt(); ?>
 	<tr valign="top">
 		<th scope="row">
