@@ -12,8 +12,8 @@
 	
 */
 
-$.extend($.infinitescroll.prototype,{
-	
-	
-	
-});
+(function($, undefined) {
+	$.extend($.infinitescroll.prototype,{
+		// TODO: Implement
+	});
+})(jQuery);

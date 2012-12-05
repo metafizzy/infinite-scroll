@@ -48,6 +48,17 @@
 			<span class="description"><?php _e( 'Div containing an individual post', 'infinite-scroll' ); ?></span>
 		</td>
 	</tr>
+
+	<tr valign="top">
+		<th scope="row">
+			<?php _e("Callback", "infinite-scroll"); ?>
+		</th>
+		<td>
+			<textarea name="infinite_scroll[callback]" id="infinite_scroll[callback]" rows="6" cols="80"><?php print($this->parent->options->callback); ?></textarea><br />
+			<span class="description"><?php _e("Code that is called after each new page is loaded", "infinite-scroll"); ?></span>
+		</td>
+	</tr>
+
 	<?php $this->parent->submit->prompt(); ?>
 	<tr valign="top">
 		<th scope="row">
@@ -84,6 +95,40 @@
 		<?php } ?>
 		<br />
 			<span class="description"><?php _e( 'URL of existing or uploaded image to display as new posts are retrieved', 'infinite-scroll' ); ?></span>
+		</td>
+	</tr>
+	<tr valign="top">
+		<th scope="row">
+			<?php _e("Behavior", "infinite-scroll") ?>
+		</th>
+		<td>
+
+<?php
+$behavior = $this->parent->options->behavior;
+
+function isBehavior($value, $behavior) {
+	if ($value === $behavior) {
+		print("selected=\"selected\"");
+	}
+}
+
+?>
+
+			<select id="infinite_scroll[behavior]" name="infinite_scroll[behavior]">
+				<option <?php isBehavior("", $behavior); ?> value="">Default</option>
+				<option <?php isBehavior("twitter", $behavior); ?> value="twitter">Manual Trigger</option>
+				<option <?php isBehavior("local", $behavior); ?> value="local">Local</option>
+				<option <?php isBehavior("cufon", $behavior); ?> value="cufon">Cufon</option>
+				<option <?php isBehavior("masonry", $behavior); ?> value="masonry">Masonry/Isotope</option>
+			</select>
+		</td>
+	</tr>
+	<tr valign="top">
+		<th scope="row">
+			<?php _e("Debug", "infinite-scroll") ?>
+		</th>
+		<td>
+			<input type="checkbox" id="infinite_scroll[debug]" name="infinite_scroll[debug]" value="true" <?php if ($this->parent->options->debug === "true") { print("checked=\"checked\""); } ?> />
 		</td>
 	</tr>
 </table>

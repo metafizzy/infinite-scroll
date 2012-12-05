@@ -4,4 +4,9 @@
  * @package Infinite_Scroll
  */
 ?>
-<script>jQuery( infinite_scroll.contentSelector ).infinitescroll( infinite_scroll );</script>
+<script type="text/javascript">
+// Because the `wp_localize_script` method makes everything a string
+infinite_scroll.debug = "true" === infinite_scroll.debug;
+
+jQuery( infinite_scroll.contentSelector ).infinitescroll( infinite_scroll, function(data) { eval(infinite_scroll.callback); });
+</script>

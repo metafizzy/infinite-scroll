@@ -98,6 +98,14 @@ msgstr ""
 msgid "Div containing an individual post"
 msgstr ""
 
+#: templates/options.php
+msgid "Callback"
+msgstr ""
+
+#: templates/options.php
+msgid "Code that is called after each new page is loaded"
+msgstr "
+
 #: templates/options.php:53
 msgid "Loading Message"
 msgstr ""
@@ -140,6 +148,14 @@ msgstr ""
 
 #: templates/options.php:85
 msgid "URL of existing or uploaded image to display as new posts are retrieved"
+msgstr ""
+
+#: templates/options.php
+mgsid "Behavior"
+msgstr ""
+
+#: templates/options.php
+mgsid "Debug"
 msgstr ""
 
 #: templates/options.php:90

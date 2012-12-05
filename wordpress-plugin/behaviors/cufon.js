@@ -11,11 +11,10 @@
 	+ Documentation: http://infinite-scroll.com/
 	
 */
-
-$.extend($.infinitescroll.prototype,{
-	
-	_callback_cufon: function infscr_callback_cufon(newElements) {
-		Cufon.refresh(newElements);
-	}
-	
-});
+(function ($, undefined) {
+	$.extend($.infinitescroll.prototype,{
+		_callback_cufon: function infscr_callback_cufon(newElements) {
+			Cufon.refresh(newElements);
+		}
+	});
+})(jQuery);

@@ -384,7 +384,11 @@
 			}
 
             callback(this,data);
-        },
+
+			if (opts.prefill) {
+				this._prefill();
+			}
+		},
 
         _nearbottom: function infscr_nearbottom() {
 
@@ -542,7 +546,6 @@
 			}
 
 			switch (method) {
-
 				case 'html+callback':
 
 					instance._debug('Using HTML via .load() method');

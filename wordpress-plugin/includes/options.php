@@ -44,7 +44,7 @@ class Infinite_Scroll_Options {
 	function validate( $options ) {
 
 		//add slashes to JS selectors
-		$js = array ( 'nextSelector', 'navSelector', 'itemSelector', 'contentSelector', 'callback' );
+		$js = array ( 'nextSelector', 'navSelector', 'itemSelector', 'contentSelector' );
 		foreach ( $js as $field ) {
 
 			if ( !isset( $options[$field] ) )
@@ -116,7 +116,6 @@ class Infinite_Scroll_Options {
 		}
 
 		return apply_filters( $this->parent->prefix . 'options', $options );
-
 	}
 
 

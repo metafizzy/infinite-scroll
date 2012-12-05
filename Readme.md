@@ -31,7 +31,7 @@ $('.selector').infinitescroll({
 	},
 	debug: false,
 	behavior: undefined,
-	binder: $(window), // used to cache the selector
+	binder: $(window), // used to cache the selector for the element that will be scrolling
 	nextSelector: "div.navigation a:first",
 	navSelector: "div.navigation",
 	contentSelector: null, // rename to pageFragment
@@ -66,6 +66,7 @@ To scroll inside an element having `overflow`, use the `local` behavior.
 ```javascript
 $('.selector').infinitescroll({
   behavior: 'local',
+  binder: $('.selector'), // scroll on this element rather than on the window
   // other options
 });
 ```
