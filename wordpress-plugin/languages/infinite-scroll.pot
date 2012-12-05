@@ -150,6 +150,10 @@ msgstr ""
 msgid "URL of existing or uploaded image to display as new posts are retrieved"
 msgstr ""
 
+#:templates/options.php
+mgsid "Debug"
+msgstr ""
+
 #: templates/options.php:90
 msgid "Save Options"
 msgstr ""

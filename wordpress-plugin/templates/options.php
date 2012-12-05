@@ -97,6 +97,14 @@
 			<span class="description"><?php _e( 'URL of existing or uploaded image to display as new posts are retrieved', 'infinite-scroll' ); ?></span>
 		</td>
 	</tr>
+	<tr valign="top">
+		<th scope="row">
+			<?php _e("Debug", "infinite-scroll") ?>
+		</th>
+		<td>
+			<input type="checkbox" id="infinite_scroll[debug]" name="infinite_scroll[debug]" value="true" <?php if ($this->parent->options->debug === "true") { print("checked=\"checked\""); } ?> />
+		</td>
+	</tr>
 </table>
 <p class="submit">
 	<input type="submit" class="button-primary" value="<?php _e( 'Save Options', 'infinite-scroll' ); ?>" />
