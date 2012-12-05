@@ -117,11 +117,26 @@ class Infinite_Scroll {
 		$suffix = ( WP_DEBUG ) ? '.dev' : '';
 
 		$file = "/js/front-end/jquery.infinitescroll{$suffix}.js";
-
 		wp_enqueue_script( $this->slug, plugins_url( $file, __FILE__ ), array( 'jquery' ), $this->version, true );
 
 		$options = apply_filters( $this->prefix . 'js_options', $this->options->get_options() );
 		wp_localize_script( $this->slug, $this->slug_, $options );
+
+		// Output a behavior script if needed
+		if ($options["behavior"]) {
+			$scripts["twitter"] = "manual-trigger.js";
+			$scripts["local"] = "local.js";
+			$scripts["cufon"] = "cufon.js";
+			$scripts["masonry"] = "masonry-isotope.js";
+
+			$behaviorFile = $scripts[$options["behavior"]];
+
+			if ($behaviorFile) {
+				$behaviorFile = "/behaviors/" . $behaviorFile;
+				wp_enqueue_script($this->slug . "-behavior", plugins_url($behaviorFile, __FILE__),
+					array("jquery", $this->slug), $this->version, true);
+			}
+		}
 	}
 
 	/**

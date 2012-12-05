@@ -99,6 +99,32 @@
 	</tr>
 	<tr valign="top">
 		<th scope="row">
+			<?php _e("Behavior", "infinite-scroll") ?>
+		</th>
+		<td>
+
+<?php
+$behavior = $this->parent->options->behavior;
+
+function isBehavior($value, $behavior) {
+	if ($value === $behavior) {
+		print("selected=\"selected\"");
+	}
+}
+
+?>
+
+			<select id="infinite_scroll[behavior]" name="infinite_scroll[behavior]">
+				<option <?php isBehavior("", $behavior); ?> value="">Default</option>
+				<option <?php isBehavior("twitter", $behavior); ?> value="twitter">Manual Trigger</option>
+				<option <?php isBehavior("local", $behavior); ?> value="local">Local</option>
+				<option <?php isBehavior("cufon", $behavior); ?> value="cufon">Cufon</option>
+				<option <?php isBehavior("masonry", $behavior); ?> value="masonry">Masonry/Isotope</option>
+			</select>
+		</td>
+	</tr>
+	<tr valign="top">
+		<th scope="row">
 			<?php _e("Debug", "infinite-scroll") ?>
 		</th>
 		<td>

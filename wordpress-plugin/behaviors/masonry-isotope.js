@@ -12,10 +12,10 @@
 	
 */
 
-$.extend($.infinitescroll.prototype,{
-	
-	_callback_masonry: function infscr_callback_masonry (newElements) {
-		$(this).masonry('appended',$(newElements));
-	}
-	
-});
+(function($, undefined) {
+	$.extend($.infinitescroll.prototype,{
+		_callback_masonry: function infscr_callback_masonry (newElements) {
+			$(this).masonry('appended',$(newElements));
+		}
+	});
+})(jQuery);
