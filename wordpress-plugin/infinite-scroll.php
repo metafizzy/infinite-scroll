@@ -93,8 +93,8 @@ class Infinite_Scroll {
 			'loading' => array(
 				'msgText'         => __( '<em>Loading...</em>', 'infinite-scroll' ),
 				'finishedMsg'     => __( '<em>No additional posts.</em>', 'infinite-scroll' ),
+				'img'             => plugins_url( 'img/ajax-loader.gif', __FILE__ )
 			),
-			'img'             => plugins_url( 'img/ajax-loader.gif', __FILE__ ),
 			'nextSelector'    => '#nav-below a:first',
 			'navSelector'     => '#nav-below',
 			'itemSelector'    => '.post',
