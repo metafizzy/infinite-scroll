@@ -87,7 +87,6 @@ class Infinite_Scroll {
 	 * Init default options
 	 */
 	function init_defaults() {
-
 		//option keys map to javascript options and are passed directly via wp_localize_script
 		$this->options->defaults = array(
 			'loading' => array(
@@ -100,8 +99,8 @@ class Infinite_Scroll {
 			'itemSelector'    => '.post',
 			'contentSelector' => '#content',
 			'debug'           => WP_DEBUG,
+			"behavior"		  => ""
 		);
-
 	}
 
 
