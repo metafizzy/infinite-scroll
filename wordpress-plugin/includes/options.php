@@ -55,18 +55,17 @@ class Infinite_Scroll_Options {
 		}
 
 		//force post-style kses on messages
-		foreach ( array( 'finishedMsg', 'msgText' ) as $field ) {
+		foreach ( array( 'finishedMsg', 'msgText', "img" ) as $field ) {
 
 			if ( !isset( $options['loading'][$field] ) )
 				continue;
 
 			$options['loading'][$field] = wp_filter_post_kses( $options['loading'][$field] );
-
 		}
 		
 		//handle image resets
 		if ( isset( $_POST[ 'reset_default_image'] ) )
-			$options['img'] = $this->defaults['img'];
+			$options["loading"]['img'] = $this->defaults["loading"]['img'];
 		
 		//pull existing image if none is given
 		if ( empty( $options['img'] ) ) 

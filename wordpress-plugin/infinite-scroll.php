@@ -49,7 +49,7 @@ class Infinite_Scroll {
 	public $version   = '2.5';
 
 	/**
-	 * Construct the primary class and autoload all child classes
+	 * Construct the primary class and auto-load all child classes
 	 */
 	function __construct() {
 
@@ -175,7 +175,7 @@ class Infinite_Scroll {
 
 	/**
 	 * Upgrade DB to latest version
-	 * @param int $from version comming from
+	 * @param int $from version coming from
 	 * @param int $to version going to
 	 */
 	function upgrade( $from , $to ) {
@@ -232,7 +232,7 @@ class Infinite_Scroll {
 		//regardless of which upgrade we did, move loading string to array
 		$new['loading'] = array( );
 
-		foreach ( array( 'finishedMsg', 'msgText' ) as $field ) {
+		foreach ( array( 'finishedMsg', 'msgText', "img" ) as $field ) {
 			if ( isset( $new[$field] ) ) {
 				$new['loading'][$field] = $new[$field];
 				unset( $new[$field] );
@@ -240,10 +240,10 @@ class Infinite_Scroll {
 		}
         
 		//if the user is still using the default ajax-loader.gif then update the location
-		if( isset($new['img']) )
-			$new['img'] = str_replace("wp-content/plugins/infinite-scroll/ajax-loader.gif",
+		if( isset($new["loading"]['img']) )
+			$new["loading"]['img'] = str_replace("wp-content/plugins/infinite-scroll/ajax-loader.gif",
 									  "wp-content/plugins/infinite-scroll/img/ajax-loader.gif",
-									  $new['img']);
+									  $new["loading"]['img']);
 
 		//regardless of which upgrade, ensure that debug is now set to boolean string rather than int
 		//if it wasn't originally on then just set it to the plugin default
