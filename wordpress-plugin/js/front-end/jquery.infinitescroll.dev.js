@@ -78,7 +78,7 @@
             var instance = this,
             opts = instance.options;
 
-            opts.v = '2.0b2.111027';
+            opts.v = '2.0b2.120520';
 
             // if behavior is defined and this function is extended, call that instead of default
             if (!!opts.behavior && this['_binding_'+opts.behavior] !== undefined) {
@@ -115,6 +115,8 @@
             if (!instance._validate(options)) {
 				return false;
 			}
+
+			$(opts.navSelector).hide();
 
             // Validate page fragment path
             var path = $(opts.nextSelector).attr('href');
