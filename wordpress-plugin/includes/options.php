@@ -55,12 +55,14 @@ class Infinite_Scroll_Options {
 		}
 
 		//force post-style kses on messages
-		foreach ( array( 'finishedMsg', 'msgText', "img" ) as $field ) {
+		foreach ( array( 'finishedMsg', 'msgText' ) as $field ) {
 
 			if ( !isset( $options['loading'][$field] ) )
 				continue;
 
-			$options['loading'][$field] = wp_filter_post_kses( $options['loading'][$field] );
+			// wp_filter_post_kses will add slashes to something like "you've" -> "you\'ve" but not added slashes to other slashes
+			// Escaping the slashes and then stripping them, gets past this problem and allows preservation of intentionally inserted slashes
+			$options['loading'][$field] = stripslashes(wp_filter_post_kses( addslashes($options['loading'][$field] )));
 		}
 		
 		//handle image resets
