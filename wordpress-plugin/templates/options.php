@@ -91,7 +91,8 @@
 			<?php _e( 'Current Image:', 'infinite-scroll' ); ?> <img src="<?php echo esc_attr( $this->parent->options->loading["img"] ); ?>" alt="<?php _e( 'Current Loading Image', 'infinite-scroll' ); ?>" /><br />
 			<?php _e( 'New Image:', 'infinite-scroll' ); ?>
 			<input id="infinite-scroll-upload-image" type="text" size="36" name="infinite_scroll[loading][img]" value="" />
-			<input id="infinite-scroll-upload-image-button" type="button" value="<?php _e( 'Upload New Image', 'infinite-scroll' ); ?>" /> <?php if ( $this->parent->options->loading["img"] != $this->parent->options->defaults["loading"]['img'] ) { ?>
+			<input id="infinite-scroll-upload-image-button" type="button" value="<?php _e( 'Upload New Image', 'infinite-scroll' ); ?>" /> <?php if ( $this->parent->options->loading["img"]
+				!= $this->parent->options->defaults["loading"]['img'] ) { ?>
 		( <a href="#" id="use_default"><?php _e( 'Use Default', 'infinite-scroll' ); ?></a> )
 		<?php } ?>
 		<br />

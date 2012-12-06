@@ -2,13 +2,13 @@
 /*
 Plugin Name: Infinite Scroll
 Description: Automatically loads the next page of posts into the bottom of the initial page.
-Version: 2.5
-Author: Beaver6813, dirkhaim, Paul Irish, benbalter
+Version: 2.6
+Author: Beaver6813, dirkhaim, Paul Irish, benbalter, Glenn Nelson
 Author URI:
 License: GPL3
 */
 
-/*  Copyright 2008-2012 Beaver6813, dirkhaim, Paul Irish, Benjamin J. Balter
+/*  Copyright 2008-2012 Beaver6813, dirkhaim, Paul Irish, Benjamin J. Balter, Glenn Nelson
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ License: GPL3
  *
  *  @copyright 2008-2012
  *  @license GPL v3
- *  @version 2.5
+ *  @version 2.6
  *  @package Infinite Scroll
  *  @author Beaver6813, dirkhaim, Paul Irish, Benjamin J. Balter, Glenn Nelson
  */
@@ -46,7 +46,7 @@ class Infinite_Scroll {
 	public $slug_     = 'infinite_scroll'; //slug with underscores (PHP/JS safe)
 	public $prefix    = 'infinite_scroll_'; //prefix to append to all options, API calls, etc. w/ trailing underscore
 	public $file      = null;
-	public $version   = '2.5';
+	public $version   = '2.6';
 
 	/**
 	 * Construct the primary class and auto-load all child classes
@@ -179,90 +179,94 @@ class Infinite_Scroll {
 	 * @param int $to version going to
 	 */
 	function upgrade( $from , $to ) {
+		if ($from == 2.5) {
+			$old = get_option("infinite_scroll");
+			$new = $old;
 
-		//array of option conversions in the form of from => to
-		$map = array(
-			'callback' => 'callback',
-			'image' => 'img',
-			'text' => 'msgText',
-			'donetext' => 'finishedMsg',
-			'content_selector' => 'contentSelector',
-			'post_selector' => 'itemSelector',
-			'nav_selector' => 'navSelector',
-			'next_selector' => 'nextSelector',
-			'behavior' => 'behavior',
-			'debug' => 'debug',
-		);
+			$new["loading"]["img"] = $old["img"];
+			unset($new["img"]);
 
-		$old = get_option( 'infscr_options' );
-		$new = array();
+			$this->options->set_options($new);
 
-		//really old legacy options storage
-		//each option is stored as its own option in the options table
-		if ( !$old ) {
+		} else if ($from < 2.5) {
+			//array of option conversions in the form of from => to
+			$map = array(
+				'js_calls' => 'callback',
+				'image' => 'img',
+				'text' => 'msgText',
+				'donetext' => 'finishedMsg',
+				'content_selector' => 'contentSelector',
+				'post_selector' => 'itemSelector',
+				'nav_selector' => 'navSelector',
+				'next_selector' => 'nextSelector',
+				'behavior' => 'behavior',
+				'debug' => 'debug',
+			);
 
-			//loop through options and attempt to find
-			foreach ( array_keys( $map ) as $option ) {
+			$old = get_option( 'infscr_options' );
+			$new = array();
 
-				$legacy = get_option( 'infscr_' . $option );
+			//really old legacy options storage
+			//each option is stored as its own option in the options table
+			if ( !$old ) {
+				//loop through options and attempt to find
+				foreach ( array_keys( $map ) as $option ) {
+					$legacy = get_option( 'infscr_' . $option );
 
-				if ( !$legacy )
+					if ( !$legacy )
+						continue;
+
+					//move to new option array and delete old
+					$new[ $map[ $option ] ] = $legacy;
+					delete_option( 'infscr_' . $option );
+				}
+			}
+
+			//pre 2.5 options storage
+			//all stuffed in a single array, but not properly keyed
+			foreach ( $map as $from => $to ) {
+
+				if ( !$old || !isset( $old[ 'infscr_' . $from ] ) )
 					continue;
 
-				//move to new option array and delete old
-				$new[ $map[ $option ] ] = $legacy;
-				delete_option( 'infscr_' . $option );
+				$new[ $to ] = $old[ 'infscr_' . $from ];
 
 			}
 
-		}
+			//regardless of which upgrade we did, move loading string to array
+			$new['loading'] = array( );
 
-
-		//pre 2.5 options storage
-		//all stuffed in a single array, but not properly keyed
-		foreach ( $map as $from => $to ) {
-
-			if ( !$old || !isset( $old[ 'infscr_' . $from ] ) )
-				continue;
-
-			$new[ $to ] = $old[ 'infscr_' . $from ];
-
-		}
-
-		//regardless of which upgrade we did, move loading string to array
-		$new['loading'] = array( );
-
-		foreach ( array( 'finishedMsg', 'msgText', "img" ) as $field ) {
-			if ( isset( $new[$field] ) ) {
-				$new['loading'][$field] = $new[$field];
-				unset( $new[$field] );
+			foreach ( array( 'finishedMsg', 'msgText', "img" ) as $field ) {
+				if ( isset( $new[$field] ) ) {
+					$new['loading'][$field] = $new[$field];
+					unset( $new[$field] );
+				}
 			}
+
+			//if the user is still using the default ajax-loader.gif then update the location
+			if( isset($new["loading"]['img']) && !strstr($new["loading"]["img"], "/img/ajax-loader.gif") )
+				$new["loading"]['img'] = str_replace("/ajax-loader.gif",
+					"/img/ajax-loader.gif",
+					$new["loading"]['img']);
+
+			//regardless of which upgrade, ensure that debug is now set to boolean string rather than int
+			//if it wasn't originally on then just set it to the plugin default
+			if( isset($new['debug']) && $new['debug'] == 1 )
+				$new['debug'] = "true";
+			else
+				unset( $new['debug'] );
+
+			//don't pass an empty array so the default filter can properly set defaults
+			if ( empty( $new['loading'] ) )
+				unset( $new['loading'] );
+
+			$this->options->set_options( $new );
+			delete_option( 'infscr_options' );
+
+			//migrate presets
+			if ( $from < 2.5 )
+				$this->presets->migrate();
 		}
-        
-		//if the user is still using the default ajax-loader.gif then update the location
-		if( isset($new["loading"]['img']) && !strstr($new["loading"]["img"], "/img/ajax-loader.gif") )
-			$new["loading"]['img'] = str_replace("/ajax-loader.gif",
-									  "/img/ajax-loader.gif",
-									  $new["loading"]['img']);
-
-		//regardless of which upgrade, ensure that debug is now set to boolean string rather than int
-		//if it wasn't originally on then just set it to the plugin default
-		if( isset($new['debug']) && $new['debug'] == 1 )
-			$new['debug'] = "true";
-		else
-			unset( $new['debug'] );
-
-		//don't pass an empty array so the default filter can properly set defaults
-		if ( empty( $new['loading'] ) )
-			unset( $new['loading'] );
-
-		$this->options->set_options( $new );
-		delete_option( 'infscr_options' );
-
-		//migrate presets
-		if ( $from < 2.5 )
-			$this->presets->migrate();
-
 	}
 
 
