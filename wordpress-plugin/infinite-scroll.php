@@ -182,7 +182,7 @@ class Infinite_Scroll {
 
 		//array of option conversions in the form of from => to
 		$map = array(
-			'js_calls' => 'callback',
+			'callback' => 'callback',
 			'image' => 'img',
 			'text' => 'msgText',
 			'donetext' => 'finishedMsg',
@@ -192,7 +192,6 @@ class Infinite_Scroll {
 			'next_selector' => 'nextSelector',
 			'behavior' => 'behavior',
 			'debug' => 'debug',
-			"callback" => "callback"
 		);
 
 		$old = get_option( 'infscr_options' );
