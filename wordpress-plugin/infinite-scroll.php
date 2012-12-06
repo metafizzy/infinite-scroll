@@ -191,7 +191,8 @@ class Infinite_Scroll {
 			'nav_selector' => 'navSelector',
 			'next_selector' => 'nextSelector',
 			'behavior' => 'behavior',
-			'debug' => 'debug'
+			'debug' => 'debug',
+			"callback" => "callback"
 		);
 
 		$old = get_option( 'infscr_options' );
@@ -240,9 +241,9 @@ class Infinite_Scroll {
 		}
         
 		//if the user is still using the default ajax-loader.gif then update the location
-		if( isset($new["loading"]['img']) )
-			$new["loading"]['img'] = str_replace("wp-content/plugins/infinite-scroll/ajax-loader.gif",
-									  "wp-content/plugins/infinite-scroll/img/ajax-loader.gif",
+		if( isset($new["loading"]['img']) && !strstr($new["loading"]["img"], "/img/ajax-loader.gif") )
+			$new["loading"]['img'] = str_replace("/ajax-loader.gif",
+									  "/img/ajax-loader.gif",
 									  $new["loading"]['img']);
 
 		//regardless of which upgrade, ensure that debug is now set to boolean string rather than int
