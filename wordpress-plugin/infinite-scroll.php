@@ -27,7 +27,7 @@ License: GPL3
  *  @license GPL v3
  *  @version 2.5
  *  @package Infinite Scroll
- *  @author Beaver6813, dirkhaim, Paul Irish, Benjamin J. Balter
+ *  @author Beaver6813, dirkhaim, Paul Irish, Benjamin J. Balter, Glenn Nelson
  */
 
 require_once dirname( __FILE__ ) . '/includes/options.php';
