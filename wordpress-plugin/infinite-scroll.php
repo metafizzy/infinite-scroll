@@ -47,7 +47,12 @@ class Infinite_Scroll {
 	public $prefix    = 'infinite_scroll_'; //prefix to append to all options, API calls, etc. w/ trailing underscore
 	public $file      = null;
 	public $version   = '2.6';
-
+	public $behaviors = array(  //array of behaviors as key => array( label => js file ) (without extension)
+	                      'twitter' => array( 'label' => 'Manual Trigger', 'src'  => 'manual-trigger' ),
+	                      'local'   => array( 'label' => 'Local', 'src' => 'local' ),
+	                      'cufon'   => array( 'label' => 'Cufon', 'src' => 'cufon' ),
+	                      'masonry' => array( 'label' => 'Masonry/Isotope', 'src' => 'masonry-isotope')
+	                   );
 	/**
 	 * Construct the primary class and auto-load all child classes
 	 */
@@ -99,7 +104,7 @@ class Infinite_Scroll {
 			'itemSelector'    => '.post',
 			'contentSelector' => '#content',
 			'debug'           => WP_DEBUG,
-			"behavior"		  => ""
+			'behavior'		    => ''
 		);
 	}
 
@@ -121,21 +126,17 @@ class Infinite_Scroll {
 		$options = apply_filters( $this->prefix . 'js_options', $this->options->get_options() );
 		wp_localize_script( $this->slug, $this->slug_, $options );
 
-		// Output a behavior script if needed
-		if ($options["behavior"]) {
-			$scripts["twitter"] = "manual-trigger.js";
-			$scripts["local"] = "local.js";
-			$scripts["cufon"] = "cufon.js";
-			$scripts["masonry"] = "masonry-isotope.js";
+		// If no behavior, we're done, kick
+		if ( !$options['behavior'] )
+		  return;
 
-			$behaviorFile = $scripts[$options["behavior"]];
+		//sanity check
+		if ( !array_key_exists( $options['behavior'], $this->behaviors ) )
+		  return _doing_it_wrong( 'Infinite Scroll behavior', "Behavior {$options['behavior']} not found", $this->version );
+		
+		$src = 'behaviors/' . $this->behaviors[ $options['behavior'] ]['src'] . '.js';
+		wp_enqueue_script( $this->slug . "-behavior", plugins_url( $src, __FILE__ ), array( "jquery", $this->slug ), $this->version, true );
 
-			if ($behaviorFile) {
-				$behaviorFile = "/behaviors/" . $behaviorFile;
-				wp_enqueue_script($this->slug . "-behavior", plugins_url($behaviorFile, __FILE__),
-					array("jquery", $this->slug), $this->version, true);
-			}
-		}
 	}
 
 	/**
