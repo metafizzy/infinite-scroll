@@ -82,15 +82,17 @@
     		</div>
 		</td>
 	</tr>
+
 	<tr valign="top">
 		<th scope="row">
 			<?php _e( 'Loading Image', 'infinite-scroll' ); ?>		
 		</th>
 		<td>
-			<?php _e( 'Current Image:', 'infinite-scroll' ); ?> <img src="<?php echo esc_attr( $this->parent->options->img ); ?>" alt="<?php _e( 'Current Loading Image', 'infinite-scroll' ); ?>" /><br />
+			<?php _e( 'Current Image:', 'infinite-scroll' ); ?> <img src="<?php echo esc_attr( $this->parent->options->loading["img"] ); ?>" alt="<?php _e( 'Current Loading Image', 'infinite-scroll' ); ?>" /><br />
 			<?php _e( 'New Image:', 'infinite-scroll' ); ?>
-			<input id="upload_image" type="text" size="36" name="infinite_scroll[img]" value="" />
-			<input id="upload_image_button" type="button" value="<?php _e( 'Upload New Image', 'infinite-scroll' ); ?>" /> <?php if ( $this->parent->options->img != $this->parent->options->defaults['img'] ) { ?>
+			<input id="infinite-scroll-upload-image" type="text" size="36" name="infinite_scroll[loading][img]" value="" />
+			<input id="infinite-scroll-upload-image-button" type="button" value="<?php _e( 'Upload New Image', 'infinite-scroll' ); ?>" /> <?php if ( $this->parent->options->loading["img"]
+				!= $this->parent->options->defaults["loading"]['img'] ) { ?>
 		( <a href="#" id="use_default"><?php _e( 'Use Default', 'infinite-scroll' ); ?></a> )
 		<?php } ?>
 		<br />
@@ -140,3 +142,46 @@ function isBehavior($value, $behavior) {
 <?php } ?>
 </form>
 </div>
+
+<?php
+// Allow the user to auto-magically insert the image URL into the text field
+// Taken From: http://wordpress.stackexchange.com/a/11254/17267
+?>
+
+<script type="text/javascript">
+(function($, undefined) {
+	$(function() {
+		var $uploadImageInput = $("#infinite-scroll-upload-image");
+		var $uploadImageButton = $("#infinite-scroll-upload-image-button");
+
+		var tb_show_temp = window.tb_show;
+		window.tb_show = function() {
+			tb_show_temp.apply(null, arguments);
+
+			var $iframe = $("#TB_iframeContent");
+			$iframe.load(function() {
+				var $document = $iframe.get(0).contentWindow.document;
+				var $jquery = $iframe.get(0).contentWindow.jQuery;
+				var $buttonContainer = $jquery("td.savesend");
+
+				if ($buttonContainer.get(0)) {
+					var $buttonSubmit = $buttonContainer.find("input:submit");
+					$buttonSubmit.click(function() {
+						var fileId = jQuery(this).attr("id").replace("send", "").replace("[", "").replace("]", "");
+						var imageUrl = $jquery("input[name=\"attachments\\[" + fileId + "\\]\\[url\\]\"]").val();
+
+						$uploadImageInput.val(imageUrl);
+
+						tb_remove();
+					});
+				}
+			});
+		}
+
+		$uploadImageButton.click(function() {
+			tb_show("Loading Image", "media-upload.php?type=image&tab=library&TB_iframe=1");
+		});
+	});
+})(jQuery);
+</script>
+

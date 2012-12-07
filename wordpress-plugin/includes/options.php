@@ -60,18 +60,19 @@ class Infinite_Scroll_Options {
 			if ( !isset( $options['loading'][$field] ) )
 				continue;
 
-			$options['loading'][$field] = wp_filter_post_kses( $options['loading'][$field] );
-
+			// wp_filter_post_kses will add slashes to something like "you've" -> "you\'ve" but not added slashes to other slashes
+			// Escaping the slashes and then stripping them, gets past this problem and allows preservation of intentionally inserted slashes
+			$options['loading'][$field] = stripslashes(wp_filter_post_kses( addslashes($options['loading'][$field] )));
 		}
 		
 		//handle image resets
 		if ( isset( $_POST[ 'reset_default_image'] ) )
-			$options['img'] = $this->defaults['img'];
+			$options["loading"]['img'] = $this->defaults["loading"]['img'];
 		
 		//pull existing image if none is given
-		if ( empty( $options['img'] ) ) 
-			$options['img']  = $this->img;
-					
+		if ( empty( $options["loading"]['img'] ) )
+			$options["loading"]['img']  = $this->loading["img"];
+
 		return apply_filters( $this->parent->prefix . 'options_validate', $options );
 
 	}

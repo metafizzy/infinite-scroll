@@ -1,6 +1,6 @@
 {
   "name": "jquery-infinite-scroll",
-  "version": "2.0b2.120519",
+  "version": "2.0b2.120520",
   "dependencies": {
     "jquery": "~1.7.2"
   }
