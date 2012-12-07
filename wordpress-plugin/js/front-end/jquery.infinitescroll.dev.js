@@ -116,8 +116,6 @@
 				return false;
 			}
 
-			$(opts.navSelector).hide();
-
             // Validate page fragment path
             var path = $(opts.nextSelector).attr('href');
             if (!path) {
