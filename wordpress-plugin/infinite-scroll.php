@@ -178,16 +178,8 @@ class Infinite_Scroll {
 	 * @param int $to version going to
 	 */
 	function upgrade( $from , $to ) {
-		if ($from == 2.5) {
-			$old = get_option("infinite_scroll");
-			$new = $old;
-
-			$new["loading"]["img"] = $old["img"];
-			unset($new["img"]);
-
-			$this->options->set_options($new);
-
-		} else if ($from < 2.5) {
+		
+		if ($from < 2.5) {
 			//array of option conversions in the form of from => to
 			$map = array(
 				'js_calls' => 'callback',
@@ -266,6 +258,20 @@ class Infinite_Scroll {
 			if ( $from < 2.5 )
 				$this->presets->migrate();
 		}
+		
+		//migrate loading image
+		if ($from < 2.6) {
+		
+			$old = get_option("infinite_scroll");
+			$new = $old;
+
+			$new["loading"]["img"] = $old["img"];
+			unset($new["img"]);
+
+			$this->options->set_options($new);
+
+		}		
+			                     
 	}
 
 
