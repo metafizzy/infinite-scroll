@@ -130,7 +130,7 @@ function isBehavior($value, $behavior) {
 			<?php _e("Debug", "infinite-scroll") ?>
 		</th>
 		<td>
-			<input type="checkbox" id="infinite_scroll[debug]" name="infinite_scroll[debug]" value="true" <?php if ($this->parent->options->debug === "true") { print("checked=\"checked\""); } ?> />
+			<input type="checkbox" id="infinite_scroll[debug]" name="infinite_scroll[debug]" value="true" <?php checked( $this->parent->options->debug ) ?> />
 		</td>
 	</tr>
 </table>

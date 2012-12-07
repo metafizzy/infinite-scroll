@@ -72,6 +72,9 @@ class Infinite_Scroll_Options {
 		//pull existing image if none is given
 		if ( empty( $options["loading"]['img'] ) )
 			$options["loading"]['img']  = $this->loading["img"];
+			
+		//force debug as bool
+		$options['debug'] = (bool) $options['debug'];
 
 		return apply_filters( $this->parent->prefix . 'options_validate', $options );
 
