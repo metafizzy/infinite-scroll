@@ -2,7 +2,7 @@
 /*
 Plugin Name: Infinite Scroll
 Description: Automatically loads the next page of posts into the bottom of the initial page.
-Version: 2.6
+Version: 2.6.1
 Author: Beaver6813, dirkhaim, Paul Irish, benbalter, Glenn Nelson
 Author URI:
 License: GPL3
@@ -25,7 +25,7 @@ License: GPL3
  *
  *  @copyright 2008-2012
  *  @license GPL v3
- *  @version 2.6
+ *  @version 2.6.1
  *  @package Infinite Scroll
  *  @author Beaver6813, dirkhaim, Paul Irish, Benjamin J. Balter, Glenn Nelson
  */
@@ -46,7 +46,7 @@ class Infinite_Scroll {
 	public $slug_     = 'infinite_scroll'; //slug with underscores (PHP/JS safe)
 	public $prefix    = 'infinite_scroll_'; //prefix to append to all options, API calls, etc. w/ trailing underscore
 	public $file      = null;
-	public $version   = '2.6';
+	public $version   = '2.6.1';
 	public $behaviors = array(  //array of behaviors as key => array( label => js file ) (without extension)
 	                      'twitter' => array( 'label' => 'Manual Trigger', 'src'  => 'manual-trigger' ),
 	                      'local'   => array( 'label' => 'Local', 'src' => 'local' ),
