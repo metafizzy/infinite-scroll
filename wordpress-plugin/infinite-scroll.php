@@ -124,7 +124,7 @@ class Infinite_Scroll {
 		wp_enqueue_script( $this->slug, plugins_url( $file, __FILE__ ), array( 'jquery' ), $this->version, true );
 
 		$options = apply_filters( $this->prefix . 'js_options', $this->options->get_options() );
-		wp_localize_script( $this->slug, $this->slug_, $options );
+		wp_localize_script($this->slug, $this->slug_, json_encode($options));
 
 		// If no behavior, we're done, kick
 		if ( !$options['behavior'] )
@@ -161,7 +161,7 @@ class Infinite_Scroll {
 	 */
 	function upgrade_check() {
 
-		if ( $this->options->db_version == $this->version )
+		if ( !is_int($this->options->db_version) || $this->options->db_version == $this->version )
 			return;
 
 		$this->upgrade( $this->options->db_version, $this->version );
