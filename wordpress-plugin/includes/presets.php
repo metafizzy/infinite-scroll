@@ -21,6 +21,8 @@
  * @package Infinite_Scroll
  */
 
+require_once(ABSPATH . "/wp-admin/includes/theme.php");
+
 class Infinite_Scroll_Presets {
 
 	private $parent;
@@ -56,6 +58,22 @@ class Infinite_Scroll_Presets {
 	 */
 	function __get( $preset ) {
 		return $this->get_preset( $preset );
+	}
+
+	function getThemes($args) {
+		if (function_exists("wp_get_themes")) {
+			return wp_get_themes($args);
+		} else {
+			return get_themes();
+		}
+	}
+
+	function getTheme($theme) {
+		if (function_exists("wp_get_theme")) {
+			return wp_get_theme($theme);
+		} else {
+			return get_theme($theme);
+		}
 	}
 
 
@@ -115,7 +133,7 @@ class Infinite_Scroll_Presets {
 		//WP version 3.4+, use the new wp_get_themes function
 		if ( function_exists( 'wp_get_theme' ) ) {
 		
-			$theme = wp_get_theme( $theme );
+			$theme = $this->getTheme($theme);
 
 			//not a theme or not a child
 			if ( is_wp_error( $theme ) || !is_object( $theme->parent() ) )
@@ -128,7 +146,7 @@ class Infinite_Scroll_Presets {
 		//pre 3.4 back compat..
 		//get theme by slug
 		$name = $this->get_name( $theme );
-		$themes = get_themes();				
+		$themes = $this->getThemes(array());
 		$child = $themes[ $name ];
 				
 		//not a child theme
@@ -524,17 +542,16 @@ class Infinite_Scroll_Presets {
 	 * @return bool true if insalled, otherwise false
 	 */
 	function theme_installed( $theme ) {
-	
 		//3.4+
-		if ( function_exists( 'wp_get_theme' ) )
+		if ( function_exists( 'wp_get_theme' ) ) {
 			return wp_get_theme( $theme->theme )->exists();
-	
-		//pre 3.4
-		$themes = get_themes();
-		$name = $this->get_name( $theme );
-		
-		return array_key_exists( $name, $themes );
-				
+		} else {
+			//pre 3.4
+			$themes = get_themes();
+			$name = $this->get_name( $theme );
+
+			return array_key_exists( $name, $themes );
+		}
 	}
 	
 	/**
@@ -551,14 +568,14 @@ class Infinite_Scroll_Presets {
 		//pre 3.4
 		if ( !function_exists( 'wp_get_themes' ) ) {
 		
-			if ( $theme = get_theme( $name ) )		
+			if ( $theme = get_theme( $name ) )
 				return $theme->stylesheet;	
 			
 		//3.4+
 		} else {
 					
 			//we can't use wp_filter_list_object with WP_Theme objects, so filter manually
-			foreach ( wp_get_themes() as $theme )
+			foreach ( $this->getThemes(null) as $theme )
 				if ( $theme->name = $name )
 					return $theme->stylesheet;
 	
@@ -588,7 +605,7 @@ class Infinite_Scroll_Presets {
 		//pre 3.4
 		} else {
 		
-			foreach ( get_themes as $theme ) 
+			foreach ( get_themes() as $theme )
 				if ( $theme->stylesheet == $stylesheet )
 					return $theme->name;
 		
@@ -692,7 +709,7 @@ class Infinite_Scroll_Presets_Table extends WP_List_Table {
 		$data = array_filter( $data, array( &$infinite_scroll->presets, 'theme_installed' ) );
 		
 		//merge in themes
-		$themes = get_themes();
+		$themes = $infinite_scroll->presets->getThemes(null);
 
 		foreach ( $themes as $theme => $theme_data ) {
 			
