@@ -113,10 +113,9 @@ class Infinite_Scroll {
 	 * Enqueue front-end JS and pass options to json_encoded array
 	 */
 	function enqueue_js() {
-
-		//no need to show on singular pages
-		if ( is_singular() )
+		if (!$this->shouldLoadJavascript()) {
 			return;
+		}
 
 		$suffix = ( WP_DEBUG ) ? '.dev' : '';
 
@@ -143,6 +142,10 @@ class Infinite_Scroll {
 	 * Load footer template to pass options array to JS
 	 */
 	function footer() {
+		if (!$this->shouldLoadJavascript()) {
+			return;
+		}
+
 		require dirname( __FILE__ ) . '/templates/footer.php';
 	}
 
@@ -293,7 +296,20 @@ class Infinite_Scroll {
 
 	}
 
+	/**
+	 * Determines if the jQuery plugin and corresponding options should
+	 * be output onto the page.
+	 *
+	 * @return bool
+	 */
+	function shouldLoadJavascript() {
+		// Don't need to load the plugin on single pages
+		if (is_singular()) {
+			return false;
+		}
 
+		return true;
+	}
 }
 
 
