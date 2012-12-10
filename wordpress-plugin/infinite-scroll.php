@@ -57,7 +57,6 @@ class Infinite_Scroll {
 	 * Construct the primary class and auto-load all child classes
 	 */
 	function __construct() {
-
 		self::$instance = &$this;
 		$this->file    = __FILE__;
 		$this->admin   = new Infinite_Scroll_Admin( $this );
@@ -84,7 +83,6 @@ class Infinite_Scroll {
 
 		//404 fix
 		add_action( 'wp', array( &$this, 'paged_404_fix' ) );
-
 	}
 
 
@@ -163,16 +161,15 @@ class Infinite_Scroll {
 	 * Fires on admin init to support SVN
 	 */
 	function upgrade_check() {
-
-		if ( !is_int($this->options->db_version) || $this->options->db_version == $this->version )
+		if ($this->options->db_version == $this->version) {
 			return;
+		}
 
 		$this->upgrade( $this->options->db_version, $this->version );
 
 		do_action( $this->prefix . 'upgrade', $this->version, $this->options->db_version );
 
 		$this->options->db_version = $this->version;
-
 	}
 
 
@@ -182,8 +179,7 @@ class Infinite_Scroll {
 	 * @param int $to version going to
 	 */
 	function upgrade( $from , $to ) {
-		
-		if ($from < 2.5) {
+		if ($from < "2.5") {
 			//array of option conversions in the form of from => to
 			$map = array(
 				'js_calls' => 'callback',
@@ -258,24 +254,18 @@ class Infinite_Scroll {
 			$this->options->set_options( $new );
 			delete_option( 'infscr_options' );
 
-			//migrate presets
-			if ( $from < 2.5 )
-				$this->presets->migrate();
+			$this->presets->migrate();
 		}
-		
+
 		//migrate loading image
-		if ($from < 2.6) {
-		
+		if ($from < '2.6') {
 			$old = get_option("infinite_scroll");
 			$new = $old;
-
 			$new["loading"]["img"] = $old["img"];
 			unset($new["img"]);
 
 			$this->options->set_options($new);
-
-		}		
-			                     
+		}
 	}
 
 
