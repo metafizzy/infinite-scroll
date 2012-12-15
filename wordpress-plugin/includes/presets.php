@@ -542,6 +542,11 @@ class Infinite_Scroll_Presets {
 	 * @return bool true if insalled, otherwise false
 	 */
 	function theme_installed( $theme ) {
+		// get theme name if $theme is an preset object
+		if ( is_object( $theme ) ) {
+			$theme = $theme->theme;
+		}
+
 		//3.4+
 		if ( function_exists( 'wp_get_theme' ) ) {
 			return wp_get_theme( $theme )->exists();
