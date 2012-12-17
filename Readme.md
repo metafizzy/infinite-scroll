@@ -1,5 +1,23 @@
+# Infinite Scroll With History
 
-# Infinite Scroll
+This is an extension of Paul Irish's Infinite Scroll project. This adds History API integration into it.
+
+What works:
+* Scrolling down updates the url with the page
+* Scrolling up after scrolling down also updates the url properly
+* New Jasmine Test Library
+
+What doesn't work:
+* Wordpress plugin does not have History API
+* Minimized version is the original Infinite Scroll project code still
+
+On my todo list:
+* Update docs to include new params
+* When first requested page is 2+, load previous pages above
+* Add option for page 1's url to be bare
+* Allow all matches of navSelector to be hidden
+
+###Paul Irish's Original Infinite Scroll Documentation###
 
 <http://www.infinite-scroll.com/>
 
