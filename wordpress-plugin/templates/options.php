@@ -104,24 +104,11 @@
 			<?php _e("Behavior", "infinite-scroll") ?>
 		</th>
 		<td>
-
-<?php
-$behavior = $this->parent->options->behavior;
-
-function isBehavior($value, $behavior) {
-	if ($value === $behavior) {
-		print("selected=\"selected\"");
-	}
-}
-
-?>
-
 			<select id="infinite_scroll[behavior]" name="infinite_scroll[behavior]">
-				<option <?php isBehavior("", $behavior); ?> value="">Default</option>
-				<option <?php isBehavior("twitter", $behavior); ?> value="twitter">Manual Trigger</option>
-				<option <?php isBehavior("local", $behavior); ?> value="local">Local</option>
-				<option <?php isBehavior("cufon", $behavior); ?> value="cufon">Cufon</option>
-				<option <?php isBehavior("masonry", $behavior); ?> value="masonry">Masonry/Isotope</option>
+  			<option <?php selected("", $this->parent->options->behavior); ?> value="">Default</option>
+  			<?php foreach ( $this->parent->behaviors as $key => $behavior ) { ?>
+				  <option value="<?php echo $key; ?>" <?php selected( $key, $this->parent->options->behavior ); ?>><?php echo $behavior['label']; ?></option>
+				<?php } ?>
 			</select>
 		</td>
 	</tr>
@@ -130,7 +117,7 @@ function isBehavior($value, $behavior) {
 			<?php _e("Debug", "infinite-scroll") ?>
 		</th>
 		<td>
-			<input type="checkbox" id="infinite_scroll[debug]" name="infinite_scroll[debug]" value="true" <?php if ($this->parent->options->debug === "true") { print("checked=\"checked\""); } ?> />
+			<input type="checkbox" id="infinite_scroll[debug]" name="infinite_scroll[debug]" value="true" <?php checked($this->parent->options->debug) ?> />
 		</td>
 	</tr>
 </table>

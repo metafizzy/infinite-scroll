@@ -3,8 +3,8 @@
 **Donate link:** http://www.infinite-scroll.com  
 **Tags:** ajax, pagination, scrolling, scroll, endless, reading  
 **Requires at least:** 3.2  
-**Tested up to:** 3.4  
-**Stable tag:** 2.6
+**Tested up to:** 3.5
+**Stable tag:** 2.6.1
 
 Automatically append the next page of posts (via AJAX) to your page when a user scrolls to the bottom. 
 

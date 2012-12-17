@@ -2,7 +2,7 @@
 /*
 Plugin Name: Infinite Scroll
 Description: Automatically loads the next page of posts into the bottom of the initial page.
-Version: 2.6
+Version: 2.6.1
 Author: Beaver6813, dirkhaim, Paul Irish, benbalter, Glenn Nelson
 Author URI:
 License: GPL3
@@ -25,7 +25,7 @@ License: GPL3
  *
  *  @copyright 2008-2012
  *  @license GPL v3
- *  @version 2.6
+ *  @version 2.6.1
  *  @package Infinite Scroll
  *  @author Beaver6813, dirkhaim, Paul Irish, Benjamin J. Balter, Glenn Nelson
  */
@@ -46,13 +46,17 @@ class Infinite_Scroll {
 	public $slug_     = 'infinite_scroll'; //slug with underscores (PHP/JS safe)
 	public $prefix    = 'infinite_scroll_'; //prefix to append to all options, API calls, etc. w/ trailing underscore
 	public $file      = null;
-	public $version   = '2.6';
-
+	public $version   = '2.6.1';
+	public $behaviors = array(  //array of behaviors as key => array( label => js file ) (without extension)
+	                      'twitter' => array( 'label' => 'Manual Trigger', 'src'  => 'manual-trigger' ),
+	                      'local'   => array( 'label' => 'Local', 'src' => 'local' ),
+	                      'cufon'   => array( 'label' => 'Cufon', 'src' => 'cufon' ),
+	                      'masonry' => array( 'label' => 'Masonry/Isotope', 'src' => 'masonry-isotope')
+	                   );
 	/**
 	 * Construct the primary class and auto-load all child classes
 	 */
 	function __construct() {
-
 		self::$instance = &$this;
 		$this->file    = __FILE__;
 		$this->admin   = new Infinite_Scroll_Admin( $this );
@@ -79,7 +83,6 @@ class Infinite_Scroll {
 
 		//404 fix
 		add_action( 'wp', array( &$this, 'paged_404_fix' ) );
-
 	}
 
 
@@ -99,7 +102,7 @@ class Infinite_Scroll {
 			'itemSelector'    => '.post',
 			'contentSelector' => '#content',
 			'debug'           => WP_DEBUG,
-			"behavior"		  => ""
+			'behavior'		    => ''
 		);
 	}
 
@@ -108,10 +111,9 @@ class Infinite_Scroll {
 	 * Enqueue front-end JS and pass options to json_encoded array
 	 */
 	function enqueue_js() {
-
-		//no need to show on singular pages
-		if ( is_singular() )
+		if (!$this->shouldLoadJavascript()) {
 			return;
+		}
 
 		$suffix = ( WP_DEBUG ) ? '.dev' : '';
 
@@ -119,29 +121,29 @@ class Infinite_Scroll {
 		wp_enqueue_script( $this->slug, plugins_url( $file, __FILE__ ), array( 'jquery' ), $this->version, true );
 
 		$options = apply_filters( $this->prefix . 'js_options', $this->options->get_options() );
-		wp_localize_script( $this->slug, $this->slug_, $options );
+		wp_localize_script($this->slug, $this->slug_, json_encode($options));
 
-		// Output a behavior script if needed
-		if ($options["behavior"]) {
-			$scripts["twitter"] = "manual-trigger.js";
-			$scripts["local"] = "local.js";
-			$scripts["cufon"] = "cufon.js";
-			$scripts["masonry"] = "masonry-isotope.js";
+		// If no behavior, we're done, kick
+		if ( !$options['behavior'] )
+		  return;
 
-			$behaviorFile = $scripts[$options["behavior"]];
+		//sanity check
+		if ( !array_key_exists( $options['behavior'], $this->behaviors ) )
+		  return _doing_it_wrong( 'Infinite Scroll behavior', "Behavior {$options['behavior']} not found", $this->version );
+		
+		$src = 'behaviors/' . $this->behaviors[ $options['behavior'] ]['src'] . '.js';
+		wp_enqueue_script( $this->slug . "-behavior", plugins_url( $src, __FILE__ ), array( "jquery", $this->slug ), $this->version, true );
 
-			if ($behaviorFile) {
-				$behaviorFile = "/behaviors/" . $behaviorFile;
-				wp_enqueue_script($this->slug . "-behavior", plugins_url($behaviorFile, __FILE__),
-					array("jquery", $this->slug), $this->version, true);
-			}
-		}
 	}
 
 	/**
 	 * Load footer template to pass options array to JS
 	 */
 	function footer() {
+		if (!$this->shouldLoadJavascript()) {
+			return;
+		}
+
 		require dirname( __FILE__ ) . '/templates/footer.php';
 	}
 
@@ -159,16 +161,15 @@ class Infinite_Scroll {
 	 * Fires on admin init to support SVN
 	 */
 	function upgrade_check() {
-
-		if ( $this->options->db_version == $this->version )
+		if ($this->options->db_version == $this->version) {
 			return;
+		}
 
 		$this->upgrade( $this->options->db_version, $this->version );
 
 		do_action( $this->prefix . 'upgrade', $this->version, $this->options->db_version );
 
 		$this->options->db_version = $this->version;
-
 	}
 
 
@@ -178,16 +179,7 @@ class Infinite_Scroll {
 	 * @param int $to version going to
 	 */
 	function upgrade( $from , $to ) {
-		if ($from == 2.5) {
-			$old = get_option("infinite_scroll");
-			$new = $old;
-
-			$new["loading"]["img"] = $old["img"];
-			unset($new["img"]);
-
-			$this->options->set_options($new);
-
-		} else if ($from < 2.5) {
+		if ($from < "2.5") {
 			//array of option conversions in the form of from => to
 			$map = array(
 				'js_calls' => 'callback',
@@ -262,9 +254,17 @@ class Infinite_Scroll {
 			$this->options->set_options( $new );
 			delete_option( 'infscr_options' );
 
-			//migrate presets
-			if ( $from < 2.5 )
-				$this->presets->migrate();
+			$this->presets->migrate();
+		}
+
+		//migrate loading image
+		if ($from < '2.6') {
+			$old = get_option("infinite_scroll");
+			$new = $old;
+			$new["loading"]["img"] = $old["img"];
+			unset($new["img"]);
+
+			$this->options->set_options($new);
 		}
 	}
 
@@ -286,7 +286,20 @@ class Infinite_Scroll {
 
 	}
 
+	/**
+	 * Determines if the jQuery plugin and corresponding options should
+	 * be output onto the page.
+	 *
+	 * @return bool
+	 */
+	function shouldLoadJavascript() {
+		// Don't need to load the plugin on single pages
+		if (is_singular()) {
+			return false;
+		}
 
+		return true;
+	}
 }
 
 
