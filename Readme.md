@@ -15,7 +15,6 @@ On my todo list:
 * Update docs to include new params
 * When first requested page is 2+, load previous pages above
 * Add option for page 1's url to be bare
-* Allow all matches of navSelector to be hidden
 
 ###Paul Irish's Original Infinite Scroll Documentation###
 

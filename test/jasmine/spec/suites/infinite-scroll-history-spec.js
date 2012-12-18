@@ -5,27 +5,28 @@ describe("InfiniteScrollHistory", function() {
   });
   
   it("should load my fixtures", function() {
-    expect($('#nav')).toExist();
+    expect($('#navA')).toExist();
   });
   
   it("should hide the nav links on scroll", function() {
     $('#results').infinitescroll({
         debug : false,
-        navSelector  : "div#nav",            
-        nextSelector : "div#nav a:first-of-type",    
+        navSelector  : "div.nav",            
+        nextSelector : "div.nav a:first-of-type",    
         itemSelector : "div#results span"          
     });
   
     $('#results').infinitescroll('scroll');
     
-    expect($('#nav')).toBeHidden();
+    expect($('#navA')).toBeHidden();
+    expect($('#navB')).toBeHidden();
   });
 
   it("should update the url when scrolling past first page-break", function() {
     $('#results').infinitescroll({
         debug : false,
-        navSelector  : "div#nav",            
-        nextSelector : "div#nav a:first-of-type",    
+        navSelector  : "div.nav",            
+        nextSelector : "div.nav a:first-of-type",    
         itemSelector : "div#results span"          
     });
     
@@ -40,8 +41,8 @@ describe("InfiniteScrollHistory", function() {
   it("should update the url when scrolling back up a previous page-break", function() {
     $('#results').infinitescroll({
         debug : false,
-        navSelector  : "div#nav",            
-        nextSelector : "div#nav a:first-of-type",    
+        navSelector  : "div.nav",            
+        nextSelector : "div.nav a:first-of-type",    
         itemSelector : "div#results span",
         state        : {
                             currentViewPage: 2
