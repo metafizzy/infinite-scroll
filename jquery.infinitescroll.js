@@ -61,7 +61,8 @@
         infid: 0, //Instance ID
         pixelsFromNavToBottom: undefined,
         path: undefined, // Either parts of a URL as an array (e.g. ["/page/", "/"] or a function that takes in the page number and returns a URL
-		prefill: false // When the document is smaller than the window, load data until the document is larger or links are exhausted
+		prefill: false, // When the document is smaller than the window, load data until the document is larger or links are exhausted
+        maxPage:0 // to manually control maximum page (when maxPage is 0, maximum page limitation is not work)
 	};
 
     $.infinitescroll.prototype = {
@@ -532,6 +533,13 @@
 
 			// increment the URL bit. e.g. /page/3/
 			opts.state.currPage++;
+
+            // Manually control maximum page 
+            if ( opts.maxPage != 0 && opts.state.currPage > opts.maxPage ){
+                opts.state.isDestroyed = true;
+                instance._error('end');
+                return;
+            }
 
 			// if we're dealing with a table we can't use DIVs
 			box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');
