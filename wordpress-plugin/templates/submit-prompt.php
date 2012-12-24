@@ -10,7 +10,7 @@
 		<p class="description"><?php echo sprintf( __( 'Please consider <a href="%s">submitting your theme\'s CSS selectors</a> to the global CSS selector database to make installation and configuration easier for other users', 'infinite-scroll'), esc_url( add_query_arg( 'submit', true ) ) ); ?>
 		
 		<span style="font-size: 10px;">
-			(<a href="#" id="hide-submit"><?php _e( 'hide this message' ); ?></a>)
+			(<a href="#" id="hide-submit"><?php _e( 'hide this message', 'infinite-scroll' ); ?></a>)
 		</span>
 		</p>
 		<?php wp_nonce_field( $this->parent->slug_ . '_hide_submit' , '_ajax_nonce-' . $this->parent->slug . '-hide-submit' ); ?>

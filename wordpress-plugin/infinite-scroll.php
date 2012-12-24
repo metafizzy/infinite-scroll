@@ -6,6 +6,9 @@ Version: 2.6.1
 Author: Beaver6813, dirkhaim, Paul Irish, benbalter, Glenn Nelson
 Author URI:
 License: GPL3
+License URI: http://www.gnu.org/licenses/gpl-3.0.html
+Text Domain: infinite-scroll
+Domain Path: /languages/
 */
 
 /*  Copyright 2008-2012 Beaver6813, dirkhaim, Paul Irish, Benjamin J. Balter, Glenn Nelson
@@ -93,8 +96,8 @@ class Infinite_Scroll {
 		//option keys map to javascript options and are passed directly via wp_localize_script
 		$this->options->defaults = array(
 			'loading' => array(
-				'msgText'         => __( '<em>Loading...</em>', 'infinite-scroll' ),
-				'finishedMsg'     => __( '<em>No additional posts.</em>', 'infinite-scroll' ),
+				'msgText'         => '<em>' . __( 'Loading...', 'infinite-scroll' ) . '</em>',
+				'finishedMsg'     => '<em>' . __( 'No additional posts.', 'infinite-scroll' ) . '</em>',
 				'img'             => plugins_url( 'img/ajax-loader.gif', __FILE__ )
 			),
 			'nextSelector'    => '#nav-below a:first',
