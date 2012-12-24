@@ -5,7 +5,7 @@
  */
 ?>
 <div class="wrap">
-	<h2><?php _e( 'Submit CSS Selectors' ); ?></h2>
+	<h2><?php _e( 'Submit CSS Selectors', 'infinite-scroll' ); ?></h2>
 	<p class="description"><?php _e( 'Infinite Scroll maintains a global database of CSS selectors to help new users, and users without knowledge of CSS selectors adapt the plugin to fit their individual theme. If you have enjoyed this free plugin, please consider contributing back to the community by taking a moment to submit the below information.', 'infinite-scroll' ); ?></p>
 	<strong><?php _e( 'How to submit:', 'infinite-scroll' ); ?></strong>
 	<ol>
@@ -23,9 +23,9 @@
 &lt;/blockquote></textarea>
 <span style="font-size: 10px;">
 	<?php if ( isset( $_GET['all'] ) ) { ?>
-		<a href="<?php echo esc_url( remove_query_arg( 'all' ) ); ?>"><?php _e( 'Export only custom selectors' ); ?></a>
+		<a href="<?php echo esc_url( remove_query_arg( 'all' ) ); ?>"><?php _e( 'Export only custom selectors', 'infinite-scroll' ); ?></a>
 	<?php } else { ?>
-		<a href="<?php echo esc_url( add_query_arg( 'all', true ) ); ?>"><?php _e( 'Export all selectors' ); ?></a>
+		<a href="<?php echo esc_url( add_query_arg( 'all', true ) ); ?>"><?php _e( 'Export all selectors', 'infinite-scroll' ); ?></a>
 	<?php } ?>
 </span>
 </div>

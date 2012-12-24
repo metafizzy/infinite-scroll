@@ -22,7 +22,8 @@ Features:
 * Relies on shared database of common themes to simplify installation process
 * Maintain local database of theme presets for all installed themes (shared across network on multisite installs)
 * Countless API endpoints to modify the behavior.
-* Backwards compatible: Will not break RSS readers, mobile devices, or browsers with javascript  
+* Backwards compatible: Will not break RSS readers, mobile devices, or browsers with javascript
+* Contribute Translations at [https://translate.foe-services.de/projects/infinite-scroll](https://translate.foe-services.de/projects/infinite-scroll)
 
 Full information on [infinite-scroll.com](http://www.infinite-scroll.com)
 

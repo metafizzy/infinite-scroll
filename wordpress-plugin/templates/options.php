@@ -101,7 +101,7 @@
 	</tr>
 	<tr valign="top">
 		<th scope="row">
-			<?php _e("Behavior", "infinite-scroll") ?>
+			<?php _e( 'Behavior', 'infinite-scroll' ) ?>
 		</th>
 		<td>
 			<select id="infinite_scroll[behavior]" name="infinite_scroll[behavior]">
@@ -114,7 +114,7 @@
 	</tr>
 	<tr valign="top">
 		<th scope="row">
-			<?php _e("Debug", "infinite-scroll") ?>
+			<?php _e( 'Debug', 'infinite-scroll' ) ?>
 		</th>
 		<td>
 			<input type="checkbox" id="infinite_scroll[debug]" name="infinite_scroll[debug]" value="true" <?php checked($this->parent->options->debug) ?> />
@@ -125,7 +125,7 @@
 	<input type="submit" class="button-primary" value="<?php _e( 'Save Options', 'infinite-scroll' ); ?>" />
 </p>
 <?php if ( !is_multisite() || is_super_admin() ) { ?>
-<div style="float:right; margin-top: -50px; margin-right:20px;"><a href="<?php echo esc_url( add_query_arg( 'manage-presets', true ) ); ?>"><?php _e( 'Manage Defaults'); ?></a></div>
+<div style="float:right; margin-top: -50px; margin-right:20px;"><a href="<?php echo esc_url( add_query_arg( 'manage-presets', true ) ); ?>"><?php _e( 'Manage Defaults', 'infinite-scroll' ); ?></a></div>
 <?php } ?>
 </form>
 </div>
