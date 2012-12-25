@@ -227,6 +227,13 @@ class Infinite_Scroll {
 
 			}
 
+			//pre 2.5 we html encoded selectors, we don't do this anymore
+			foreach ( array( 'contentSelector', 'itemSelector', 'navSelector', 'nextSelector' ) as $field ) {
+				if ( isset( $new[$field] ) ) {
+					$new[$field] = html_entity_decode($new[$field]);
+				}
+			}
+
 			//regardless of which upgrade we did, move loading string to array
 			$new['loading'] = array( );
 
