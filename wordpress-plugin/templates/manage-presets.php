@@ -12,7 +12,7 @@ $table = new Infinite_Scroll_Presets_Table();
 $table->prepare_items();
 ?>
 <div class="wrap">
-	<h2><?php _e( 'Mange Infinite Scroll Presets', 'infinite-scroll' ); ?></h2>
+	<h2><?php _e( 'Manage Infinite Scroll Presets', 'infinite-scroll' ); ?></h2>
  	<p class="description"><?php _e( 'Many theme\'s CSS selector\'s are stored in a community contributed database maintained by the plugin. If the current theme\'s CSS selectors are known, the plugin will automatically use them if the site administrator has not set any. This list will update automatically as additional theme\'s are added. You can add to and/or override those community defaults below. Changes entered here will affect only your site on a single-site install, and only your network\'s site on a multisite install.', 'infinite-scroll' ); ?></p>
  	<form id="ajax-form">
 	<?php $table->display(); ?>

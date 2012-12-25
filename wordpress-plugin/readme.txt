@@ -194,7 +194,8 @@ Add a filter to `infinite_scroll_options` and adds additional options to the opt
 
 = Is the plugin available in my language? =
 
-If you enjoy the plugin and are interested in contributing a translation (it's super easy), please take a look at the [Translating WordPress](http://codex.wordpress.org/Translating_WordPress) page. 
+* Currently the plugin offers an English and German interface.
+* Contribute Translations at [https://translate.foe-services.de/projects/infinite-scroll](https://translate.foe-services.de/projects/infinite-scroll)
 
 = Is it SEO-Friendly? =
 Yes all enhancements are made via javascript only, so search spiders see no difference.
