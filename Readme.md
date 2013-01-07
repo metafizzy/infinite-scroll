@@ -1,23 +1,28 @@
 # Infinite Scroll With History
 
 This is an extension of Paul Irish's Infinite Scroll project. This adds History API integration into it.
+**The history API is relatively new and is supported by most new browsers, but not all.** See http://caniuse.com/#feat=history for more detail.
 
-What works:
+####What works####
 * Scrolling down updates the url with the page
-* Scrolling up after scrolling down also updates the url properly
+* Scrolling up after scrolling down also updates the url properly (decrements page number)
 * New Jasmine Test Library
 
-What doesn't work:
+####What doesn't work####
 * Wordpress plugin does not have History API
 * Minimized version is the original Infinite Scroll project code still
 
-On my todo list:
+####On my todo list####
 * Update docs to include new params
-* When first requested page is 2+, load previous pages above
+* When first requested page is 2+, load previous pages above the content div
 * Add option for page 1's url to be bare
 * Stop physically including Jasmine and Jasmine-jquery jars in this project
 
-###Paul Irish's Original Infinite Scroll Documentation###
+##Jasmine##
+* Specs are located in *test/jasmine/spec/suites* and the fixtures are in *test/jasmine/spec/javascripts/fixtures*
+* To run them, open your local *test/jasmine/SpecRunner.html* in your browser
+
+#Paul Irish's Original Infinite Scroll Documentation#
 
 <http://www.infinite-scroll.com/>
 
