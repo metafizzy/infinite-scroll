@@ -59,9 +59,9 @@ class Infinite_Scroll {
 	/**
 	 * Construct the primary class and auto-load all child classes
 	 */
-	function __construct() {
+	function __construct($infile = null) {
 		self::$instance = &$this;
-		$this->file    = __FILE__;
+		$this->file    = $infile == null?__FILE__:$infile;
 		$this->admin   = new Infinite_Scroll_Admin( $this );
 		$this->options = new Infinite_Scroll_Options( $this );
 		$this->presets = new Infinite_Scroll_Presets( $this );
@@ -98,7 +98,7 @@ class Infinite_Scroll {
 			'loading' => array(
 				'msgText'         => '<em>' . __( 'Loading...', 'infinite-scroll' ) . '</em>',
 				'finishedMsg'     => '<em>' . __( 'No additional posts.', 'infinite-scroll' ) . '</em>',
-				'img'             => plugins_url( 'img/ajax-loader.gif', __FILE__ )
+				'img'             => plugins_url( 'img/ajax-loader.gif', $this->file )
 			),
 			'nextSelector'    => '#nav-below a:first',
 			'navSelector'     => '#nav-below',
@@ -121,7 +121,8 @@ class Infinite_Scroll {
 		$suffix = ( WP_DEBUG ) ? '.dev' : '';
 
 		$file = "/js/front-end/jquery.infinitescroll{$suffix}.js";
-		wp_enqueue_script( $this->slug, plugins_url( $file, __FILE__ ), array( 'jquery' ), $this->version, true );
+		wp_enqueue_script( $this->slug, plugins_url( $file, $this->file ), array( 'jquery' ), $this->version, true );
+
 
 		$options = apply_filters( $this->prefix . 'js_options', $this->options->get_options() );
 		wp_localize_script($this->slug, $this->slug_, json_encode($options));
@@ -135,7 +136,7 @@ class Infinite_Scroll {
 		  return _doing_it_wrong( 'Infinite Scroll behavior', "Behavior {$options['behavior']} not found", $this->version );
 		
 		$src = 'behaviors/' . $this->behaviors[ $options['behavior'] ]['src'] . '.js';
-		wp_enqueue_script( $this->slug . "-behavior", plugins_url( $src, __FILE__ ), array( "jquery", $this->slug ), $this->version, true );
+		wp_enqueue_script( $this->slug . "-behavior", plugins_url( $src, $this->file ), array( "jquery", $this->slug ), $this->version, true );
 
 	}
 
@@ -312,5 +313,5 @@ class Infinite_Scroll {
 	}
 }
 
-
-$infinite_scroll = new Infinite_Scroll();
+//The global variable $plugin holds the unresolved path of the current file.
+$infinite_scroll = new Infinite_Scroll($plugin);
