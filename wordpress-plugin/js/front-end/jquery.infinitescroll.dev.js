@@ -34,7 +34,8 @@
             msgText: "<em>Loading the next set of posts...</em>",
             selector: null,
             speed: 'fast',
-            start: undefined
+            start: undefined,
+            lastPageNumber: undefined
         },
         state: {
             isDuringAjax: false,
@@ -543,72 +544,77 @@
 			if (opts.appendCallback && opts.dataType === 'html') {
 				method += '+callback';
 			}
+			
+			if (opts.state.currPage > opts.loading.lastPageNumber) {
+				opts.state.isDone = true;
+				instance._loadcallback(box, '', desturl);
+			} else {
+				switch (method) {
+					case 'html+callback':
+						instance._debug('Using HTML via .load() method');
+						box.load(desturl + ' ' + opts.itemSelector, undefined, function infscr_ajax_callback(responseText) {
+							instance._loadcallback(box, responseText, desturl);
+						});
 
-			switch (method) {
-				case 'html+callback':
-					instance._debug('Using HTML via .load() method');
-					box.load(desturl + ' ' + opts.itemSelector, undefined, function infscr_ajax_callback(responseText) {
-						instance._loadcallback(box, responseText, desturl);
-					});
+						break;
 
-					break;
-
-				case 'html':
-					instance._debug('Using ' + (method.toUpperCase()) + ' via $.ajax() method');
-					$.ajax({
-						// params
-						url: desturl,
-						dataType: opts.dataType,
-						complete: function infscr_ajax_callback(jqXHR, textStatus) {
-							condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
-							if (condition) {
-								instance._loadcallback(box, jqXHR.responseText, desturl);
-							} else {
-								instance._error('end');
+					case 'html':
+						instance._debug('Using ' + (method.toUpperCase()) + ' via $.ajax() method');
+						$.ajax({
+							// params
+							url: desturl,
+							dataType: opts.dataType,
+							complete: function infscr_ajax_callback(jqXHR, textStatus) {
+								condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
+								if (condition) {
+									instance._loadcallback(box, jqXHR.responseText, desturl);
+								} else {
+									instance._error('end');
+								}
 							}
-						}
-					});
+						});
 
-					break;
-				case 'json':
-					instance._debug('Using ' + (method.toUpperCase()) + ' via $.ajax() method');
-					$.ajax({
-						dataType: 'json',
-						type: 'GET',
-						url: desturl,
-						success: function (data, textStatus, jqXHR) {
-							condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
-							if (opts.appendCallback) {
-								// if appendCallback is true, you must defined template in options.
-								// note that data passed into _loadcallback is already an html (after processed in opts.template(data)).
-								if (opts.template !== undefined) {
-									var theData = opts.template(data);
-									box.append(theData);
-									if (condition) {
-										instance._loadcallback(box, theData);
+						break;
+					case 'json':
+						instance._debug('Using ' + (method.toUpperCase()) + ' via $.ajax() method');
+						$.ajax({
+							dataType: 'json',
+							type: 'GET',
+							url: desturl,
+							success: function (data, textStatus, jqXHR) {
+								condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
+								if (opts.appendCallback) {
+									// if appendCallback is true, you must defined template in options.
+									// note that data passed into _loadcallback is already an html (after processed in opts.template(data)).
+									if (opts.template !== undefined) {
+										var theData = opts.template(data);
+										box.append(theData);
+										if (condition) {
+											instance._loadcallback(box, theData);
+										} else {
+											instance._error('end');
+										}
 									} else {
+										instance._debug("template must be defined.");
 										instance._error('end');
 									}
 								} else {
-									instance._debug("template must be defined.");
-									instance._error('end');
+									// if appendCallback is false, we will pass in the JSON object. you should handle it yourself in your callback.
+									if (condition) {
+										instance._loadcallback(box, data, desturl);
+									} else {
+										instance._error('end');
+									}
 								}
-							} else {
-								// if appendCallback is false, we will pass in the JSON object. you should handle it yourself in your callback.
-								if (condition) {
-									instance._loadcallback(box, data, desturl);
-								} else {
-									instance._error('end');
-								}
+							},
+							error: function() {
+								instance._debug("JSON ajax request failed.");
+								instance._error('end');
 							}
-						},
-						error: function() {
-							instance._debug("JSON ajax request failed.");
-							instance._error('end');
-						}
-					});
+						});
 
-					break;
+						break;
+				}
 			}
 		},
 
