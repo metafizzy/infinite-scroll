@@ -510,10 +510,9 @@
 
         // Destroy current instance of plugin
         destroy: function infscr_destroy() {
-
             this.options.state.isDestroyed = true;
+			this.options.loading.finished();
             return this._error('destroy');
-
         },
 
         // Set pause value to false
