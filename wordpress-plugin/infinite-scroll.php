@@ -304,7 +304,7 @@ class Infinite_Scroll {
 	 */
 	function shouldLoadJavascript() {
 		// Don't need to load the plugin on single pages
-		$load = is_singular() ? false : true;
+		$load = is_single() ? false : true;
 		return apply_filters( 'infinite_scroll_load_javascript', $load );
 	}
 }
