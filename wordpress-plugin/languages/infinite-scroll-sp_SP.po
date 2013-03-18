@@ -1,0 +1,315 @@
+# Translation of Infinite-Scroll in German
+# This file is distributed under the same license as the Infinite-Scroll package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2013-02-14 16:32-0300\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Poedit 1.5.3\n"
+"Project-Id-Version: Infinite-Scroll\n"
+"Language-Team: Darío Hereñú <magallania@gmail.com>\n"
+"Language: Español\n"
+"POT-Creation-Date: \n"
+"Last-Translator: Darío Hereñú <magallania@gmail.com>\n"
+
+#: templates/manage-presets.php:15
+msgid "Manage Infinite Scroll Presets"
+msgstr "Administrar los ajustes preestablecidos de Infinite Scroll"
+
+#: templates/submit.php:19
+msgid "All CSS Selectors:"
+msgstr "Todos los selectores CSS:"
+
+#: templates/submit.php:19
+msgid "Your CSS Selectors:"
+msgstr "Sus selectores CSS:"
+
+#: templates/submit.php:26
+msgid "Export only custom selectors"
+msgstr "Exportar solo los selectores usuales"
+
+#: templates/submit.php:28
+msgid "Export all selectors"
+msgstr "Exportar todos los selectores"
+
+#: templates/options.php:99
+msgid "URL of existing or uploaded image to display as new posts are retrieved"
+msgstr ""
+"URL de una imagen existente o carguela para visualizala en tanto las nuevas "
+"entradas son recuperadas"
+
+#: templates/options.php:104
+msgid "Behavior"
+msgstr "Comportamiento"
+
+#: templates/options.php:117
+msgid "Debug"
+msgstr "Depurar"
+
+#: templates/options.php:125
+msgid "Save Options"
+msgstr "Guardar opciones"
+
+#: templates/options.php:128
+msgid "Manage Defaults"
+msgstr "Administrar opciones por defecto"
+
+#: templates/preset-prompt.php:7
+msgid ""
+"Other users have submitted default CSS selectors for your theme.  Would you "
+"like to <strong><a href=\"%s\">use your theme's default selectors</a></"
+"strong>?"
+msgstr ""
+"Otros usuarios han suministrada selectores CSS por defecto en sus temas. Le "
+"gustaría <strong><a href=\"%s\">utilizar los selectores por defecto de su "
+"tema</a></strong>?"
+
+#: templates/submit-prompt.php:10
+msgid ""
+"Please consider <a href=\"%s\">submitting your theme's CSS selectors</a> to "
+"the global CSS selector database to make installation and configuration "
+"easier for other users"
+msgstr ""
+"Por favor, considere <a href=\"%s\">presentar sus selectores CSS</a> a la "
+"base de datos global de selectores CSS para facilitar la instalación y "
+"configuración más fácil a otros usuarios"
+
+#: templates/submit-prompt.php:13
+msgid "hide this message"
+msgstr "ocultar este mensaje"
+
+#: templates/submit.php:8
+msgid "Submit CSS Selectors"
+msgstr "Compartir selectores CSS"
+
+#: templates/submit.php:9
+msgid ""
+"Infinite Scroll maintains a global database of CSS selectors to help new "
+"users, and users without knowledge of CSS selectors adapt the plugin to fit "
+"their individual theme. If you have enjoyed this free plugin, please "
+"consider contributing back to the community by taking a moment to submit the "
+"below information."
+msgstr ""
+"Infinite Scroll mantiene una base de datos global de selectores CSS para "
+"ayudar a sus nuevos usuarios, como también aquellos sin conocimientos de "
+"selectores CSS a adaptar este complemento al tema Wordpress. Si disfrutó "
+"este complemento gratuito, por favor, considere retribuir a la comunidad "
+"solamente tomándose un momento para elevar la siguiente información."
+
+#: templates/submit.php:10
+msgid "How to submit:"
+msgstr "Cómo presentar:"
+
+#: templates/submit.php:12
+msgid ""
+"Press <code>CTRL-C</code> (PC) or <code>Command-C</code> (Mac) to copy the "
+"below CSS selectors to your computer's clipboard."
+msgstr ""
+"Presione <code>Ctrl+C</code> (PC) o <code>Comando+C</code> (Mac) para copiar "
+"los siguientes selectores CSS al portapapeles de su computadora."
+
+#: templates/submit.php:13
+msgid ""
+"Navigate to the <a href=\"%s\" target=\"_BLANK\">Infinite Scroll Support "
+"Forum CSS Selectors Page</a>, and if you don't already have one, <a href=\"%s"
+"\" target=\"_BLANK\">create a WordPress.org account</a> (it takes 30 "
+"seconds!)."
+msgstr ""
+"Diríjase a la <a href=\"%s\" target=\"_BLANK\">página de selectores CSS del "
+"foro de Infinite Scroll Support</a> y si no aun no posee uno, <a href=\"%s\" "
+"target=\"_BLANK\">créese una cuenta en WordPress.org</a> (solo toma unos 30 "
+"segundos!)."
+
+#: templates/submit.php:14
+msgid "Click the reply message box (the big input area)"
+msgstr "Haga clic en el cuadro de mensaje de respuesta "
+
+#: templates/submit.php:15
+msgid ""
+"Press <code>CTRL-V</code> (PC) or <code>Command-V</code> (Mac) to paste the "
+"selectors into the message box"
+msgstr ""
+"Presione <code>Ctrl+V</code> (PC) o <code>Comando+V</code> (Mac) para pegar "
+"los selectores dentro del cuadro de mensajes."
+
+#: templates/submit.php:16
+msgid "Add a message, if you'd like (optional)"
+msgstr "Agregue un mensaje, si le apetece (opcional)"
+
+#: templates/submit.php:17
+msgid "Click \"<code>Post</code>\""
+msgstr "Click \"<code>Entrada</code>\""
+
+#: templates/options.php:21
+msgid "Div containing your theme's content"
+msgstr "Div conteniendo el contenido de su tema "
+
+#: templates/options.php:26
+msgid "Navigation Selector"
+msgstr "Selector de navegación"
+
+#: templates/options.php:30
+msgid "Div containing your theme's navigation"
+msgstr "Div conteniendo los elementos de navegación de su tema"
+
+#: templates/options.php:35
+msgid "Next Selector"
+msgstr "Próximo selector"
+
+#: templates/options.php:39
+msgid "Link to next page of content"
+msgstr "Enlace a la próxima página de contenido"
+
+#: templates/options.php:44
+msgid "Item Selector"
+msgstr "Selector de elemento"
+
+#: templates/options.php:48
+msgid "Div containing an individual post"
+msgstr "Div conteniendo una entrada individual"
+
+#: templates/options.php:54
+msgid "Callback"
+msgstr "Volver a llamar"
+
+#: templates/options.php:58
+msgid "Code that is called after each new page is loaded"
+msgstr "Código que es llamado cada vez que una nueva página es cargada"
+
+#: templates/options.php:65
+msgid "Loading Message"
+msgstr "Cargando mensaje"
+
+#: templates/options.php:70
+msgid "Text to display as new posts are retrieved"
+msgstr "Texto a visualizar en tanto las nuevas entradas son recuperadas"
+
+#: templates/options.php:76
+msgid "Finished Message"
+msgstr "Mensaje concluido"
+
+#: templates/options.php:81
+msgid "Text to display when no additional posts are available"
+msgstr "Texto a mostrar cuando no hay disponibles entradas adicionales "
+
+#: templates/options.php:88
+msgid "Loading Image"
+msgstr "Cargando imagen"
+
+#: templates/options.php:91
+msgid "Current Image:"
+msgstr "Actual imagen:"
+
+#: templates/options.php:91
+msgid "Current Loading Image"
+msgstr "Imagen cargándose actualmente"
+
+#: templates/options.php:92
+msgid "New Image:"
+msgstr "Nueva imagen:"
+
+#: templates/options.php:94
+msgid "Upload New Image"
+msgstr "Subir nueva imagen"
+
+#: templates/options.php:96
+msgid "Use Default"
+msgstr "Utilizar valores predeterminados"
+
+#: infinite-scroll.php:4
+msgid ""
+"Automatically loads the next page of posts into the bottom of the initial "
+"page."
+msgstr ""
+"Automáticamente carga la próxima página de entradas al final de la página "
+"inicial."
+
+#: includes/admin.php:32 templates/options.php:8
+msgid "Infinite Scroll Options"
+msgstr "Opciones de Infinite Scroll"
+
+#: includes/admin.php:32
+msgid "Infinite Scroll"
+msgstr "Infinite Scroll"
+
+#: includes/admin.php:62
+msgid "Are you sure you want to delete the preset \"%s\"?"
+msgstr "Está seguro que quiere borrar el valor predefinido \"%s\"?"
+
+#: includes/presets.php:671
+msgid "Edit"
+msgstr "Editar"
+
+#: includes/presets.php:671
+msgid "Delete"
+msgstr "Borrar"
+
+#: includes/presets.php:672
+msgid "Save"
+msgstr "Guardar"
+
+#: includes/presets.php:672
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: infinite-scroll.php:99
+msgid "Loading..."
+msgstr "Cargando…"
+
+#: infinite-scroll.php:100
+msgid "No additional posts."
+msgstr "Sin entradas adicionales."
+
+#: templates/manage-presets.php:16
+msgid ""
+"Many theme's CSS selector's are stored in a community contributed database "
+"maintained by the plugin. If the current theme's CSS selectors are known, "
+"the plugin will automatically use them if the site administrator has not set "
+"any. This list will update automatically as additional theme's are added. "
+"You can add to and/or override those community defaults below. Changes "
+"entered here will affect only your site on a single-site install, and only "
+"your network's site on a multisite install."
+msgstr ""
+"Varios selectores CSS de temas son guardados en una base de datos "
+"contribuidos por la comunidad y mantenida por este complemento. Si sus "
+"actuales selectores CSS de su actual tema son conocidos, este complemento "
+"automáticamente los usará si el administrador del sitio aun no lo ha hecho. "
+"Esta lista se actualizará automáticamente en tanto conforme se vayan "
+"agregando temas a la base de datos. Puede agregar o deshabilitar los "
+"siguientes valores predeterminados de la comunidad. Los cambios ingresados "
+"aquí afectarán solamente a su sitio basado en la modalidad: única "
+"instalación y solamente en el sitio de la red en la modalidad instalación "
+"multisitio."
+
+#: templates/manage-presets.php:19
+msgid "Back to General Options"
+msgstr "De vuelta a las opciones generales"
+
+#: templates/manage-presets.php:19
+msgid "Export/Submit"
+msgstr "Exportar/Presentar"
+
+#: templates/options.php:12
+msgid ""
+"Infinite scroll uses <a href=\"http://www.w3.org/TR/CSS2/selector.html\">CSS "
+"selectors</a> to identify various parts of your site's unique theme. In most "
+"cases, identifying each of your theme's elements below simply requires "
+"entering either the element's ID indicated with a hashmark, (<em>e.g.,</"
+"em><code>#content</code>), or the element's class indicated by a period, "
+"(<em>e.g.,</em><code>.post</code>). For more information, please see <a href="
+"\"http://docs.jquery.com/Selectors\">jQuery's CSS Selector documentation</a>."
+msgstr ""
+"Infinite Scroll utiliza <a href=\"http://www.w3.org/TR/CSS2/selector.html"
+"\">selectores CSS</a> para identificar varias porciones del tema de su "
+"sitio. En la mayoría de los casos, identificiar cada uno de los elementos de "
+"su tema simplemente requiere ingresar o el ID de elemento indicado con una "
+"almohadilla (<em>z.B. </em><code>#content</code>), o el elemento de clase "
+"indicado por un punto (<em>Xiam</em><code>.post</code>). Para mayor "
+"información, vea <a href=\"http://docs.jquery.com/Selectors\">documentación "
+"acerca de selectores CSS jQuery (en inglés)</a>."
+
+#: templates/options.php:17
+msgid "Content Selector"
+msgstr "Selector de contenido"
