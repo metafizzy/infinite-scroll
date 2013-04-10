@@ -73,36 +73,35 @@ class Infinite_Scroll_Admin {
 	 */
 	function send_to_editor( $args ) {
 		global $wpdb;
-		
-		if ( $args['errors'] !== null )
-			return $args;
-			
-		if ( isset( $_GET['attachment_id'] ) ) {
-		
-			$id = $_GET['attachment_id'];
-			
-		//workaround for WP 3.2 non-flash upload
-		//not ideal, but works for an edge case
-		} else {
-		
-			//because we can't get the attachment ID at this point, try to pull it from the database
-			//look for the most recent parent-less attachment with same title and mime-type
-			$upload = $GLOBALS['HTTP_POST_FILES']['async-upload'];
-			$title = substr( $upload['name'], 0, strrpos( $upload['name'], '.' ) );
-			$id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_type = 'attachment' AND post_mime_type = '" . $upload['type'] . "' AND post_parent = '0' AND post_title = '$title' ORDER BY ID DESC LIMIT 1" );
-			
-			//if for some reason we couldn't pull the ID, simply kick
-			//the user will just have to click insert to close the dialog
-			if ( !$id )
+		if (isset($GLOBALS['HTTP_POST_FILES']['async-upload'])){
+			if ( $args['errors'] !== null )
 				return $args;
-		
+				
+			if ( isset( $_GET['attachment_id'] ) ) {
+			
+				$id = $_GET['attachment_id'];
+				
+			//workaround for WP 3.2 non-flash upload
+			//not ideal, but works for an edge case
+			} else {
+			
+				//because we can't get the attachment ID at this point, try to pull it from the database
+				//look for the most recent parent-less attachment with same title and mime-type
+				$upload = $GLOBALS['HTTP_POST_FILES']['async-upload'];
+				$title = substr( $upload['name'], 0, strrpos( $upload['name'], '.' ) );
+				$id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_type = 'attachment' AND post_mime_type = '" . $upload['type'] . "' AND post_parent = '0' AND post_title = '$title' ORDER BY ID DESC LIMIT 1" );
+				
+				//if for some reason we couldn't pull the ID, simply kick
+				//the user will just have to click insert to close the dialog
+				if ( !$id )
+					return $args;
+			
+			}
+			
+			//rely on WordPress's internal function to output script tags and call send_to_editor()
+			media_send_to_editor( wp_get_attachment_url( $id ) );
 		}
-		
-		//rely on WordPress's internal function to output script tags and call send_to_editor()
-		media_send_to_editor( wp_get_attachment_url( $id ) );
-		
 		return $args;
-		
 	}
 	
 	/**
