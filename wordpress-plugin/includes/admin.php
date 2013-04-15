@@ -69,7 +69,7 @@ class Infinite_Scroll_Admin {
 	 * @param array $args the default args
 	 * @return array the original args, unmodified
 	 * @uses media_send_to_editor()
-	 & @uses send_to_editor() (javascript)
+	 * @uses send_to_editor() (javascript)
 	 */
 	function send_to_editor( $args ) {
 		global $wpdb;
