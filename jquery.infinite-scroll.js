@@ -116,9 +116,11 @@
 				data: data,
 				dataType: dataType
 			}).done(function(data, textStatus, jqXHR) {
+				pluginContext._debug("Loaded" + jqXHR.url);
 				console.log("Loaded:", data);
 			}).fail(function(jqXHR, textStatus, errorThrown) {
-				console.log("Failed:", jqXHR);
+				console.log("Failed to load", jqXHR.url, errorThrown);
+				// TODO: Provide check to determine if the plugin should terminate
 			}).then(function() {
 				pluginContext.state.isLoading = false;
 				pluginContext.$element.trigger(pluginContext.EVENTS.LOADING_END);
@@ -135,14 +137,31 @@
 		_shouldLoad: function() {
 			if (!this.state.isPaused && !this.state.isLoading) {
 				// TODO: Write logic to determine if content should be loaded
+				// TODO: Check if the scrollbar is close enough to the bottom of the scrollable area
+				// TODO: Check if the scrollable area is large enough to have scrollbar
 				return true;
 			}
 
 			return false;
 		},
 
+		/**
+		 * Wrapper method to handle inconsistencies between browsers when using logging methods. Anything passed into
+		 * the method will be passed along to the `console.log` method
+		 *
+		 * @private
+		 */
 		_debug: function() {
-			// TODO: Write universal (that is IE8+) debugging method
+			if (true !== this.options.debug) {
+				return;
+			}
+
+			if (typeof console !== "undefined" && typeof console.log === "function") {
+				console.log(Array.prototype.slice.call(arguments));
+			} else if (!Function.prototype.bind && typeof console !== "undefined" && typeof console.log === "object") {
+				// IE 8
+				Function.prototype.call.call(console.log, console, Array.prototype.slice.call(arguments));
+			}
 		},
 
 		/**
@@ -215,5 +234,21 @@
 				break;
 		}
 	};
+
+
+	// Make console.log safe to use in all browsers
+	// Based off of Gist by sx, in turn based on Paul Irish's log(): https://gist.github.com/sx/1793447
+	(function(logger) {
+		logger.info = logger.info || $.noop;
+		logger.error = logger.error || logger.info;
+	})(function() {
+		try {
+			console.log();
+			return window.console;
+		} catch (exception) {
+			window.console = {};
+			return window.console;
+		}
+	})();
 })(jQuery, window);
 
