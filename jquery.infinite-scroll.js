@@ -10,6 +10,7 @@
 	$.infiniteScroll = function(options, element) {
 		this.$element = $(element);
 		this.$window = $(window);
+		this.$document = $(document);
 		this.options = $.extend({}, this.defaults, options);
 
 		this._init();
@@ -23,7 +24,8 @@
 		debug: false,
 		page: 1,
 		path: undefined,
-		fill: true
+		fill: true,
+		pixelThreshold: 0
 
 		// TODO: Rethink plugin ("behavior") loader to allow for multiple plugins
 	};
@@ -128,6 +130,22 @@
 		},
 
 		/**
+		 * Calculates the amount of pixels remaining until the scrolling area has reached the bottom.
+		 *
+		 * @returns {number} The number of pixels until the bottom has been reached
+		 * @private
+		 */
+		_getRemainingPixels: function() {
+			if ($.isWindow(this.$scroll)) {
+				return this.$document.height() - this.$scroll.scrollTop() - this.$window.height();
+			} else {
+				// TODO: Write code to calculate remaining pixels from inside of an HTML element
+
+				return 0;
+			}
+		},
+
+		/**
 		 * Determines if additional content should be loaded based on the direction of the scroll and position of the
 		 * scrollbar within scrolling element. Also checks if the scrollbar is present on the scrolling element.
 		 *
@@ -136,10 +154,14 @@
 		 */
 		_shouldLoad: function() {
 			if (!this.state.isPaused && !this.state.isLoading) {
-				// TODO: Write logic to determine if content should be loaded
-				// TODO: Check if the scrollbar is close enough to the bottom of the scrollable area
+				// Get the number of pixels until the bottom of the scrolling area is reached, and scroll if it is
+				var pixelsUntilBottom = this._getRemainingPixels();
+
+				if (pixelsUntilBottom < this.options.pixelThreshold) {
+					return true;
+				}
+
 				// TODO: Check if the scrollable area is large enough to have scrollbar
-				return true;
 			}
 
 			return false;
