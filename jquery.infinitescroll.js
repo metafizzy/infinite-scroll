@@ -477,7 +477,7 @@
             .find('img')
             .hide()
             .parent()
-            .find('div').html(opts.loading.finishedMsg).animate({ opacity: 1 }, 2000, function () {
+            .find('div').html(opts.finishedMsg).animate({ opacity: 1 }, 2000, function () {
                 $(this).parent().fadeOut(opts.loading.speed);
             });
 
