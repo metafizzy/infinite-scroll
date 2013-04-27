@@ -18,6 +18,7 @@ $('.selector').infinitescroll({
 		msg: null,
 		msgText: "<em>Loading the next set of posts...</em>",
 		selector: null,
+		delay: 0, // Delay before loading data (milliseconds)
 		speed: 'fast',
 		start: undefined
 	},

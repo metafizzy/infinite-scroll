@@ -33,6 +33,7 @@
             msg: null,
             msgText: "<em>Loading the next set of posts...</em>",
             selector: null,
+            delay: 0, // Delay before loading data (milliseconds)
             speed: 'fast',
             start: undefined
         },
@@ -153,8 +154,11 @@
                 opts.loading.msg
                 .appendTo(opts.loading.selector)
                 .show(opts.loading.speed, $.proxy(function() {
-					this.beginAjax(opts);
-				}, self));
+                    var that = this;
+                    setTimeout(function() {
+                        that.beginAjax(opts);
+                    }, opts.loading.delay);
+                }, self));
             };
 
             // determine loading.finished actions
