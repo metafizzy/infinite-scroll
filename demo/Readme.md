@@ -16,6 +16,4 @@ py -m SimpleHTTPServer
 py -m http.server
 ```
 
-From there, navigate to [`localhost:8000/demo/simple.html`][1] or to another demo in the directory.
-
-	[1]: http://localhost:8000/demo/simple.html
+From there, navigate to [`localhost:8000/demo/simple.html`](http://localhost:8000/demo/simple.html) or to another demo in the directory.
