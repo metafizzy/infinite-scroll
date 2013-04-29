@@ -8,7 +8,7 @@
 	var DATA_KEY = "infiniteScroll";
 
 	$.infiniteScroll = function(options, element) {
-		this.$element = $(element);
+		this.$container = $(element);
 		this.$window = $(window);
 		this.$document = $(document);
 		this.options = $.extend({}, this.defaults, options);
@@ -25,7 +25,8 @@
 		page: 1,
 		path: undefined,
 		fill: true,
-		pixelThreshold: 0
+		pixelThreshold: 0,
+		dataType: "html"
 
 		// TODO: Rethink plugin ("behavior") loader to allow for multiple plugins
 	};
@@ -106,26 +107,26 @@
 			} else if (typeof this.path === "string") {
 				return this.path;
 			}
+
+			return "";
 		},
 
-		_getPage: function(url, data, dataType) {
+		_getPage: function(url, dataType) {
 			var pluginContext = this;
 
-			this.$element.trigger(pluginContext.EVENTS.LOADING_START);
+			this.$container.trigger(pluginContext.EVENTS.LOADING_START);
 
 			$.ajax({
 				url: url,
-				data: data,
 				dataType: dataType
-			}).done(function(data, textStatus, jqXHR) {
-				pluginContext._debug("Loaded" + jqXHR.url);
-				console.log("Loaded:", data);
+			}).done(function(data) {
+				pluginContext._debug("Loaded", data);
 			}).fail(function(jqXHR, textStatus, errorThrown) {
-				console.log("Failed to load", jqXHR.url, errorThrown);
 				// TODO: Provide check to determine if the plugin should terminate
+				pluginContext._debug("Failed to load:", jqXHR.url, errorThrown);
 			}).then(function() {
 				pluginContext.state.isLoading = false;
-				pluginContext.$element.trigger(pluginContext.EVENTS.LOADING_END);
+				pluginContext.$container.trigger(pluginContext.EVENTS.LOADING_END);
 			});
 		},
 
@@ -187,9 +188,10 @@
 		 * Wrapper method to handle inconsistencies between browsers when using logging methods. Anything passed into
 		 * the method will be passed along to the `console.log` method
 		 *
+		 * @param {...} varargs All arguments are passed into `console.log`
 		 * @private
 		 */
-		_debug: function() {
+		_debug: function(varargs) {
 			if (true !== this.options.debug) {
 				return;
 			}
@@ -210,7 +212,10 @@
 		 */
 		_resize: function() {
 			if (this._shouldLoad()) {
-				// TODO: Load additional content if `this.$scroll` is not full
+				var url = this._getUrl(++this.page);
+				var contents = this._getPage(url, this.options.dataType);
+
+				this.$container.append(contents);
 			}
 		},
 
@@ -222,7 +227,10 @@
 		 */
 		_scroll: function() {
 			if (this._shouldLoad()) {
-				// TODO: Determine the direction (up or down) and load content
+				var url = this._getUrl(++this.page);
+				var contents = this._getPage(url, this.options.dataType);
+
+				this.$container.append(contents);
 			}
 		},
 
@@ -232,7 +240,7 @@
 		 * Removes all event handlers and data for the plugin instance
 		 */
 		destroy: function() {
-			this.$element.removeData(DATA_KEY);
+			this.$container.removeData(DATA_KEY);
 			this.$window.off(this.EVENTS.RESIZE);
 			this.$scroll.off(this.EVENTS.SCROLL);
 		},
