@@ -146,6 +146,28 @@
 		},
 
 		/**
+		 * Determine if the scrollable area has enough content to have a scrollbar
+		 *
+		 * @returns {boolean}
+		 * @private
+		 */
+		_isScrollViewFull: function() {
+			// TODO: Determine if the scrollable area has a scrollbar
+			return false;
+		},
+
+		/**
+		 * Determine if the scrollbar is within the threshold of the bottom of the scrollable area
+		 *
+		 * @returns {boolean}
+		 * @private
+		 */
+		_isNearBottom: function() {
+			// Get the number of pixels until the bottom of the scrolling area is reached, and scroll if it is
+			return (this._getRemainingPixels() < this.options.pixelThreshold);
+		},
+
+		/**
 		 * Determines if additional content should be loaded based on the direction of the scroll and position of the
 		 * scrollbar within scrolling element. Also checks if the scrollbar is present on the scrolling element.
 		 *
@@ -154,14 +176,8 @@
 		 */
 		_shouldLoad: function() {
 			if (!this.state.isPaused && !this.state.isLoading) {
-				// Get the number of pixels until the bottom of the scrolling area is reached, and scroll if it is
-				var pixelsUntilBottom = this._getRemainingPixels();
-
-				if (pixelsUntilBottom < this.options.pixelThreshold) {
-					return true;
-				}
-
-				// TODO: Check if the scrollable area is large enough to have scrollbar
+				// Load if the scroll bar is near the bottom of the view or the view is not full enough for a scrollbar
+				return (this._isNearBottom() || !this._isScrollViewFull());
 			}
 
 			return false;
