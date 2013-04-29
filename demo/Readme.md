@@ -4,14 +4,16 @@ To run, you will need to contain the project in a web server to allow pages to p
 
 The simplest way to do this is to use Python's Simple HTTP Server:
 
-#### Python 2.x
+##### Python 2.x
 
 ```bash
 py -m SimpleHTTPServer
 ```
 
-#### Python 3.x
+##### Python 3.x
 
 ```bash
 py -m http.server
 ```
+
+From there, navigate to `localhost:8000/demo/simple.html` or to a demo another demo in the directory.
