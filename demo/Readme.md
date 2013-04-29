@@ -17,3 +17,5 @@ py -m http.server
 ```
 
 From there, navigate to [`localhost:8000/demo/simple.html`][1] or to another demo in the directory.
+
+	[1]: http://localhost:8000/demo/simple.html
