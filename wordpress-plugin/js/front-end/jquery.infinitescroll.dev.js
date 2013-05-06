@@ -62,7 +62,9 @@
         pixelsFromNavToBottom: undefined,
         path: undefined, // Either parts of a URL as an array (e.g. ["/page/", "/"] or a function that takes in the page number and returns a URL
 		prefill: false, // When the document is smaller than the window, load data until the document is larger or links are exhausted
-        maxPage: undefined // to manually control maximum page (when maxPage is undefined, maximum page limitation is not work)
+        maxPage: undefined, // to manually control maximum page (when maxPage is undefined, maximum page limitation is not work)
+        didStartLoading: undefined, // Callback invoked when starts loading of a new page
+        didEndLoading: undefined // Callback invoked when ends loading of a new page
 	};
 
     $.infinitescroll.prototype = {
@@ -477,7 +479,7 @@
             .find('img')
             .hide()
             .parent()
-            .find('div').html(opts.loading.finishedMsg).animate({ opacity: 1 }, 2000, function () {
+            .find('div').html(opts.finishedMsg).animate({ opacity: 1 }, 2000, function () {
                 $(this).parent().fadeOut(opts.loading.speed);
             });
 
@@ -539,6 +541,11 @@
                 return;
             }
 
+
+            if( opts.didStartLoading !== undefined ){
+                opts.didStartLoading.call();
+            }
+
 			// if we're dealing with a table we can't use DIVs
 			box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');
 
@@ -554,6 +561,10 @@
 				case 'html+callback':
 					instance._debug('Using HTML via .load() method');
 					box.load(desturl + ' ' + opts.itemSelector, undefined, function infscr_ajax_callback(responseText) {
+                        // invoke finished callback
+                        if( opts.didEndLoading !== undefined ){
+                            opts.didEndLoading.call();
+                        }
 						instance._loadcallback(box, responseText, desturl);
 					});
 
@@ -567,6 +578,10 @@
 						dataType: opts.dataType,
 						complete: function infscr_ajax_callback(jqXHR, textStatus) {
 							condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
+                            // invoke finished callback
+                            if( opts.didEndLoading !== undefined ){
+                                    opts.didEndLoading.call();
+                            }
 							if (condition) {
 								instance._loadcallback(box, jqXHR.responseText, desturl);
 							} else {
@@ -584,6 +599,10 @@
 						url: desturl,
 						success: function (data, textStatus, jqXHR) {
 							condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
+                            // invoke finished callback
+                            if( opts.didEndLoading !== undefined ){
+                                opts.didEndLoading.call();
+                            }
 							if (opts.appendCallback) {
 								// if appendCallback is true, you must defined template in options.
 								// note that data passed into _loadcallback is already an html (after processed in opts.template(data)).
