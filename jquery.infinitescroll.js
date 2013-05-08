@@ -200,11 +200,11 @@
 
 		_prefill: function infscr_prefill() {
 			var instance = this;
-			var $document = $(document);
+			var $contentSelector = $(this.options.contentSelector);
 			var $window = $(window);
 
 			function needsPrefill() {
-				return ($document.height() <= $window.height());
+				return ($contentSelector.height() <= $window.height());
 			}
 
 			this._prefill = function() {
