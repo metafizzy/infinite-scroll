@@ -42,6 +42,7 @@
             isDestroyed: false,
             isDone: false, // For when it goes all the way through the archive.
             isPaused: false,
+            isBeyondMaxPage: false,
             currPage: 1
         },
         debug: false,
@@ -159,7 +160,8 @@
 
             // determine loading.finished actions
             opts.loading.finished = opts.loading.finished || function() {
-                opts.loading.msg.fadeOut(opts.loading.speed);
+                if (!opts.state.isBeyondMaxPage)
+                    opts.loading.msg.fadeOut(opts.loading.speed);
             };
 
 			// callback loading
@@ -309,13 +311,14 @@
 
             this._debug('Error', xhr);
 
-            if (xhr === 'end') {
+            if (xhr === 'end' || opts.state.isBeyondMaxPage) {
                 this._showdonemsg();
             }
 
             opts.state.isDone = true;
             opts.state.currPage = 1; // if you need to go back to this instance
             opts.state.isPaused = false;
+            opts.state.isBeyondMaxPage = false;
             this._binding('unbind');
 
         },
@@ -535,6 +538,7 @@
 
             // Manually control maximum page 
             if ( opts.maxPage != undefined && opts.state.currPage > opts.maxPage ){
+                opts.state.isBeyondMaxPage = true;
                 this.destroy();
                 return;
             }
