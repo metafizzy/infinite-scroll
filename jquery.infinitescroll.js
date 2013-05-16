@@ -377,7 +377,7 @@ console.log("Content Selector:", opts.contentSelector);
 
             // smooth scroll to ease in the new content
             if (opts.animate) {
-                var scrollTo = $(window).scrollTop() + $('#infscr-loading').height() + opts.extraScrollPx + 'px';
+                var scrollTo = $(window).scrollTop() + $(opts.loading.msg).height() + opts.extraScrollPx + 'px';
                 $('html,body').animate({ scrollTop: scrollTo }, 800, function () { opts.state.isDuringAjax = false; });
             }
 
