@@ -130,7 +130,7 @@
 
             // contentSelector is 'page fragment' option for .load() / .ajax() calls
             opts.contentSelector = opts.contentSelector || this.element;
-
+console.log("Content Selector:", opts.contentSelector);
             // loading.selector - if we want to place the load message in a specific selector, defaulted to the contentSelector
             opts.loading.selector = opts.loading.selector || opts.contentSelector;
 
@@ -203,11 +203,10 @@
 
 		_prefill: function infscr_prefill() {
 			var instance = this;
-			var $document = $(document);
 			var $window = $(window);
 
 			function needsPrefill() {
-				return ($document.height() <= $window.height());
+				return (instance.options.contentSelector.height() <= $window.height());
 			}
 
 			this._prefill = function() {
