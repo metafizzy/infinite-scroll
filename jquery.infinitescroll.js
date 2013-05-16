@@ -130,7 +130,7 @@
 
             // contentSelector is 'page fragment' option for .load() / .ajax() calls
             opts.contentSelector = opts.contentSelector || this.element;
-console.log("Content Selector:", opts.contentSelector);
+
             // loading.selector - if we want to place the load message in a specific selector, defaulted to the contentSelector
             opts.loading.selector = opts.loading.selector || opts.contentSelector;
 
