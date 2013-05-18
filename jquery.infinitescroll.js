@@ -53,6 +53,7 @@
         contentSelector: null, // rename to pageFragment
         extraScrollPx: 150,
         itemSelector: "div.post",
+        hideNav: true,
         animate: false,
         pathParse: undefined,
         dataType: 'html',
@@ -151,7 +152,8 @@
 
             // determine loading.start actions
             opts.loading.start = opts.loading.start || function() {
-                $(opts.navSelector).hide();
+            	if (opts.hideNav)
+                    $(opts.navSelector).hide();
                 opts.loading.msg
                 .appendTo(opts.loading.selector)
                 .show(opts.loading.speed, $.proxy(function() {
