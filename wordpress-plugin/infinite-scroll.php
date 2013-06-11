@@ -115,7 +115,6 @@ class Infinite_Scroll {
 
 	/**
 	 * Add filter for custom behaviors
-	 * jt 29.05.13
 	 */
 	function custom_behaviors() {
 		$allBehaviors = apply_filters( $this->prefix . 'custom_behaviors', $this->behaviors );
