@@ -47,7 +47,9 @@ $('.selector').infinitescroll({
 	pixelsFromNavToBottom: undefined,
 	path: undefined, // Can either be an array of URL parts (e.g. ["/page/", "/"]) or a function that accepts the page number and returns a URL
 	prefill: false, // When the document is smaller than the window, load data until the document is larger or links are exhausted
-	maxPage:undefined // to manually control maximum page (when maxPage is undefined, maximum page limitation is not work)
+	maxPage:undefined, // to manually control maximum page (when maxPage is undefined, maximum page limitation is not work)
+	unbindWhenDone: true  // This avoids triggering of events when there is no more pages to load.
+	                      // Set it to false when you have more than one infinite scroll in the same page.
 });
 ```
 
