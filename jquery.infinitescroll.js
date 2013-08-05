@@ -55,6 +55,7 @@
         itemSelector: "div.post",
         animate: false,
         pathParse: undefined,
+        rgxPath: /^(.*?pages?[=\/])(\d+)(\/.*|$)/,  // Extract the url as three parts (path lead / page number / path tail)
         dataType: 'html',
         appendCallback: true,
         bufferPx: 40,
@@ -261,33 +262,24 @@
                 this._debug('pathParse manual');
                 return opts.pathParse(path, this.options.state.currPage+1);
 
+                // extracts the url as three parts (lead / page number / tail)
+            } else if (path.match(opts.rgxPath)) {
+                path = path.match(opts.rgxPath).slice(1);
+            
+                // (only for backwards compatibility)
+                // url structure differs a bit more than expected, become more general
             } else if (path.match(/^(.*?)\b2\b(.*?$)/)) {
                 path = path.match(/^(.*?)\b2\b(.*?$)/).slice(1);
-
-                // if there is any 2 in the url at all.    
+            
+                // (only for backwards compatibility)
+                // if there is any 2 in the url at all
             } else if (path.match(/^(.*?)2(.*?$)/)) {
-
-                // page= is used in django:
-                // http://www.infinite-scroll.com/changelog/comment-page-1/#comment-127
-                if (path.match(/^(.*?page=)2(\/.*|$)/)) {
-                    path = path.match(/^(.*?page=)2(\/.*|$)/).slice(1);
-                    return path;
-                }
-
                 path = path.match(/^(.*?)2(.*?$)/).slice(1);
-
+            
             } else {
-
-                // page= is used in drupal too but second page is page=1 not page=2:
-                // thx Jerod Fritz, vladikoff
-                if (path.match(/^(.*?page=)1(\/.*|$)/)) {
-                    path = path.match(/^(.*?page=)1(\/.*|$)/).slice(1);
-                    return path;
-                } else {
-                    this._debug('Sorry, we couldn\'t parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.');
-                    // Get rid of isInvalidPage to allow permalink to state
-                    opts.state.isInvalidPage = true;  //prevent it from running on this page.
-                }
+                this._debug('Sorry, we couldn\'t parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.');
+                // Get rid of isInvalidPage to allow permalink to state
+                opts.state.isInvalidPage = true;  //prevent it from running on this page.
             }
             this._debug('determinePath', path);
             return path;
