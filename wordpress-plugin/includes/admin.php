@@ -20,7 +20,7 @@ class Infinite_Scroll_Admin {
 		add_action( 'admin_menu', array( &$this, 'options_menu_init' ) );
 		add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue' ) );
 
-		//upload helers
+		//upload helpers
 		add_filter( 'get_media_item_args', array( &$this, 'send_to_editor'), 10, 1);
 
 	}
