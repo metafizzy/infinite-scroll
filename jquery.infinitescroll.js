@@ -172,7 +172,9 @@
                 }
 
                 if (callback) {
-                    callback.call($(opts.contentSelector)[0], data, opts, url);
+                    if(callback.call($(opts.contentSelector)[0], data, opts, url) == 'end') {
+                        self._error('end')
+                    }
                 }
 
 				if (opts.prefill) {
@@ -386,7 +388,9 @@
 				opts.state.isDuringAjax = false;
 			}
 
-            callback(this, data, url);
+            if(callback(this, data, url) == 'end') {
+                this._error('end');
+            }
 
 			if (opts.prefill) {
 				this._prefill();
