@@ -30,6 +30,7 @@ $('.selector').infinitescroll({
 		currPage: 1
 	},
 	debug: false,
+    beforeScroll: undefined,
 	behavior: undefined,
 	binder: $(window), // used to cache the selector for the element that will be scrolling
 	nextSelector: "div.navigation a:first",
@@ -74,7 +75,7 @@ $('.selector').infinitescroll({
 
 ### Loading JSON data
 
-As explained on the website, Infinite Scroll is designed for progressive enhancement, using existing pagination links. However, it is still possible work with JSON data. 
+As explained on the website, Infinite Scroll is designed for progressive enhancement, using existing pagination links. However, it is still possible work with JSON data.
 
 It means the `nextSelector` href will be called via AJAX, expecting JSON data, which will be passed to the callback function.
 
@@ -85,7 +86,7 @@ $('.selector').infinitescroll({
   appendCallback: false
 }, function(json, opts) {
   // Get current page
-  var page = opts.state.currPage; 
+  var page = opts.state.currPage;
   // Do something with JSON data, create DOM elements, etc ..
 });
 ```
