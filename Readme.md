@@ -74,7 +74,7 @@ $('.selector').infinitescroll({
 
 ### Loading JSON data
 
-As explained on the website, Infinite Scroll is designed for progressive enhancement, using existing pagination links. However, it is still possible work with JSON data. 
+As explained on the website, Infinite Scroll is designed for progressive enhancement, using existing pagination links. However, it is still possible to work with JSON data. 
 
 It means the `nextSelector` href will be called via AJAX, expecting JSON data, which will be passed to the callback function.
 
