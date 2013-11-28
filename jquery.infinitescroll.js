@@ -266,6 +266,7 @@
             	path = path.match('(.*start=)([0-9]{0,})').slice(1);
             	return function(page)
             	{ 
+            		page--;
             		return path[0]+(path[1]*page); 
             	};
             } else if (path.match(/^(.*?)\b2\b(.*?$)/)) {
