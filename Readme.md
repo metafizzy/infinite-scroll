@@ -1,3 +1,7 @@
+This project is currenty unmaintained, however it's [actively looking for a new maintainer.](https://github.com/paulirish/infinite-scroll/issues/224)  Please, step up!
+
+<hr>
+
 # Infinite Scroll
 
 <http://www.infinite-scroll.com/>
