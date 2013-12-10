@@ -343,8 +343,8 @@
 
 				case 'no-append':
 					if (opts.dataType === 'html') {
-						data = '<div>' + data + '</div>';
-						data = $(data).find(opts.itemSelector);
+						var box = $(opts.contentSelector).is('table, tbody') ? $('<tbody/>') : $('<div/>');
+						data = box.append(data).find(opts.itemSelector);
 					}
 					break;
 
