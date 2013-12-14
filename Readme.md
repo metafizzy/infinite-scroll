@@ -6,10 +6,10 @@ This project is currenty unmaintained, however it's [actively looking for a new 
 
 <http://www.infinite-scroll.com/>
 
-The jQuery and Wordpress Plugins:
+The jQuery and WordPress Plugins:
 
 * jQuery Plugin <http://www.infinite-scroll.com/infinite-scroll-jquery-plugin/> `v2.0b.120520`
-* Wordpress Plugin <http://www.infinite-scroll.com/installation/>
+* WordPress Plugin <http://www.infinite-scroll.com/installation/>
 
 As of version 2.0, option names have changed. Here is a list:
 
