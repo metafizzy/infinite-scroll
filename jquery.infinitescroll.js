@@ -250,46 +250,46 @@
         _determinepath: function infscr_determinepath(path) {
 
             var opts = this.options;
-
+		cpath=decodeURIComponent(path)
             // if behavior is defined and this function is extended, call that instead of default
             if (!!opts.behavior && this['_determinepath_'+opts.behavior] !== undefined) {
-                return this['_determinepath_'+opts.behavior].call(this,path);
+                return this['_determinepath_'+opts.behavior].call(this,cpath);
             }
 
             if (!!opts.pathParse) {
 
                 this._debug('pathParse manual');
-                return opts.pathParse(path, this.options.state.currPage+1);
+                return opts.pathParse(cpath, this.options.state.currPage+1);
 
-            } else if (path.match(/^(.*?)\b2\b(.*?$)/)) {
-                path = path.match(/^(.*?)\b2\b(.*?$)/).slice(1);
+            } else if (cpath.match(/^(.*?)\b2\b(.*?$)/)) {
+                path = cpath.match(/^(.*?)\b2\b(.*?$)/).slice(1);
 
                 // if there is any 2 in the url at all.    
-            } else if (path.match(/^(.*?)2(.*?$)/)) {
+            } else if (cpath.match(/^(.*?)2(.*?$)/)) {
 
                 // page= is used in django:
                 // http://www.infinite-scroll.com/changelog/comment-page-1/#comment-127
-                if (path.match(/^(.*?page=)2(\/.*|$)/)) {
-                    path = path.match(/^(.*?page=)2(\/.*|$)/).slice(1);
-                    return path;
+                if (cpath.match(/^(.*?page=)2(\/.*|$)/)) {
+                    path = cpath.match(/^(.*?page=)2(\/.*|$)/).slice(1);
+                    return cpath;
                 }
 
-                path = path.match(/^(.*?)2(.*?$)/).slice(1);
+                path = cpath.match(/^(.*?)2(.*?$)/).slice(1);
 
             } else {
 
                 // page= is used in drupal too but second page is page=1 not page=2:
                 // thx Jerod Fritz, vladikoff
-                if (path.match(/^(.*?page=)1(\/.*|$)/)) {
-                    path = path.match(/^(.*?page=)1(\/.*|$)/).slice(1);
-                    return path;
+                if (cpath.match(/^(.*?page=)1(\/.*|$)/)) {
+                    path = cpath.match(/^(.*?page=)1(\/.*|$)/).slice(1);
+                    return cpath;
                 } else {
                     this._debug('Sorry, we couldn\'t parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.');
                     // Get rid of isInvalidPage to allow permalink to state
                     opts.state.isInvalidPage = true;  //prevent it from running on this page.
                 }
             }
-            this._debug('determinePath', path);
+            this._debug('determinePath', cpath);
             return path;
 
         },
