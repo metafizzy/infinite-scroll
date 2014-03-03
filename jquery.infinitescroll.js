@@ -549,7 +549,7 @@
 			desturl = (typeof path === 'function') ? path(opts.state.currPage) : path.join(opts.state.currPage);
 			instance._debug('heading into ajax', desturl);
 
-			method = (opts.dataType === 'html' || opts.dataType === 'json' ) ? opts.dataType : 'html+callback';
+			method = (opts.dataType === 'html' || opts.dataType === 'json' || opts.dataType === 'script') ? opts.dataType : 'html+callback';
 			if (opts.appendCallback && opts.dataType === 'html') {
 				method += '+callback';
 			}
@@ -563,6 +563,7 @@
 
 					break;
 
+				case 'script':
 				case 'html':
 					instance._debug('Using ' + (method.toUpperCase()) + ' via $.ajax() method');
 					$.ajax({
