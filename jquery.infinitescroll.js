@@ -63,9 +63,9 @@
         pixelsFromNavToBottom: undefined,
         path: undefined, // Either parts of a URL as an array (e.g. ["/page/", "/"] or a function that takes in the page number and returns a URL
 		prefill: false, // When the document is smaller than the window, load data until the document is larger or links are exhausted
-        maxPage: undefined // to manually control maximum page (when maxPage is undefined, maximum page limitation is not work)
+        maxPage: undefined, // to manually control maximum page (when maxPage is undefined, maximum page limitation is not work)
         type: 'GET', // to switch between GET/POST requests with ajax calls
-        data: undefined, // the POST data if we are using POST instead of GET
+        data: undefined // the POST data if we are using POST instead of GET
 	};
 
     $.infinitescroll.prototype = {
