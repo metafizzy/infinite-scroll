@@ -330,6 +330,11 @@
             result = (opts.state.isDone) ? 'done' : (!opts.appendCallback) ? 'no-append' : 'append',
             frag;
 
+            // Let the callbacks have access to the original responseText and the plugin instance. This can be used to preemptively finish
+            // infinite scroll for working, by checking if next links are available in the response text.
+            opts.responseText = data;
+            opts.pluginInstance = this;
+
             // if behavior is defined and this function is extended, call that instead of default
             if (!!opts.behavior && this['_loadcallback_'+opts.behavior] !== undefined) {
                 this['_loadcallback_'+opts.behavior].call(this,box,data);
