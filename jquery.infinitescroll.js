@@ -261,11 +261,11 @@
                 this._debug('pathParse manual');
                 return opts.pathParse(path, this.options.state.currPage+1);
 
-            } else if (path.match(/^(.*?)\b2\b(.*?$)/)) {
-                path = path.match(/^(.*?)\b2\b(.*?$)/).slice(1);
+            } else if (path.match(/^(.*)?\b2\b(.*?$)/)) {
+                path = path.match(/^(.*)?\b2\b(.*?$)/).slice(1);
 
                 // if there is any 2 in the url at all.    
-            } else if (path.match(/^(.*?)2(.*?$)/)) {
+            } else if (path.match(/^(.*)?2(.*?$)/)) {
 
                 // page= is used in django:
                 // http://www.infinite-scroll.com/changelog/comment-page-1/#comment-127
@@ -274,7 +274,7 @@
                     return path;
                 }
 
-                path = path.match(/^(.*?)2(.*?$)/).slice(1);
+                path = path.match(/^(.*)?2(.*?$)/).slice(1);
 
             } else {
 
