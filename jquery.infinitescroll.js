@@ -248,7 +248,6 @@
 
         // find the number to increment in the path.
         _determinepath: function infscr_determinepath(path) {
-
             var opts = this.options;
 
             // if behavior is defined and this function is extended, call that instead of default
@@ -261,15 +260,16 @@
                 this._debug('pathParse manual');
                 return opts.pathParse(path, this.options.state.currPage+1);
 
-            } else if (path.match(/^(.*?)\b2\b(.*?$)/)) {
+            } else if (decodeURIComponent(path).match(/^(.*?)\b2\b(.*?$)/)) {
+              
                 path = path.match(/^(.*?)\b2\b(.*?$)/).slice(1);
 
                 // if there is any 2 in the url at all.    
-            } else if (path.match(/^(.*?)2(.*?$)/)) {
+            } else if (decodeURIComponent(path).match(/^(.*?)2(.*?$)/)) {
 
                 // page= is used in django:
                 // http://www.infinite-scroll.com/changelog/comment-page-1/#comment-127
-                if (path.match(/^(.*?page=)2(\/.*|$)/)) {
+                if (decodeURIComponent(path).match(/^(.*?page=)2(\/.*|$)/)) {
                     path = path.match(/^(.*?page=)2(\/.*|$)/).slice(1);
                     return path;
                 }
@@ -280,7 +280,7 @@
 
                 // page= is used in drupal too but second page is page=1 not page=2:
                 // thx Jerod Fritz, vladikoff
-                if (path.match(/^(.*?page=)1(\/.*|$)/)) {
+                if (decodeURIComponent(path).match(/^(.*?page=)1(\/.*|$)/)) {
                     path = path.match(/^(.*?page=)1(\/.*|$)/).slice(1);
                     return path;
                 } else {
