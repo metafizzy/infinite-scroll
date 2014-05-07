@@ -93,3 +93,6 @@ $('.selector').infinitescroll({
   // Do something with JSON data, create DOM elements, etc ..
 });
 ```
+
+The callback can return the string "end" to indicate the end of the data.
+Infinite Scroll will flash the finishedMsg and unbind itself from the element.
