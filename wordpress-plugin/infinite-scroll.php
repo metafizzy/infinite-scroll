@@ -76,6 +76,9 @@ class Infinite_Scroll {
 		//default options
 		add_action( 'init', array( &$this, 'init_defaults' ) );
 
+		//custom behaviors
+		add_action( 'init', array( &$this, 'custom_behaviors' ) );
+
 		//js
 		add_action( 'wp_enqueue_scripts', array( &$this, 'enqueue_js' ) );
 		add_action( 'wp_footer', array( &$this, 'footer' ), 100 ); //low priority will load after i18n and script loads
@@ -107,6 +110,17 @@ class Infinite_Scroll {
 			'debug'           => WP_DEBUG,
 			'behavior'		    => ''
 		);
+	}
+
+
+	/**
+	 * Add filter for custom behaviors
+	 */
+	function custom_behaviors() {
+		$allBehaviors = apply_filters( $this->prefix . 'custom_behaviors', $this->behaviors );
+		if (!empty($allBehaviors) && is_array($allBehaviors)) {
+			$this->behaviors  = $allBehaviors;
+		}
 	}
 
 
