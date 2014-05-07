@@ -342,7 +342,7 @@
 					return false;
 
 				case 'no-append':
-					if (opts.dataType === 'html') {
+					if (opts.dataType === 'html' && !opts.dontScrewUpTheData) {
 						data = '<div>' + data + '</div>';
 						data = $(data).find(opts.itemSelector);
 					}
