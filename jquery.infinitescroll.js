@@ -514,7 +514,8 @@
         // Destroy current instance of plugin
         destroy: function infscr_destroy() {
             this.options.state.isDestroyed = true;
-			this.options.loading.finished();
+            this.options.loading.finished();
+            this.element.data('infinitescroll', null);
             return this._error('destroy');
         },
 
