@@ -1,7 +1,7 @@
 /*jshint undef: true */
 /*global jQuery: true */
 
-/*
+/*!
    --------------------------------
    Infinite Scroll
    --------------------------------
