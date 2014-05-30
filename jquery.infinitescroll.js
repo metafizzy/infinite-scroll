@@ -261,6 +261,8 @@
                 this._debug('pathParse manual');
                 return opts.pathParse(path, this.options.state.currPage+1);
 
+            } else if(path.match(/^(.*2?)\b2\b(.*?$)/)) {
+            	path = path.match(/^(.*2?)\b2\b(.*?$)/).slice(1);
             } else if (path.match(/^(.*?)\b2\b(.*?$)/)) {
                 path = path.match(/^(.*?)\b2\b(.*?$)/).slice(1);
 
