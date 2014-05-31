@@ -1,14 +1,10 @@
-This project is currenty unmaintained, however it's [actively looking for a new maintainer.](https://github.com/paulirish/infinite-scroll/issues/224)  Please, step up!
-
-<hr>
-
 # Infinite Scroll
 
 <http://www.infinite-scroll.com/>
 
 The jQuery and WordPress Plugins:
 
-* jQuery Plugin <http://www.infinite-scroll.com/infinite-scroll-jquery-plugin/> `v2.0b.120520`
+* jQuery Plugin <http://www.infinite-scroll.com/infinite-scroll-jquery-plugin/> `v2.0.2`
 * WordPress Plugin <http://www.infinite-scroll.com/installation/>
 
 As of version 2.0, option names have changed. Here is a list:
@@ -78,7 +74,7 @@ $('.selector').infinitescroll({
 
 ### Loading JSON data
 
-As explained on the website, Infinite Scroll is designed for progressive enhancement, using existing pagination links. However, it is still possible to work with JSON data. 
+As explained on the website, Infinite Scroll is designed for progressive enhancement, using existing pagination links. However, it is still possible to work with JSON data.
 
 It means the `nextSelector` href will be called via AJAX, expecting JSON data, which will be passed to the callback function.
 
@@ -89,7 +85,7 @@ $('.selector').infinitescroll({
   appendCallback: false
 }, function(json, opts) {
   // Get current page
-  var page = opts.state.currPage; 
+  var page = opts.state.currPage;
   // Do something with JSON data, create DOM elements, etc ..
 });
 ```
