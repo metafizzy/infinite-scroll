@@ -63,7 +63,9 @@
         pixelsFromNavToBottom: undefined,
         path: undefined, // Either parts of a URL as an array (e.g. ["/page/", "/"] or a function that takes in the page number and returns a URL
 		prefill: false, // When the document is smaller than the window, load data until the document is larger or links are exhausted
-        maxPage: undefined // to manually control maximum page (when maxPage is undefined, maximum page limitation is not work)
+        maxPage: undefined, // to manually control maximum page (when maxPage is undefined, maximum page limitation is not work)
+        unbindWhenDone: true // This avoids triggering of events when there is no more pages to load.
+                             // Set it to false when you have more than one infinite scroll in the same page.
 	};
 
     $.infinitescroll.prototype = {
@@ -319,8 +321,9 @@
             opts.state.currPage = 1; // if you need to go back to this instance
             opts.state.isPaused = false;
             opts.state.isBeyondMaxPage = false;
-            this._binding('unbind');
-
+            if (opts.unbindWhenDone) {
+              this._binding('unbind');
+            }
         },
 
         // Load Callback
