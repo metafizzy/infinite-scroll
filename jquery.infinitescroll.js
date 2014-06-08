@@ -1,4 +1,3 @@
-/*jshint undef: true */
 /*global jQuery: true */
 
 /*!
@@ -13,7 +12,16 @@
    + Documentation: http://infinite-scroll.com/
 */
 
-(function (window, $, undefined) {
+// Uses AMD or browser globals to create a jQuery plugin.
+(function (factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define(['jquery'], factory);
+    } else {
+        // Browser globals
+        factory(jQuery, window);
+    }
+}(function ($, window, undefined) {
     "use strict";
 
     $.infinitescroll = function infscr(options, callback, element) {
@@ -537,7 +545,7 @@
             opts.state.currPage++;
 
             // Manually control maximum page
-            if ( opts.maxPage != undefined && opts.state.currPage > opts.maxPage ){
+            if ( opts.maxPage !== undefined && opts.state.currPage > opts.maxPage ){
                 opts.state.isBeyondMaxPage = true;
                 this.destroy();
                 return;
@@ -810,5 +818,4 @@
         return fn ? this.bind("smartscroll", fn) : this.trigger("smartscroll", ["execAsap"]);
     };
 
-
-})(window, jQuery);
+}));
