@@ -19,9 +19,9 @@
         define(['jquery'], factory);
     } else {
         // Browser globals
-        factory(jQuery, window);
+        factory(jQuery);
     }
-}(function ($, window, undefined) {
+}(function ($, undefined) {
     "use strict";
 
     $.infinitescroll = function infscr(options, callback, element) {
