@@ -90,6 +90,11 @@ $('.selector').infinitescroll({
 });
 ```
 
+## Contributing
+
+* Please direct all pull requests to the current major/minor semver branch.
+* Include a clear and concise description of your changes.
+
 ## License
 
 The MIT License (MIT)
