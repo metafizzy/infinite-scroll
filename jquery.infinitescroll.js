@@ -121,6 +121,10 @@
             var $window = $(window);
             var instance = this;
 
+            if( this.options.infid == 0) {
+                this.options.infid = Math.random().toString(36).substring(2);
+            }
+
             // Validate selectors
             if (!instance._validate(options)) {
                 return false;
