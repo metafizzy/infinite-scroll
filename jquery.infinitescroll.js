@@ -69,6 +69,7 @@
         errorCallback: function () { },
         infid: 0, //Instance ID
         pixelsFromNavToBottom: undefined,
+        dependsOnContainerEnd: false,
         path: undefined, // Either parts of a URL as an array (e.g. ["/page/", "/"] or a function that takes in the page number and returns a URL
         prefill: false, // When the document is smaller than the window, load data until the document is larger or links are exhausted
         maxPage: undefined // to manually control maximum page (when maxPage is undefined, maximum page limitation is not work)
@@ -127,10 +128,17 @@
             }
 
             // Validate page fragment path
-            var path = $(opts.nextSelector).attr('href');
-            if (!path) {
-                this._debug('Navigation selector not found');
-                return false;
+            if (opts.nextSelector !== false) {
+                var path = $(opts.nextSelector).attr('href');
+                if (!path) {
+                    this._debug('Navigation selector not found');
+                    return false;
+                }
+            } else {
+                if (opts.path === undefined) {
+                    this._debug('If no `nextSelector` specified you need to have `path` in options');
+                    return false;
+                }
             }
 
             // Set the path to be a relative URL from root.
@@ -148,12 +156,22 @@
             // Preload loading.img
             (new Image()).src = opts.loading.img;
 
-            // distance from nav links to bottom
-            // computed as: height of the document + top offset of container - top offset of nav link
-            if(opts.pixelsFromNavToBottom === undefined) {
-                opts.pixelsFromNavToBottom = $(document).height() - $(opts.navSelector).offset().top;
-                this._debug("pixelsFromNavToBottom: " + opts.pixelsFromNavToBottom);
+            if (opts.pixelsFromNavToBottom === undefined && opts.dependsOnContainerEnd === false) {
+                // distance from nav links to bottom
+                // computed as: height of the document + top offset of container - top offset of nav link
+                var navSelectorOffset = $(opts.navSelector).offset();
+                if (navSelectorOffset !== undefined) {
+                    var navOffsetTop = navSelectorOffset.top;
+                    opts.pixelsFromNavToBottom = $(document).height() - navOffsetTop;
+                } else {
+                    opts.pixelsFromNavToBottom = 0;
+                }
+            } else if (opts.dependsOnContainerEnd === true) {
+                var containerBottomFromTop = $(opts.contentSelector).offset().top + $(opts.contentSelector).height();
+                opts.pixelsFromNavToBottom = $(document).height() - containerBottomFromTop;
             }
+
+            this._debug("pixelsFromNavToBottom: " + opts.pixelsFromNavToBottom);
 
             var self = this;
 
@@ -499,7 +517,7 @@
         // grab each selector option and see if any fail
         _validate: function infscr_validate(opts) {
             for (var key in opts) {
-                if (key.indexOf && key.indexOf('Selector') > -1 && $(opts[key]).length === 0) {
+                if (key.indexOf && key.indexOf('Selector') > -1 && $(opts[key]).length === 0 && opts[key] !== false) {
                     this._debug('Your ' + key + ' found no elements.');
                     return false;
                 }
