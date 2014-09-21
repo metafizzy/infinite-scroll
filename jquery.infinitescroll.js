@@ -143,7 +143,7 @@
             opts.loading.selector = opts.loading.selector || opts.contentSelector;
 
             // Define loading.msg
-            opts.loading.msg = opts.loading.msg || $('<div id='infscr-loading'><img alt='Loading...' src="' + opts.loading.img + '" /><div>' + opts.loading.msgText + '</div></div>');
+            opts.loading.msg = opts.loading.msg || $('<div id="infscr-loading"><img alt="Loading..." src="' + opts.loading.img + '" /><div>' + opts.loading.msgText + '</div></div>');
 
             // Preload loading.img
             (new Image()).src = opts.loading.img;
@@ -292,7 +292,7 @@
                     path = path.match(/^(.*?page=)1(\/.*|$)/).slice(1);
                     return path;
                 } else {
-                    this._debug('Sorry, we couldn\'t parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.');
+                    this._debug("Sorry, we couldn't parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.");
                     // Get rid of isInvalidPage to allow permalink to state
                     opts.state.isInvalidPage = true;  //prevent it from running on this page.
                 }
