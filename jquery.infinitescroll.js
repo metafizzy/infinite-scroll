@@ -340,7 +340,7 @@
 
             // if behavior is defined and this function is extended, call that instead of default
             if (!!opts.behavior && this['_loadcallback_'+opts.behavior] !== undefined) {
-                this['_loadcallback_'+opts.behavior].call(this,box,data);
+                this['_loadcallback_'+opts.behavior].call(this,box,data,url);
                 return;
             }
 
