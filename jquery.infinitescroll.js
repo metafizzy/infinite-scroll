@@ -5,7 +5,7 @@
    Infinite Scroll
    --------------------------------
    + https://github.com/paulirish/infinite-scroll
-   + version 2.0.2
+   + version 2.1.0
    + Copyright 2011/12 Paul Irish & Luke Shumard
    + Licensed under the MIT license
 
@@ -214,7 +214,7 @@
             var $window = $(window);
 
             function needsPrefill() {
-                return (instance.options.contentSelector.height() <= $window.height());
+                return ( $(instance.options.contentSelector).height() <= $window.height() );
             }
 
             this._prefill = function() {
