@@ -354,6 +354,12 @@
                         data = '<div>' + data + '</div>';
                         data = $(data).find(opts.itemSelector);
                     }
+
+                    // if it didn't return anything
+                    if (data.length === 0) {
+                        return this._error('end');
+                    }
+
                     break;
 
                 case 'append':
