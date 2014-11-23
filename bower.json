@@ -1,11 +1,11 @@
 {
-  "name": "jquery-infinite-scroll",
+  "name": "tentwofour-jquery-infinite-scroll",
   "version": "2.0.2",
-  "homepage": "https://github.com/paulirish/infinite-scroll",
+  "homepage": "https://github.com/tentwofour/infinite-scroll",
   "authors": [
     "paulirish"
   ],
-  "description": "jQuery Infinite Scroll Plugin",
+  "description": "jQuery Infinite Scroll Plugin - patched, waiting on #589 in main repo",
   "main": "jquery.infinitescroll.js",
   "keywords": [
     "jquery",

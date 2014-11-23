@@ -214,7 +214,7 @@
             var $window = $(window);
 
             function needsPrefill() {
-                return (instance.options.contentSelector.height() <= $window.height());
+                return ($(instance.options.contentSelector).height() <= $window.height());
             }
 
             this._prefill = function() {

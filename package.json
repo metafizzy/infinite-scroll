@@ -1,5 +1,5 @@
 {
-  "name": "jquery-infinite-scroll",
+  "name": "tentwofour-jquery-infinite-scroll",
   "version": "2.0.2",
   "dependencies": {
     "jquery": "~1.7.2"
