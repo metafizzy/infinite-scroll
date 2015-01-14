@@ -151,7 +151,7 @@
             // distance from nav links to bottom
             // computed as: height of the document + top offset of container - top offset of nav link
             if(opts.pixelsFromNavToBottom === undefined) {
-                opts.pixelsFromNavToBottom = $(document).height() - $(opts.navSelector).offset().top;
+                opts.pixelsFromNavToBottom = ($(opts.navSelector).length) ? $(document).height() - $(opts.navSelector).offset().top : 0;
                 this._debug('pixelsFromNavToBottom: ' + opts.pixelsFromNavToBottom);
             }
 
