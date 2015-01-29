@@ -73,7 +73,7 @@ class Infinite_Scroll_Admin {
 	 */
 	function send_to_editor( $args ) {
 		global $wpdb;
-		if (isset($GLOBALS['HTTP_POST_FILES']['async-upload'])){
+		if ( isset( $GLOBALS['HTTP_POST_FILES'] ) && isset( $GLOBALS['HTTP_POST_FILES']['async-upload'] ) ) {
 			if ( $args['errors'] !== null )
 				return $args;
 				
