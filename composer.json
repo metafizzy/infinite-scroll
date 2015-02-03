@@ -27,6 +27,5 @@
         "jquery.infinitescroll.min.js"
       ]
     }
-  },
-  "minimum-stability": "dev"
+  }
 }
