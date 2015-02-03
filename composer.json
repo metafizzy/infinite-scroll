@@ -15,7 +15,7 @@
     }
   ],
   "require": {
-    "component/jquery": "~1.7.2",
+    "components/jquery": "~1.7.2",
     "robloach/component-installer": "*"
   },
   "extra": {
@@ -27,5 +27,6 @@
         "jquery.infinitescroll.min.js"
       ]
     }
-  }
+  },
+  "minimum-stability": "dev"
 }
