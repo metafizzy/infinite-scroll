@@ -169,8 +169,9 @@
 
             // determine loading.finished actions
             opts.loading.finished = opts.loading.finished || function() {
-                if (!opts.state.isBeyondMaxPage)
+                if (!opts.state.isBeyondMaxPage) {
                     opts.loading.msg.fadeOut(opts.loading.speed);
+                }
             };
 
             // callback loading
