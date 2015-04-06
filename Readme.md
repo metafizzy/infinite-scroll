@@ -1,3 +1,13 @@
+Unfortunately this project is **no longer maintained**. 
+
+It's had strong contributors over the years but it's time to clearly set expectations.  We are unlikely to ship a new version, add features or fix bugs.
+
+IMO, the only way forward with this project is a 100% rewrite with a new API. If you're interested in owning that, please get in touch. ~ @paulirish, april 2015
+
+PS. Thank you very much to all the [contributors](https://github.com/infinite-scroll/infinite-scroll/graphs/contributors) over the years. It's been a fun time helping the internet scroll their way to more good stuff. :)
+
+<hr>
+
 # Infinite Scroll
 
 <http://www.infinite-scroll.com/>
