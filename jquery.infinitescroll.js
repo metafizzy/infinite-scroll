@@ -759,6 +759,13 @@
                 this.each(function () {
 
                 var instance = $.data(this, 'infinitescroll');
+                
+                if (instance){
+                    if (instance.options.state.isDestroyed){
+                        $.removeData(this, 'infinitescroll');
+                        instance = undefined;
+                    }
+                }
 
                 if (instance) {
 
