@@ -39,7 +39,7 @@ Pausing the plugin will temporarily create a flag to not retrieve content on scr
 
 **Resume**  
 `$('.selector').infinitescroll('resume');`  
-Destroys the instance of infinite scroll. This is create a flag to not load anymore content and will unbind all events.
+Resumes the instance of infinite scroll. This is create a flag to load more content and will bind events.
 
 **Toggle**  
 `$('.selector').infinitescroll('toggle');`  
