@@ -127,7 +127,9 @@
             }
 
             // Validate page fragment path
-            var path = $(opts.nextSelector).attr('href');
+            // if opts.path is defined then we can retrieve information
+            // about next url.
+            var path = $(opts.nextSelector).attr('href') || opts['path'];
             if (!path) {
                 this._debug('Navigation selector not found');
                 return false;
