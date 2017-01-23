@@ -509,6 +509,7 @@
                     this._debug('Your ' + key + ' found no elements.');
                     return false;
                 }
+                return true;
             }
 
             return true;
