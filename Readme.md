@@ -59,6 +59,7 @@ Better documentation coming soon.
 
 ```javascript
 $('.selector').infinitescroll({
+  debug: false, // console.logs messages for debuging
   loading: {
     finished: undefined,
     finishedMsg: "<em>Congratulations, you've reached the end of the internet.</em>",
