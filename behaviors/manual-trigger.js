@@ -21,7 +21,7 @@
 
 			// Bind nextSelector link to retrieve
 			$(opts.nextSelector).click(function(e) {
-				if (e.which == 1 && !e.metaKey && !e.shiftKey) {
+				if (e.which === 1 && !e.metaKey && !e.shiftKey) {
 					e.preventDefault();
 					instance.retrieve();
 				}
@@ -34,7 +34,7 @@
 					.show(opts.loading.speed, function () {
 						instance.beginAjax(opts);
 					});
-			}
+			};
 		},
 		_showdonemsg_twitter: function infscr_showdonemsg_twitter () {
 			var opts = this.options,
