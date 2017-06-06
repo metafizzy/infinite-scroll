@@ -130,7 +130,7 @@
             var path = $(opts.nextSelector).attr('href');
             if (!path) {
                 this._debug('Navigation selector not found');
-                return false;
+                //return false;
             }
 
             // Set the path to be a relative URL from root.
