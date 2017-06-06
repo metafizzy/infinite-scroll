@@ -1,10 +1,4 @@
-Unfortunately this project is **no longer maintained**. 
-
-It's had strong contributors over the years but it's time to clearly set expectations.  We are unlikely to ship a new version, add features or fix bugs.
-
-IMO, the only way forward with this project is a 100% rewrite with a new API. If you're interested in owning that, please get in touch. ~ @paulirish, april 2015
-
-PS. Thank you very much to all the [contributors](https://github.com/infinite-scroll/infinite-scroll/graphs/contributors) over the years. It's been a fun time helping the internet scroll their way to more good stuff. :)
+[Metafizzy is taking over Infinite Scroll.](https://metafizzy.co/blog/metafizzy-taking-infinite-scroll/) Expect brand new v3 release shortly 🌈🐻
 
 <hr>
 
@@ -18,7 +12,8 @@ The jQuery and WordPress Plugins:
 * WordPress Plugin <http://www.infinite-scroll.com/installation/>
 
 
-##Methods##
+## Methods
+
 A method is a command you can use to control Infinite Scroll once the plugin has been initialized. You can call on any Infinite Scroll method by using `$('.selector').infinitescroll('method-name');`.
 
 **Bind**  
@@ -58,7 +53,8 @@ Scroll will check to see if the next page is to be loaded, the same thing as if 
 The `update` method is used to update options in the instance of Infinite Scroll after initialization. The second argument is the object of options that you want to update.
 
 
-##Options##
+## Options
+
 Better documentation coming soon.
 
 ```javascript
