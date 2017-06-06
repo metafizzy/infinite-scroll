@@ -268,7 +268,15 @@
 
                 this._debug('pathParse manual');
                 return opts.pathParse(path, this.options.state.currPage+1);
-
+                
+                // Used for Joomla!
+            } else if (path.match('(.*start=)([0-9]{0,})')) {
+            	path = path.match('(.*start=)([0-9]{0,})').slice(1);
+            	return function(page)
+            	{ 
+            		page--;
+            		return path[0]+(path[1]*page); 
+            	};
             } else if (path.match(/^(.*?)\b2\b(.*?$)/)) {
                 path = path.match(/^(.*?)\b2\b(.*?$)/).slice(1);
 
