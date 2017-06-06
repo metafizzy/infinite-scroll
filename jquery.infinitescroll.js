@@ -174,13 +174,13 @@
             };
 
             // callback loading
-            opts.callback = function(instance, data, url) {
+            opts.callback = function(instance, data, url, cached) {
                 if (!!opts.behavior && instance['_callback_'+opts.behavior] !== undefined) {
-                    instance['_callback_'+opts.behavior].call($(opts.contentSelector)[0], data, url);
+                    instance['_callback_'+opts.behavior].call($(opts.contentSelector)[0], data, url, cached);
                 }
 
                 if (callback) {
-                    callback.call($(opts.contentSelector)[0], data, opts, url);
+                    callback.call($(opts.contentSelector)[0], data, opts, url, cached);
                 }
 
                 if (opts.prefill) {
@@ -331,8 +331,14 @@
 
         },
 
+        _cache: function infscr_cache(url, data) {
+            if (window.sessionStorage) {
+                sessionStorage.setItem('infscr::'+url, data);
+            }
+        },
+
         // Load Callback
-        _loadcallback: function infscr_loadcallback(box, data, url) {
+        _loadcallback: function infscr_loadcallback(box, data, url, cached) {
             var opts = this.options,
             callback = this.options.callback, // GLOBAL OBJECT FOR CALLBACK
             result = (opts.state.isDone) ? 'done' : (!opts.appendCallback) ? 'no-append' : 'append',
@@ -340,7 +346,7 @@
 
             // if behavior is defined and this function is extended, call that instead of default
             if (!!opts.behavior && this['_loadcallback_'+opts.behavior] !== undefined) {
-                this['_loadcallback_'+opts.behavior].call(this,box,data,url);
+                this['_loadcallback_'+opts.behavior].call(this,box,data,url,cached);
                 return;
             }
 
@@ -400,7 +406,7 @@
                 opts.state.isDuringAjax = false;
             }
 
-            callback(this, data, url);
+            callback(this, data, url, cached);
 
             if (opts.prefill) {
                 this._prefill();
@@ -474,6 +480,8 @@
             }
 
             this._binding('bind');
+
+            this.restore();
 
             return false;
 
@@ -572,7 +580,8 @@
                 case 'html+callback':
                     instance._debug('Using HTML via .load() method');
                     box.load(desturl + ' ' + opts.itemSelector, undefined, function infscr_ajax_callback(responseText) {
-                        instance._loadcallback(box, responseText, desturl);
+                        instance._loadcallback(box, responseText, desturl, false);
+                        instance._cache(desturl, responseText);
                     });
 
                     break;
@@ -586,7 +595,8 @@
                         complete: function infscr_ajax_callback(jqXHR, textStatus) {
                             condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === 'success' || textStatus === 'notmodified');
                             if (condition) {
-                                instance._loadcallback(box, jqXHR.responseText, desturl);
+                                instance._loadcallback(box, jqXHR.responseText, desturl, false);
+                                instance._cache(destUrl, jqXHR.responseText);
                             } else {
                                 instance._error('end');
                             }
@@ -601,7 +611,7 @@
                         type: 'GET',
                         url: desturl,
                         success: function (data, textStatus, jqXHR) {
-                            condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === 'success' || textStatus === 'notmodified');
+                            condition = (typeof (jqXHR.isResolved) !== 'undefined') ? (jqXHR.isResolved()) : (textStatus === "success" || textStatus === "notmodified");
                             if (opts.appendCallback) {
                                 // if appendCallback is true, you must defined template in options.
                                 // note that data passed into _loadcallback is already an html (after processed in opts.template(data)).
@@ -609,31 +619,107 @@
                                     var theData = opts.template(data);
                                     box.append(theData);
                                     if (condition) {
-                                        instance._loadcallback(box, theData);
+                                        instance._loadcallback(box, theData, null, false);
+                                        instance._cache(desturl, jqXHR.responseText);
                                     } else {
                                         instance._error('end');
                                     }
                                 } else {
-                                    instance._debug('template must be defined.');
+                                    instance._debug("template must be defined.");
                                     instance._error('end');
                                 }
                             } else {
                                 // if appendCallback is false, we will pass in the JSON object. you should handle it yourself in your callback.
                                 if (condition) {
-                                    instance._loadcallback(box, data, desturl);
+                                    instance._loadcallback(box, data, desturl, false);
+                                    instance._cache(desturl, jqXHR.responseText);
                                 } else {
                                     instance._error('end');
                                 }
                             }
                         },
                         error: function() {
-                            instance._debug('JSON ajax request failed.');
+                            instance._debug("JSON ajax request failed.");
                             instance._error('end');
                         }
                     });
 
                     break;
             }
+        },
+
+        // Restore from sessionStorage if present, do nothing if content is generated some other way
+        // Also requires window.JSON but any UA with sessionStorage will have it
+        restore: function infscr_restore() {
+            var opts = this.options;
+            if (!window.sessionStorage || !!opts.behavior || opts.state.isDestroyed) {
+                return;
+            }
+
+            // The following mimics beginAjax
+            var instance = this,
+                path = opts.path,
+                box, desturl, method, data;
+
+            desturl = (typeof path === 'function') ? path(opts.state.currPage+1) : path.join(opts.state.currPage+1);
+            data = sessionStorage.getItem('infscr::'+desturl);
+            if (!data) {
+                instance._debug('sessionStorage does not have '+desturl);
+                return;
+            }
+
+            // increment the URL bit. e.g. /page/3/
+            opts.state.currPage++;
+
+            // Manually control maximum page
+            if ( opts.maxPage != undefined && opts.state.currPage > opts.maxPage ){
+                opts.state.isBeyondMaxPage = true;
+                this.destroy();
+                return;
+            }
+
+            // if we're dealing with a table we can't use DIVs
+            box = $(opts.contentSelector).is('table, tbody') ? $('<tbody/>') : $('<div/>');
+
+            method = (opts.dataType === 'html' || opts.dataType === 'json' ) ? opts.dataType : 'html+callback';
+            if (opts.appendCallback && opts.dataType === 'html') {
+                method += '+callback';
+            }
+
+            switch (method) {
+                case 'html':
+                case 'html+callback':
+                    instance._debug('Using HTML from sessionStorage ('+desturl+')');
+                    box.html(!opts.itemSelector
+                            ? data
+                            : $('<div>').append($(data)).find(opts.itemSelector));
+                    this._loadcallback(box, data, desturl, true);
+                    break;
+
+                case 'json':
+                    instance._debug('Using JSON from sessionStorage ('+desturl+')');
+                    if (opts.appendCallback) {
+                        // if appendCallback is true, you must defined template in options.
+                        // note that data passed into _loadcallback is already an html (after processed in opts.template(data)).
+                        if (opts.template !== undefined) {
+                            var templateData = opts.template(JSON.parse(data));
+                            box.append(templateData);
+                            instance._loadcallback(box, templateData, desturl, true);
+                        }
+                        else {
+                            instance._debug('template must be defined.');
+                            instance._error('end');
+                        }
+                    }
+                    else {
+                        // if appendCallback is false, we will pass in the JSON object. you should handle it yourself in your callback.
+                        instance._loadcallback(box, JSON.parse(data), desturl, true);
+                    }
+                    break;
+            }
+
+            // Loaded content may end with navigation to more cached content. Load that too.
+            instance.restore();
         },
 
         // Retrieve next set of content items
