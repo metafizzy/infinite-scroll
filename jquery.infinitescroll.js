@@ -158,13 +158,15 @@
             var self = this;
 
             // determine loading.start actions
-            opts.loading.start = opts.loading.start || function() {
-                $(opts.navSelector).hide();
-                opts.loading.msg
-                .appendTo(opts.loading.selector)
-                .show(opts.loading.speed, $.proxy(function() {
-                    this.beginAjax(opts);
-                }, self));
+            opts.loading.start = opts.loading.start || function(params) {
+               var opts = params.opts
+               var instance = params.instance
+               $(opts.navSelector).hide();
+               opts.loading.msg
+               .appendTo(opts.loading.selector)
+               .show(opts.loading.speed, $.proxy(function() {
+                   instance.beginAjax(opts);
+               }, self));
             };
 
             // determine loading.finished actions
@@ -658,7 +660,7 @@
             // we dont want to fire the ajax multiple times
             opts.state.isDuringAjax = true;
 
-            opts.loading.start.call($(opts.contentSelector)[0],opts);
+            opts.loading.start.call($(opts.contentSelector)[0],{'opts': opts, 'instance':this});
         },
 
         // Check to see next page is needed
