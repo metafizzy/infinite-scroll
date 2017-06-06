@@ -160,17 +160,17 @@
             // determine loading.start actions
             opts.loading.start = opts.loading.start || function() {
                 $(opts.navSelector).hide();
-                opts.loading.msg
-                .appendTo(opts.loading.selector)
-                .show(opts.loading.speed, $.proxy(function() {
+                $(opts.loading.selector).after(opts.loading.msg);
+                opts.loading.msg.show(opts.loading.speed, $.proxy(function() {
                     this.beginAjax(opts);
                 }, self));
             };
 
             // determine loading.finished actions
             opts.loading.finished = opts.loading.finished || function() {
-                if (!opts.state.isBeyondMaxPage)
+                if (!opts.state.isBeyondMaxPage) {
                     opts.loading.msg.fadeOut(opts.loading.speed);
+                }
             };
 
             // callback loading
