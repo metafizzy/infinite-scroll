@@ -815,13 +815,13 @@
 
             if (scrollTimeout) { clearTimeout(scrollTimeout); }
             scrollTimeout = setTimeout(function () {
-                $(context).trigger('smartscroll', args);
+                $(context).triggerHandler('smartscroll', args);
             }, execAsap === 'execAsap' ? 0 : 100);
         }
     };
 
     $.fn.smartscroll = function (fn) {
-        return fn ? this.bind('smartscroll', fn) : this.trigger('smartscroll', ['execAsap']);
+        return fn ? this.bind('smartscroll', fn) : this.triggerHandler('smartscroll', ['execAsap']);
     };
 
 }));
