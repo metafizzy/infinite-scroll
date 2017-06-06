@@ -71,7 +71,8 @@
         pixelsFromNavToBottom: undefined,
         path: undefined, // Either parts of a URL as an array (e.g. ["/page/", "/"] or a function that takes in the page number and returns a URL
         prefill: false, // When the document is smaller than the window, load data until the document is larger or links are exhausted
-        maxPage: undefined // to manually control maximum page (when maxPage is undefined, maximum page limitation is not work)
+        maxPage: undefined, // to manually control maximum page (when maxPage is undefined, maximum page limitation is not work)
+        matchPath: false // Check if current browser path is same as ajax pagination path
     };
 
     $.infinitescroll.prototype = {
@@ -269,6 +270,9 @@
                 this._debug('pathParse manual');
                 return opts.pathParse(path, this.options.state.currPage+1);
 
+            } else if (path.match(/^(.*?page=)2(\/.*|$)/)) {
+                path = path.match(/^(.*?page=)2(\/.*|$)/).slice(1);
+                return path;
             } else if (path.match(/^(.*?)\b2\b(.*?$)/)) {
                 path = path.match(/^(.*?)\b2\b(.*?$)/).slice(1);
 
@@ -561,6 +565,21 @@
             box = $(opts.contentSelector).is('table, tbody') ? $('<tbody/>') : $('<div/>');
 
             desturl = (typeof path === 'function') ? path(opts.state.currPage) : path.join(opts.state.currPage);
+
+            // If matchPath set to true then check current path with pagination path
+            if ( opts.matchPath !== undefined && opts.matchPath == true ){
+                var splitPath = desturl.split('?'),
+                    pagePath = splitPath[0],
+                    currentPath = window.location.pathname;
+
+                if(pagePath != currentPath){
+                    instance._debug('Pagination path is not same as current path.');
+                    instance._error('end');
+                    this.destroy();
+                    return;
+                }
+            }
+
             instance._debug('heading into ajax', desturl);
 
             method = (opts.dataType === 'html' || opts.dataType === 'json' ) ? opts.dataType : 'html+callback';
