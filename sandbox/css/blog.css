@@ -1,0 +1,44 @@
+body {
+  line-height: 1.4;
+  background: #EEE;
+  color: #444;
+}
+
+.container {
+  padding: 0 20px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.site-header {
+  height: 150px;
+  background: #FFF;
+}
+
+.post {
+  margin: 60px 0;
+  background: white;
+  padding: 10px;
+}
+
+.post img {
+  display: block;
+  max-width: 100%;
+}
+
+.load-more-button {
+  font-size: 20px;
+  padding: 20px;
+}
+
+.site-footer {
+  padding: 200px 0;
+  background: #333;
+  color: white;
+}
+
+
+.scroll-status {
+  margin: 60px 0;
+  display: none;
+}

@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+
+  <title>unsplash masonry</title>
+
+  <link rel="stylesheet" href="css/loader-ellips.css" />
+
+<style>
+
+html { overflow-y: scroll; }
+
+body {
+  padding-bottom: 400px;
+}
+
+#item-template { display: none; }
+
+.grid-sizer, .grid-item {
+  width: 25%;
+}
+
+.grid-item img {
+  display: block;
+  max-width: 100%;
+}
+
+.grid-item__caption {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  font-size: 14px;
+}
+
+.grid-item__caption a {
+  color: white;
+  padding: 0 10px;
+  text-decoration: none;
+}
+
+</style>
+
+</head>
+<body>
+
+  <h1>unsplash masonry</h1>
+
+  <div class="grid">
+    <div class="grid-sizer"></div>
+  </div>
+
+  <div class="scroll-status">
+    <div class="infinite-scroll-request">
+      <div class="loader-ellips">
+        <span class="loader-ellips__dot loader-ellips__dot--1"></span>
+        <span class="loader-ellips__dot loader-ellips__dot--2"></span>
+        <span class="loader-ellips__dot loader-ellips__dot--3"></span>
+        <span class="loader-ellips__dot loader-ellips__dot--4"></span>
+      </div>
+    </div>
+    <p class="infinite-scroll-error">No more pages to load</p>
+    <p class="infinite-scroll-last">Last page loaded</p>
+  </div>
+
+<script type="text/html" id="item-template">
+  <div class="grid-item">
+    <img src="{{urls.small}}" />
+    <p class="grid-item__caption">
+      <a href="{{links.html}}">{{user.name}}</a>
+    </p>
+  </div>
+</script>
+
+<script src="../bower_components/ev-emitter/ev-emitter.js"></script>
+<script src="../bower_components/desandro-matches-selector/matches-selector.js"></script>
+<script src="../bower_components/fizzy-ui-utils/utils.js"></script>
+
+<script src="../bower_components/imagesloaded/imagesloaded.js"></script>
+<script src="../bower_components/get-size/get-size.js"></script>
+<script src="../bower_components/outlayer/item.js"></script>
+<script src="../bower_components/outlayer/outlayer.js"></script>
+<script src="../bower_components/masonry/masonry.js"></script>
+
+<script src="../js/core.js"></script>
+<script src="../js/scroll-watch.js"></script>
+<script src="../js/page-load.js"></script>
+<script src="../js/history.js"></script>
+<script src="../js/status.js"></script>
+<script>
+var grid = document.querySelector('.grid');
+
+var msnry = new Masonry( '.grid', {
+  itemSelector: '.grid-item',
+  columnWidth: '.grid-sizer',
+  percentPosition: true,
+  stagger: 30,
+  visibleStyle: {
+    transform: 'translateY(0)',
+    opacity: 1,
+  },
+  hiddenStyle: {
+    transform: 'translateY(100px)',
+    opacity: 0,
+  },
+});
+
+var infScroll = new InfiniteScroll( '.grid', {
+  path: 'https://api.unsplash.com/photos?client_id=9ad80b14098bcead9c7de952435e937cc3723ae61084ba8e729adb642daf0251&page={{#}}',
+  responseType: 'text',
+  status: '.scroll-status',
+  history: false,
+});
+
+var proxyDiv = document.createElement('div');
+
+infScroll.on( 'load', function( response ) {
+  var data = JSON.parse( response );
+  var itemsHTML = data.map( getItem );
+  proxyDiv.innerHTML = itemsHTML;
+
+  masonryLoad2( proxyDiv )
+
+});
+
+function masonryLoad( response ) {
+  var fragment = document.createDocumentFragment();
+  var items = response.querySelectorAll('.grid-item');
+
+  for ( var i=0; i < items.length; i++ ) {
+    fragment.appendChild( items[i] );
+  }
+
+  imagesLoaded( items, function() {
+    grid.appendChild( fragment );
+    msnry.appended( items );
+  });
+}
+
+
+function masonryLoad2( response ) {
+  var items = response.querySelectorAll('.grid-item');
+
+  imagesLoaded( items, function() {
+    infScroll.appendItems( items );
+    msnry.appended( items );
+  });
+}
+
+function jQueryLoad( response ) {
+  var $items = $( response ).find('.grid-item');
+  $items.imagesLoaded( function() {
+    $grid.infiniteScroll( 'appendItems', $items )
+      .masonry( 'appended', $items );
+  });
+}
+
+
+
+
+var itemTemplateSrc = document.querySelector('#item-template').innerHTML;
+
+function getItem( photo ) {
+  return microTemplate( itemTemplateSrc, photo );
+}
+
+// micro templating, sort-of
+function microTemplate( src, data ) {
+  return src.replace( /\{\{([\w\-\.]+)\}\}/gi, function( match, key ) {
+    var parts = key.split('.');
+    var value = data;
+    for ( var i=0; i < parts.length; i++ ) {
+      var part = parts[i];
+      value = value[ part ];
+    }
+    return value;
+  });
+}
+
+// load first page
+infScroll.loadNextPage();
+
+</script>
+
+</body>
+</html>

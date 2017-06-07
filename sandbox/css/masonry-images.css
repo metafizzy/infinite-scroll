@@ -1,0 +1,33 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-bottom: 400px;
+}
+
+.grid {
+  min-height: 600px;
+}
+
+.grid__col-sizer,
+.grid__item {
+  width: 30%;
+}
+
+.grid__gutter-sizer { width: 3.33%; }
+
+.grid__item {
+  float: left;
+  margin-bottom: 30px;
+  visibility: hidden;; /*hidden by default*/
+}
+
+.grid.are-images-ready .grid__item { visibility: visible; }
+
+.grid__item img {
+  display: block;
+  max-width: 100%;
+}
+
+.scroll-status {
+  display: none;
+}

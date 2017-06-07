@@ -1,0 +1,72 @@
+body {
+  font-family: sans-serif;
+}
+
+.content {
+  display: flex;
+}
+
+.content__main {
+  width: 65%;
+  margin-right: 5%;
+}
+
+.content__side {
+  width: 30%;
+}
+
+h2 {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #CCC;
+}
+
+.post {
+  background: #EEE;
+  margin-bottom: 10px;
+}
+
+.demo {
+  border: 1px solid #CCC;
+}
+
+.demo--big-posts .post {
+  height: 190px; /* 200px total height*/
+}
+
+.demo--prefill-element {
+  height: 500px;
+  overflow-y: scroll;
+}
+
+.demo--scroll-watch-window {
+  min-height: 400px;
+  border: 1px solid #CCC;
+}
+
+.demo--scroll-watch-element {
+  height: 400px;
+  overflow-y: scroll;
+}
+
+/* space for scrolling past */
+.footer {
+  background: #DDD;
+  height: 600px;
+}
+
+/* ---- outlayer ---- */
+
+.outlayer-item,
+.col-sizer {
+  width: calc(100%/3);
+}
+
+.outlayer-item {
+  float: left;
+}
+
+.outlayer-item img {
+  display: block;
+  max-width: 100%;
+}

@@ -1,17 +1,27 @@
 {
-  "name": "jquery-infinite-scroll",
-  "version": "2.1.0",
-  "homepage": "https://github.com/metafizzy/infinite-scroll",
+  "name": "infinite-scroll",
   "authors": [
-    "paulirish"
+    "David DeSandro <desandrocodes@gmail.com>"
   ],
-  "description": "jQuery Infinite Scroll Plugin",
-  "main": "jquery.infinitescroll.js",
+  "description": "infinite scroll",
+  "main": "js/index.js",
+  "dependencies": {
+    "ev-emitter": "^1.1.0",
+    "fizzy-ui-utils": "^2.0.5"
+  },
+  "devDependencies": {
+    "masonry": "^4.2.0",
+    "imagesloaded": "^4.1.2",
+    "jquery": "^3.2.1",
+    "jquery-bridget": "^2.0.1",
+    "qunit": "^2.3.2"
+  },
   "keywords": [
-    "jquery",
-    "infinitescroll"
+    "infinite",
+    "scroll"
   ],
-  "license": "MIT",
+  "license": "GPLv3",
+  "homepage": "",
   "ignore": [
     "**/.*",
     "node_modules",

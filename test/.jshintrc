@@ -1,0 +1,10 @@
+{
+  "browser": true,
+  "devel": true,
+  "unused": true,
+  "undef": true,
+  "globals": {
+    "Episcroll": false,
+    "QUnit": false
+  }
+}

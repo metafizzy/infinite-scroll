@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+
+  <title>Page number 6</title>
+
+  <link rel="stylesheet" href="../css/blog.css" />
+  <link rel="stylesheet" href="../css/loader-ellips.css" />
+
+</head>
+<body>
+
+<div class="site-header">
+  <div class="container">
+
+    <h1>Blog page 6</h1>
+
+  </div>
+</div>
+
+<div class="container">
+<article class="post">
+  <a class="post-header" href="/blog/triggering-jquery-vanilla-js-events">
+    <h1 class="post-header__title">Triggering jQuery and vanilla JS events</h1>
+    <p class="post-header__date">3 Jul 2015</p>
+  </a>
+  <div class="post__content">
+<p>You can now bind to jQuery events in <a href="http://isotope.metafizzy.co/">Isotope</a>, <a href="http://packery.metafizzy.co/">Packery</a>, and <a href="http://desandro.masonry.com">Masonry</a>. The recent upgrades allow you to use standard jQuery event methods <code>.on()</code>, <code>.off</code>, and <code>.one()</code>, rather than using ugly plugin method syntax.</p>
+<pre><code class="lang-js"><span class="hljs-comment">// previous plugin method syntax</span>
+<span class="hljs-comment">// Isotope &lt;= v2.2.0</span>
+$grid.isotope( <span class="hljs-string">'on'</span>, <span class="hljs-string">'layoutComplete'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{...})
+
+<span class="hljs-comment">// standard jQuery event</span>
+<span class="hljs-comment">// Isotope &gt;= v2.2.1</span>
+$grid.on( <span class="hljs-string">'layoutComplete'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{...})
+</code></pre>
+<p><a href="http://codepen.io/desandro/pen/scajv">View Isotope layoutComplete demo on CodePen</a>.</p>
+<p>This feature is already in <a href="http://flickity.metafizzy.co/">Flickity</a> and <a href="http://draggabilly.desandro.com/">Draggabilly</a>. It was prime time to port it over to the layout libraries.</p>
+
+  </div>
+</article>
+<article class="post">
+  <a class="post-header" href="/blog/dropping-ie8-9-support">
+    <h1 class="post-header__title">Dropping IE8 and 9 support</h1>
+    <p class="post-header__date">1 Jul 2015</p>
+  </a>
+  <div class="post__content">
+<p>2015 will be the last year Metafizzy supports IE8 and 9. In 2016, we&#39;ll release new major versions of our libraries that remove support for the Internet Explorers of yore.</p>
+<p>The time has come. <a href="http://caniuse.com/usage-table">Global browser usage</a> is especially low for both browsers. IE8 is at 2%. IE9 is at 1.5%.</p>
+<ul>
+<li><a href="https://www.microsoft.com/en-us/WindowsForBusiness/end-of-xp-support">Microsoft ended support for Windows XP in 2014</a>, <a href="https://support.microsoft.com/en-us/lifecycle/search?sort=PN&amp;alpha=internet%20explorer">support for IE8 will end in January 2016</a>. IE9 will only be supported for Windows Vista.</li>
+<li>The New York Times <a href="http://www.nytimes.com/content/help/site/ie8-support.html">dropped IE8 support in 2014</a> and <a href="http://www.nytimes.com/content/help/site/ie9-support.html">IE9 support in June this year</a></li>
+<li><a href="http://emberjs.com/blog/2015/04/20/ie8-support-update.html">Ember 2.0 will not support IE8</a>. <a href="https://github.com/emberjs/rfcs/pull/45">Read Ember community input on IE support</a></li>
+<li><a href="http://blog.getbootstrap.com/2014/10/29/bootstrap-3-3-0-released/">Bootstrap 4 will drop support for IE8</a></li>
+<li><a href="http://analytics.blogspot.com/2014/12/keeping-ga-web-experience-modern.html">Google Analytics dropped support for IE9 in January this year</a></li>
+</ul>
+<p>IE8 and 9 were the last browsers to have significant feature gaps. Dropping their support will allow a lot of ugly code to be removed. Polyfill libraries can be removed like  <a href="https://github.com/desandro/eventie">eventie</a>, <a href="https://github.com/desandro/classie">classie</a>, and <a href="https://github.com/desandro/doc-ready">doc-ready</a>.</p>
+<p>If you still require IE8 and 9 support, previous versions will still be completely available to download and view documentation. The old versions will no longer get bug fixes or improved features, but you can continue using them as long as you like.</p>
+<p>We&#39;ve opened issues to track this change for each library. Follow along:</p>
+<ul>
+<li><a href="https://github.com/metafizzy/isotope/issues/947">Isotope dropping IE8 and 9 support</a></li>
+<li><a href="https://github.com/metafizzy/flickity/issues/178">Flickity dropping IE8 and 9 support</a></li>
+<li><a href="https://github.com/metafizzy/packery/issues/281">Packery dropping IE8 and 9 support</a></li>
+<li><a href="https://github.com/desandro/masonry/issues/719">Masonry dropping IE8 and 9 support</a></li>
+</ul>
+
+  </div>
+</article>
+
+  <nav class="pagination">
+      <a class="pagination__previous" href="/blog/page5">Previous &middot; 5</a>
+    <span class="pagination__current">Page 6 of 17</span>
+  </nav>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="site-footer__fizzy-makes">Metafizzy makes delightful UI libraries and logos</p>
+  </div>
+</footer>
+
+<script src="../../bower_components/ev-emitter/ev-emitter.js"></script>
+<script src="../../bower_components/fizzy-ui-utils/utils.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/scroll-watch.js"></script>
+<script src="../../js/page-load.js"></script>
+<script src="../../js/history.js"></script>
+<script src="../js/scroll-loader.js"></script>
+
+</body>
+</html>

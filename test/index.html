@@ -1,106 +1,110 @@
 <!doctype html>
-<!--[if lt IE 7]> <html class="no-js ie6" lang="en"> <![endif]-->
-<!--[if IE 7]>    <html class="no-js ie7" lang="en"> <![endif]-->
-<!--[if IE 8]>    <html class="no-js ie8" lang="en"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<html lang="en">
 <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
 
-	<meta charset="utf-8">
-	
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	
-	<title>Infinite Scroll Testing</title>
-	<meta name="description" content="">
-	<meta name="author" content="">
+  <title>Infinite Scroll tests</title>
 
+  <link rel="stylesheet" href="../bower_components/qunit/qunit/qunit.css" />
+  <link rel="stylesheet" href="test.css" />
 
-	<link rel="stylesheet" href="style.css">
+  <script src="../bower_components/qunit/qunit/qunit.js"></script>
+  <!-- dependencies -->
+  <script src="../bower_components/ev-emitter/ev-emitter.js"></script>
+  <script src="../bower_components/desandro-matches-selector/matches-selector.js"></script>
+  <script src="../bower_components/fizzy-ui-utils/utils.js"></script>
+  <!-- outlayer -->
+  <script src="../bower_components/imagesloaded/imagesloaded.js"></script>
+  <script src="../bower_components/get-size/get-size.js"></script>
+  <script src="../bower_components/outlayer/item.js"></script>
+  <script src="../bower_components/outlayer/outlayer.js"></script>
+  <script src="../bower_components/masonry/masonry.js"></script>
+  <!-- infinite scroll -->
+  <script src="../js/core.js"></script>
+  <script src="../js/scroll-watch.js"></script>
+  <script src="../js/page-load.js"></script>
+  <script src="../js/history.js"></script>
+  <script src="../js/button.js"></script>
+  <script src="../js/status.js"></script>
+  <!-- unit tests -->
+  <script src="unit/path.js"></script>
+  <script src="unit/page-load.js"></script>
+  <script src="unit/page-load-error.js"></script>
+  <script src="unit/prefill-window.js"></script>
+  <script src="unit/prefill-element.js"></script>
+  <script src="unit/scroll-watch-window.js"></script>
+  <script src="unit/scroll-watch-element.js"></script>
+  <script src="unit/history-window.js"></script>
+  <script src="unit/outlayer.js"></script>
 
 </head>
-
 <body>
 
-	<div id="debug">
-		<a href="#" id="debug-trigger">+</a>
-		<h3>Debug bar</h3>
-		<nav id="debug-nav">
-			<a href="#" rel="destroy">Destroy</a>
-			<a href="#" rel="pause">Pause</a>
-			<a href="#" rel="resume">Resume</a>
-			<a href="#" rel="toggle">Toggle</a>
-			<a href="#" rel="scroll">Scroll</a>
-			<a href="#" rel="unbind">Unbind</span></a>
-			<a href="#" rel="bind">Bind</span></a>
-			<a href="#" rel="retrieve">Retrieve</a>
-			<a href="#" rel="cthullu">Invalid command</a>
-			<a href="#" rel="pause" data-arg="the-apocalypse">Invalid argument</a>
-		</nav>
-	</div>
-	
-	<div id="content">
-	
-		<h1>Infinite Scroll Testing</h1>
-		
-		<p>One for all and all for one, Muskehounds are always ready. One for all and all for one, helping everybody. One for all and all for one, it's a pretty story. Sharing everything with fun, that's the way to be. One for all and all for one, Muskehounds are always ready. One for all and all for one, helping everybody. One for all and all for one, can sound pretty corny. If you've got a problem chum, think how it could be.</p>
+<h1>Infinite Scroll tests</h1>
 
-		<p>Barnaby The Bear's my name, never call me Jack or James, I will sing my way to fame, Barnaby the Bear's my name. Birds taught me to sing, when they took me to their king, first I had to fly, in the sky so high so high, so high so high so high, so - if you want to sing this way, think of what you'd like to say, add a tune and you will see, just how easy it can be. Treacle pudding, fish and chips, fizzy drinks and liquorice, flowers, rivers, sand and sea, snowflakes and the stars are free. La la la la la, la la la la la la la, la la la la la la la, la la la la la la la la la la la la la, so - Barnaby The Bear's my name, never call me Jack or James, I will sing my way to fame, Barnaby the Bear's my name.</p>
+<div class="content">
+  <div class="content__main">
+    <div id="qunit"></div>
+  </div> <!-- content__main -->
 
-		<p>There's a voice that keeps on calling me. Down the road, that's where I'll always be. Every stop I make, I make a new friend. Can't stay for long, just turn around and I'm gone again. Maybe tomorrow, I'll want to settle down, Until tomorrow, I'll just keep moving on.</p>
+  <div class="content__side">
 
-		<p>Top Cat! The most effectual Top Cat! Who's intellectual close friends get to call him T.C., providing it's with dignity. Top Cat! The indisputable leader of the gang. He's the boss, he's a pip, he's the championship. He's the most tip top, Top Cat.</p>
+    <h2>path</h2>
+    <div class="demo demo--path"></div>
+    <p><a class="path-next-link" href="/area51/selector/page10.html">Next</a></p>
 
-		<p>Hong Kong Phooey, number one super guy. Hong Kong Phooey, quicker than the human eye. He's got style, a groovy style, and a car that just won't stop. When the going gets tough, he's really rough, with a Hong Kong Phooey chop (Hi-Ya!). Hong Kong Phooey, number one super guy. Hong Kong Phooey, quicker than the human eye. Hong Kong Phooey, he's fan-riffic!</p>
+    <h2>page load</h2>
+    <div class="demo demo--page-load">
+      <div class="post">page 1, post 1</div>
+    </div>
+    <p><a class="page-load-next-link" href="page/2.html">Next</a></p>
 
-		<p>Barnaby The Bear's my name, never call me Jack or James, I will sing my way to fame, Barnaby the Bear's my name. Birds taught me to sing, when they took me to their king, first I had to fly, in the sky so high so high, so high so high so high, so - if you want to sing this way, think of what you'd like to say, add a tune and you will see, just how easy it can be. Treacle pudding, fish and chips, fizzy drinks and liquorice, flowers, rivers, sand and sea, snowflakes and the stars are free. La la la la la, la la la la la la la, la la la la la la la, la la la la la la la la la la la la la, so - Barnaby The Bear's my name, never call me Jack or James, I will sing my way to fame, Barnaby the Bear's my name.</p>
+    <h2>page load error</h2>
+    <div class="demo demo--page-load-error">
+      <div class="post">page 1, post 1</div>
+    </div>
 
-		<p>There's a voice that keeps on calling me. Down the road, that's where I'll always be. Every stop I make, I make a new friend. Can't stay for long, just turn around and I'm gone again. Maybe tomorrow, I'll want to settle down, Until tomorrow, I'll just keep moving on.</p>
+    <h2>prefill, window</h2>
+    <div class="demo demo--prefill-window demo--big-posts">
+    </div>
 
-		<p>Top Cat! The most effectual Top Cat! Who's intellectual close friends get to call him T.C., providing it's with dignity. Top Cat! The indisputable leader of the gang. He's the boss, he's a pip, he's the championship. He's the most tip top, Top Cat.</p>
+    <h2>prefill, element</h2>
+    <div class="demo demo--prefill-element demo--big-posts">
+    </div>
 
-		<p>Hong Kong Phooey, number one super guy. Hong Kong Phooey, quicker than the human eye. He's got style, a groovy style, and a car that just won't stop. When the going gets tough, he's really rough, with a Hong Kong Phooey chop (Hi-Ya!). Hong Kong Phooey, number one super guy. Hong Kong Phooey, quicker than the human eye. Hong Kong Phooey, he's fan-riffic!</p>
-		
-	</div>
-	
-	<a id="next" href="index2.html">next page?</a>
+    <h2>scroll watch window</h2>
+    <div class="demo demo--scroll-watch-window"></div>
 
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.js"></script>
-	<script>window.jQuery || document.write("<script src='jquery-1.6.1.js'>\x3C/script>")</script>
-	
-	<script src="debug.js"></script>
-	<script src="../jquery.infinitescroll.js"></script>
-	<script src="../behaviors/manual-trigger.js"></script>
-	
-	<script>
-	
-	
-	$('#content').infinitescroll({
-		navSelector  	: "#next:last",
-		nextSelector 	: "a#next:last",
-		itemSelector 	: "#content p",
-		debug		 	: true,
-		dataType	 	: 'html',
-        maxPage         : 3,
-//		prefill			: true,
-//		path: ["http://nuvique/infinite-scroll/test/index", ".html"]
-		path: function(index) {
-			return "index" + index + ".html";
-		}
-		// behavior		: 'twitter',
-		// appendCallback	: false, // USE FOR PREPENDING
-		// pathParse     	: function( pathStr, nextPage ){ return pathStr.replace('2', nextPage ); }
-    }, function(newElements, data, url){
-    	//USE FOR PREPENDING
-    	// $(newElements).css('background-color','#ffef00');
-    	// $(this).prepend(newElements);
-    	//
-    	//END OF PREPENDING
+    <h2>scroll watch element</h2>
+    <div class="demo demo--scroll-watch-element demo--big-posts">
+      <div class="post">page 1, post 1</div>
+      <div class="post">page 1, post 2</div>
+      <div class="post">page 1, post 3</div>
+      <div class="post">page 1, post 4</div>
+      <div class="post">page 1, post 5</div>
+    </div>
 
-//    	window.console && console.log('context: ',this);
-//    	window.console && console.log('returned: ', newElements);
-    	
-    });
-	</script>
+    <h2>history window</h2>
+    <div class="demo demo--history-window demo--big-posts">
+      <div class="post">page 1, post 1</div>
+      <div class="post">page 1, post 2</div>
+    </div>
 
+    <h2>outlayer</h2>
+    <div class="demo demo--outlayer">
+      <div class="col-sizer"></div>
+      <div class="outlayer-item"><img src="https://i.imgur.com/vxOA4hg.jpg" /></div>
+      <div class="outlayer-item"><img src="https://i.imgur.com/9eHhuCK.jpg" /></div>
+      <div class="outlayer-item"><img src="https://i.imgur.com/fp6SDtQ.jpg" /></div>
+      <div class="outlayer-item"><img src="https://i.imgur.com/utsastL.jpg" /></div>
+      <div class="outlayer-item"><img src="https://i.imgur.com/FEFyXGY.jpg" /></div>
+    </div>
+
+  </div> <!-- content__side -->
+</div> <!-- content -->
+
+<footer class="footer"></footer>
 
 </body>
 </html>

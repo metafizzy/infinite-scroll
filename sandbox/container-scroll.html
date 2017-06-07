@@ -1,0 +1,110 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+
+  <title>container scroll</title>
+
+  <link rel="stylesheet" href="css/blog.css" />
+
+<style>
+.sidebar {
+  width: 300px;
+  height: 400px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  border: 1px solid #CCC;
+}
+
+.post {
+  margin-top: 0;
+  font-size: 12px;
+}
+</style>
+
+</head>
+<body>
+
+<div class="site-header">
+  <div class="container">
+
+    <h1>container scroll</h1>
+
+  </div>
+</div>
+
+
+<div class="container">
+  <div class="sidebar">
+  <div class="posts-container">
+<article class="post">
+  <a class="post-header" href="/blog/wyday-logos">
+    <h1 class="post-header__title">wyDay logos</h1>
+    <p class="post-header__date">22 Mar 2017</p>
+  </a>
+  <div class="post__content">
+<p><img src="https://i.imgur.com/pbs1Ylg.png" alt="wyDay logos"></p>
+<p>After seeing my work on <a href="http://logo.pizza">Logo Pizza</a>, Wyatt at <a href="https://wyday.com/">wyDay</a> employed my services to design a new set of logos for wyDay and its products, LimeLM and wyBuild. wyDay makes &quot;premium software development tools for high-tech companies.&quot; A kindred spirit for Metafizzy!</p>
+<p><img src="https://i.imgur.com/jUySqoc.png" alt="wyDay logos before &amp; after"></p>
+<p>wyDay already had a strong brand to work with. That LimeLM pirate with lime eye patch is a great visual — easily memorable. The wyDay and wyBuild logos were a bit generic, so I was offered a blank slate for them. The end result is a set of straight-forward, iconic emblems.</p>
+
+  </div>
+</article>
+<article class="post">
+  <a class="post-header" href="/blog/mealio-logo">
+    <h1 class="post-header__title">Mealio logo</h1>
+    <p class="post-header__date">8 Mar 2017</p>
+  </a>
+  <div class="post__content">
+<p><img src="https://i.imgur.com/3Ycdt9U.png" alt="Mealio logo"></p>
+<p><em>If you eat and if you even remotely like food then <a href="https://www.mealio.com">Mealio</a> is the right place for you.</em> Mealio helps people solve the problem of constantly having to create a weekly meal plan by generating them based on the user&#39;s preferences. It&#39;s like Spotify for food.</p>
+<p>I was tasked to design the Mealio logo. I delivered on an friendly &amp; clever M monogram that evokes the approachable and helpful qualities of Mealio. The fork and knife fitting within the counters of the M say it all. Knife, fork, M = Mealio.</p>
+
+  </div>
+</article>
+
+
+
+</div> <!-- posts-container -->
+</div> <!-- sidebar -->
+</div> <!-- container -->
+
+  <nav class="pagination">
+    <span class="pagination__current">Page 1 of 17</span>
+      <a class="pagination__next" href="page/2.html">Next &middot; 2</a>
+  </nav>
+
+<footer class="site-footer">
+  <div class="container">
+
+    <p class="site-footer__fizzy-makes">Metafizzy makes delightful UI libraries and logos</p>
+
+
+  </div>
+</footer>
+
+<script src="../bower_components/ev-emitter/ev-emitter.js"></script>
+<script src="../bower_components/fizzy-ui-utils/utils.js"></script>
+<script src="../js/core.js"></script>
+<script src="../js/scroll-watch.js"></script>
+<script src="../js/page-load.js"></script>
+<script src="../js/history.js"></script>
+
+<script>
+
+var postsContainer = document.querySelector('.posts-container');
+
+var infScroll = new InfiniteScroll( postsContainer, {
+  elementScroll: '.sidebar',
+  append: '.post',
+  path: '.pagination__next',
+  scrollThreshold: 200,
+  // history: false,
+});
+
+</script>
+
+</body>
+</html>

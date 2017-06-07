@@ -1,8 +1,0 @@
-{
-  "name": "jquery-infinite-scroll",
-  "version": "2.1.0",
-  "main": "jquery.infinitescroll.js",
-  "dependencies": {
-    "jquery": "~1.7.2"
-  }
-}
