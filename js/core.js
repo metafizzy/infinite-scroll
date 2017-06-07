@@ -1,4 +1,33 @@
-var utils = fizzyUIUtils;
+// core
+( function( window, factory ) {
+  // universal module definition
+  /* globals define, module, require */
+  if ( typeof define == 'function' && define.amd ) {
+    // AMD
+    define( [
+      'ev-emitter/ev-emitter',
+      'fizzy-ui-utils/utils',
+    ], function( EvEmitter, utils) {
+      return factory( window, EvEmitter, utils );
+    });
+  } else if ( typeof module == 'object' && module.exports ) {
+    // CommonJS
+    module.exports = factory(
+      window,
+      require('ev-emitter'),
+      require('fizzy-ui-utils')
+    );
+  } else {
+    // browser global
+    window.InfiniteScroll = factory(
+      window,
+      window.EvEmitter,
+      window.fizzyUIUtils
+    );
+  }
+
+}( window, function factory( window, EvEmitter, utils ) {
+
 var jQuery = window.jQuery;
 // internal store of all InfiniteScroll intances
 var instances = {};
@@ -343,3 +372,9 @@ utils.htmlInit( InfiniteScroll, 'infinite-scroll' );
 if ( jQuery && jQuery.bridget ) {
   jQuery.bridget( 'infiniteScroll', InfiniteScroll );
 }
+
+// --------------------------  -------------------------- //
+
+return InfiniteScroll;
+
+}));

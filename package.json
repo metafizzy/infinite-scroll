@@ -1,0 +1,53 @@
+{
+  "name": "infinite-scroll",
+  "version": "3.0.0-beta.1",
+  "description": "Automatically add the next page",
+  "main": "js/index.js",
+  "files": [
+    "dist",
+    "js"
+  ],
+  "dependencies": {
+    "ev-emitter": "^1.1.0",
+    "fizzy-ui-utils": "^2.0.5"
+  },
+  "devDependencies": {
+    "chalk": "^0.5.1",
+    "gulp": "^3.9.1",
+    "gulp-jshint": "^1.12.0",
+    "gulp-json-lint": "0.0.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-replace": "^0.5.4",
+    "gulp-requirejs-optimize": "github:metafizzy/gulp-requirejs-optimize",
+    "gulp-uglify": "^1.5.4",
+    "gulp-util": "^3.0.8",
+    "imagesloaded": "^4.1.2",
+    "jquery": "^3.2.1",
+    "jquery-bridget": "^2.0.1",
+    "masonry-layout": "^4.2.0",
+    "minimist": "^1.2.0",
+    "qunitjs": "^2.3.2"
+  },
+  "scripts": {
+    "test": "echo \"View test/ html\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/metafizzy/infinite-scroll.git"
+  },
+  "keywords": [
+    "plugin",
+    "ui",
+    "DOM",
+    "browser"
+  ],
+  "author": "Metafizzy",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/metafizzy/infinite-scroll/issues"
+  },
+  "homepage": "https://infinite-scroll.com",
+  "directories": {
+    "test": "test"
+  }
+}

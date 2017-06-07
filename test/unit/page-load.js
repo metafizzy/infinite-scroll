@@ -1,8 +1,6 @@
 QUnit.test( 'pageLoad', function( assert ) {
 
-
   var demoElem = document.querySelector('.demo--page-load');
-  // var done = assert.async( 2 );
 
   var infScroll = new InfiniteScroll( demoElem, {
     path: '.page-load-next-link',
@@ -82,29 +80,5 @@ QUnit.test( 'pageLoad', function( assert ) {
 
     infScroll.loadNextPage();
   }
-
-  // pageError();
-
-  function pageError() {
-    // reset infScroll
-    // infScroll.destroy();
-    infScroll = new InfiniteScroll( demoElem, {
-      // page not there
-      path: function() {
-        return 'page/4.html';
-      },
-      scrollThreshold: false,
-      history: false,
-    });
-
-    infScroll.on( 'error', function( error ) {
-      assert.ok( error, 'error event, with error argument' );
-      done();
-    });
-
-    infScroll.loadNextPage();
-  }
-
-  // load json
 
 });

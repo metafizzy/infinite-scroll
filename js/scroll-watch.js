@@ -1,4 +1,33 @@
-var utils = fizzyUIUtils;
+// scroll-watch
+( function( window, factory ) {
+  // universal module definition
+  /* globals define, module, require */
+  if ( typeof define == 'function' && define.amd ) {
+    // AMD
+    define( [
+      './core',
+      'fizzy-ui-utils/utils',
+    ], function( InfiniteScroll, utils ) {
+      return factory( window, InfiniteScroll, utils );
+    });
+  } else if ( typeof module == 'object' && module.exports ) {
+    // CommonJS
+    module.exports = factory(
+      window,
+      require('./core'),
+      require('fizzy-ui-utils')
+    );
+  } else {
+    // browser global
+    factory(
+      window,
+      window.InfiniteScroll,
+      window.fizzyUIUtils
+    );
+  }
+
+}( window, function factory( window, InfiniteScroll, utils ) {
+
 var proto = InfiniteScroll.prototype;
 
 // default options
@@ -79,3 +108,9 @@ proto.onResize = function() {
 };
 
 utils.debounceMethod( InfiniteScroll, 'onResize', 150 );
+
+// --------------------------  -------------------------- //
+
+return InfiniteScroll;
+
+}));

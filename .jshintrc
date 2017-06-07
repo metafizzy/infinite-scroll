@@ -1,0 +1,8 @@
+{
+  "browser": true,
+  "unused": true,
+  "undef": true,
+  "globals": {
+    "console": false
+  }
+}

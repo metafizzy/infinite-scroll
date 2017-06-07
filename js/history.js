@@ -1,5 +1,34 @@
+// history
+( function( window, factory ) {
+  // universal module definition
+  /* globals define, module, require */
+  if ( typeof define == 'function' && define.amd ) {
+    // AMD
+    define( [
+      './core',
+      'fizzy-ui-utils/utils',
+    ], function( InfiniteScroll, utils ) {
+      return factory( window, InfiniteScroll, utils );
+    });
+  } else if ( typeof module == 'object' && module.exports ) {
+    // CommonJS
+    module.exports = factory(
+      window,
+      require('./core'),
+      require('fizzy-ui-utils')
+    );
+  } else {
+    // browser global
+    factory(
+      window,
+      window.InfiniteScroll,
+      window.fizzyUIUtils
+    );
+  }
+
+}( window, function factory( window, InfiniteScroll, utils ) {
+
 var proto = InfiniteScroll.prototype;
-var utils = fizzyUIUtils;
 
 InfiniteScroll.defaults.history = 'replace';
 // InfiniteScroll.defaults.historyTitle = false;
@@ -167,3 +196,9 @@ proto.onBeforeunload = function() {
 proto.onPageLoadHistory = function( response, path ) {
   this.setHistory( response.title, path );
 };
+
+// --------------------------  -------------------------- //
+
+return InfiniteScroll;
+
+}));

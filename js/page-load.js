@@ -1,3 +1,30 @@
+// page-load
+( function( window, factory ) {
+  // universal module definition
+  /* globals define, module, require */
+  if ( typeof define == 'function' && define.amd ) {
+    // AMD
+    define( [
+      './core',
+    ], function( InfiniteScroll ) {
+      return factory( window, InfiniteScroll );
+    });
+  } else if ( typeof module == 'object' && module.exports ) {
+    // CommonJS
+    module.exports = factory(
+      window,
+      require('./core')
+    );
+  } else {
+    // browser global
+    factory(
+      window,
+      window.InfiniteScroll
+    );
+  }
+
+}( window, function factory( window, InfiniteScroll ) {
+
 var proto = InfiniteScroll.prototype;
 
 // InfiniteScroll.defaults.append = false;
@@ -230,3 +257,9 @@ function request( url, responseType, onLoad, onError ) {
 
   req.send();
 }
+
+// --------------------------  -------------------------- //
+
+return InfiniteScroll;
+
+}));

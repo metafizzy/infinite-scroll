@@ -22,7 +22,7 @@ QUnit.test( 'pageLoad error', function( assert ) {
     done();
   });
 
-  infScroll.on( 'load', function( error ) {
+  infScroll.on( 'load', function() {
     assert.ok( false, 'load event should not trigger' );
     done();
   });
