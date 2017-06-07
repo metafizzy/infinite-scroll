@@ -1,9 +1,7 @@
 QUnit.test( 'prefill element', function( assert ) {
 
   // expected load count, each post is 200px tall
-  var expLoadCount = 3
-
-  // assert.ok( true );
+  var expLoadCount = 3;
 
   var done = assert.async( expLoadCount );
 
@@ -16,15 +14,18 @@ QUnit.test( 'prefill element', function( assert ) {
     elementScroll: true,
     history: false,
     scrollThreshold: false,
+    onInit: function() {
+      this.on( 'append', onAppend );
+    },
   });
 
-  infScroll.on( 'append', function() {
+  function onAppend() {
     assert.ok( true, 'prefill element appended post ' + infScroll.loadCount );
     if ( infScroll.loadCount == expLoadCount ) {
       assert.equal( infScroll.loadCount, expLoadCount,
         expLoadCount + ' pages appended' );
     }
     done();
-  });
+  }
 
 });

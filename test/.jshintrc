@@ -4,7 +4,7 @@
   "unused": true,
   "undef": true,
   "globals": {
-    "Episcroll": false,
+    "InfiniteScroll": false,
     "QUnit": false
   }
 }

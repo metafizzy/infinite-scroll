@@ -64,6 +64,7 @@ proto.create = function() {
   }
   this.updateGetAbsolutePath();
   this.log( 'initialized', [ this.element.className ] );
+  this.callOnInit();
   // create features
   for ( var method in InfiniteScroll.create ) {
     InfiniteScroll.create[ method ].call( this );
@@ -72,6 +73,14 @@ proto.create = function() {
 
 proto.option = function( opts ) {
   utils.extend( this.options, opts );
+};
+
+// call onInit option, used for binding events on init
+proto.callOnInit = function() {
+  var onInit = this.options.onInit;
+  if ( onInit ) {
+    onInit.call( this, this );
+  }
 };
 
 // ----- events ----- //
