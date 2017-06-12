@@ -11,22 +11,27 @@
   },
   "devDependencies": {
     "masonry": "^4.2.0",
-    "imagesloaded": "^4.1.2",
+    "imagesloaded": "^4.1.3",
     "jquery": "^3.2.1",
     "jquery-bridget": "^2.0.1",
     "qunit": "^2.3.2"
   },
   "keywords": [
+    "infinite scroll",
     "infinite",
-    "scroll"
+    "scroll",
+    "plugin"
   ],
-  "license": "GPLv3",
-  "homepage": "",
+  "license": "GPL-3.0",
+  "homepage": "https://infinite-scroll.com",
   "ignore": [
     "**/.*",
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "tests",
+    "sandbox",
+    "package.json",
+    "gulpfile.js"
   ]
 }
