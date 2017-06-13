@@ -1,6 +1,6 @@
 {
   "name": "infinite-scroll",
-  "version": "3.0.0",
+  "version": "3.0.0-beta.1",
   "description": "Automatically add next page",
   "main": "js/index.js",
   "files": [
