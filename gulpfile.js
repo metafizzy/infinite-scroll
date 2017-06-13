@@ -59,6 +59,7 @@ function addBanner( str ) {
 
 gulp.task( 'requirejs', function() {
   var banner = getBanner();
+  var definitionRE = /define\(\s*'infinite-scroll\/js\/index'(.|\n)+\],\s*factory/;
   // HACK src is not needed
   // should refactor rjsOptimize to produce src
   return gulp.src('js/index.js')
@@ -75,8 +76,13 @@ gulp.task( 'requirejs', function() {
         jquery: 'empty:'
       }
     }) )
-    // remove named module
-    // .pipe( replace( "'infinite-scroll/js/index',", '' ) )
+    // munge AMD definition
+    .pipe( replace( definitionRE, function( definition ) {
+      // remove named module
+      return definition.replace( "'infinite-scroll/js/index',", '' )
+        // use explicit file paths, './history' -> 'infinite-scroll/js/history'
+        .replace( /'.\//g, "'infinite-scroll/js/" );
+    }) )
     // add banner
     .pipe( addBanner( banner ) )
     .pipe( rename('infinite-scroll.pkgd.js') )
