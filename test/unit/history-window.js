@@ -11,7 +11,7 @@ QUnit.test( 'history window', function( assert ) {
     scrollThreshold: false,
     history: 'replace',
     historyTitle: true,
-    // log: true,
+    // debug: true,
   });
 
   var page1Top = getTop( demoElem );

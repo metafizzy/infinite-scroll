@@ -126,7 +126,7 @@ var infScroll = new InfiniteScroll( '.container', {
   //   this.on( 'append', function() {...})
   // }
 
-  log: false,
+  debug: false,
   // Logs events and state changes to the console.
 })
 ```

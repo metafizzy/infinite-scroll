@@ -62,6 +62,7 @@ function InfiniteScroll( element, options ) {
 InfiniteScroll.defaults = {
   // path: null,
   // hideNav: null,
+  // debug: false,
 };
 
 // create & destroy methods
@@ -163,7 +164,7 @@ var loggers = {
 
 // log events
 proto.log = function( type, args ) {
-  if ( !this.options.log ) {
+  if ( !this.options.debug ) {
     return;
   }
   var message = '[InfiniteScroll] ' + type;

@@ -20,7 +20,7 @@ function initScroll( InfiniteScroll ) {
     append: '.post',
     nav: '.pagination',
     status: '.scroll-status',
-    log: true,
+    debug: true,
     history: false,
   });
 }

@@ -25,7 +25,7 @@ imagesLoaded( '.grid', function() {
 var infScroll = new InfiniteScroll( '.grid', {
   path: '.pagination__next',
   append: '.grid__item',
-  log: true,
+  debug: true,
   outlayer: msnry,
   status: '.scroll-status',
   scrollThreshold: 1,
