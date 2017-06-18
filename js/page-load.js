@@ -94,6 +94,7 @@ proto.appendNextPage = function( response, path ) {
     this.appendItems( items, fragment );
     this.isLoading = false;
     this.dispatchEvent( 'append', null, [ response, path, items ] );
+    this.checkLastPage( response, path );
   }.bind( this );
 
   // TODO add hook for option to trigger appendReady
@@ -102,8 +103,6 @@ proto.appendNextPage = function( response, path ) {
   } else {
     appendReady();
   }
-
-  this.checkLastPage( response, path );
 };
 
 proto.appendItems = function( items, fragment ) {
@@ -166,25 +165,34 @@ proto.onAppendOutlayer = function( response, path, items ) {
   this.options.outlayer.appended( items );
 };
 
-// -----  ----- //
+// ----- checkLastPage ----- //
 
-// check response for next element, set with path selector
+// check response for next element
 proto.checkLastPage = function( response, path ) {
-  // only works if path is selector
-  var cannotCheck = !this.options.checkLastPage ||
-    !this.isPathSelector;
-  if ( cannotCheck ) {
+  var checkLastPage = this.options.checkLastPage;
+  // get selector from checkLastPage or path option
+  var selector;
+  if ( typeof checkLastPage == 'string' ) {
+    selector = checkLastPage;
+  } else if ( this.isPathSelector ) {
+    selector = this.options.path;
+  }
+  // bail if checkLastPage disabled or no selector or not document response
+  if ( !checkLastPage || !selector || !response.querySelector ) {
     return;
   }
-  var pathElem = response.querySelector( this.options.path );
-  if ( pathElem ) {
-    // page has next element, keep going
+  // check if response has selector
+  var nextElem = response.querySelector( selector );
+  if ( nextElem ) {
+    // page has selector element, keep going
     return;
   }
   // no next selector, last page hit
   this.canLoad = false;
   this.dispatchEvent( 'last', null, [ response, path ] );
 };
+
+// ----- error ----- //
 
 proto.onPageError = function( error, path ) {
   this.isLoading = false;

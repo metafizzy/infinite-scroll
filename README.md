@@ -77,6 +77,8 @@ var infScroll = new InfiniteScroll( '.container', {
 
   checkLastPage: true,
   // Checks if page has path selector element
+  // Set to string if path is not set as selector string:
+  //   checkLastPage: '.pagination__next'
 
   prefill: false,
   // Loads and appends pages on intialization until scroll requirement is met.
