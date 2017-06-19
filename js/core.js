@@ -37,6 +37,7 @@ function InfiniteScroll( element, options ) {
 
   if ( !queryElem ) {
     console.error( 'Bad element for InfiniteScroll: ' + ( queryElem || element ) );
+    return;
   }
   element = queryElem;
   // do not initialize twice on same element
