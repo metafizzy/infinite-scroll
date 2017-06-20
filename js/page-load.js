@@ -106,22 +106,19 @@ proto.appendNextPage = function( response, path ) {
 };
 
 proto.appendItems = function( items, fragment ) {
-  // get fragment if not provided
-  fragment = fragment || getItemsFragment( items );
-  if ( !fragment ) {
+  if ( !items || !items.length ) {
     return;
   }
+  // get fragment if not provided
+  fragment = fragment || getItemsFragment( items );
   refreshScripts( fragment );
   this.element.appendChild( fragment );
 };
 
 function getItemsFragment( items ) {
-  if ( !items || !items.length ) {
-    return;
-  }
   // add items to fragment
   var fragment = document.createDocumentFragment();
-  for ( var i=0; i < items.length; i++ ) {
+  for ( var i=0; items && i < items.length; i++ ) {
     fragment.appendChild( items[i] );
   }
   return fragment;

@@ -5,7 +5,7 @@ QUnit.test( 'outlayer', function( assert ) {
   var msnry, infScroll;
   var demoElem = document.querySelector('.demo--outlayer');
 
-  var done = assert.async( 6 );
+  var done = assert.async( 7 );
 
   imagesLoaded( demoElem, function() {
 
@@ -59,7 +59,26 @@ QUnit.test( 'outlayer', function( assert ) {
   function onLayoutComplete3( items ) {
     assert.equal( items.length, 10, '10 items laid out on page 3' );
     checkItems( items );
-    done();
+    setTimeout( loadNoItems );
+  }
+
+  // check loading no items does not throw error
+  function loadNoItems() {
+    infScroll.destroy();
+    infScroll = new InfiniteScroll( '.demo--outlayer', {
+      path: 'page/outlayer{{#}}.html',
+      append: 'none',
+      outlayer: msnry,
+      history: false,
+      scrollThreshold: false,
+    });
+
+    infScroll.once( 'load', done );
+    infScroll.once( 'append', function( response, path, items ) {
+      assert.equal( items.length, 0, 'appended 0 items' );
+      done();
+    })
+    infScroll.loadNextPage();
   }
 
 });
