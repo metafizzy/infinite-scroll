@@ -16,8 +16,6 @@ body {
   padding-bottom: 400px;
 }
 
-#item-template { display: none; }
-
 .grid-sizer, .grid-item {
   width: 25%;
 }
@@ -47,6 +45,8 @@ body {
 
   <h1>unsplash masonry</h1>
 
+  <p>Loading photos from <a href="https://unsplash.com/developers?utm_source=infinite-scroll-demos&utm_medium=referral&utm_campaign=api-credit">Unsplash API</a></p>
+
   <div class="grid">
     <div class="grid-sizer"></div>
   </div>
@@ -66,9 +66,9 @@ body {
 
 <script type="text/html" id="item-template">
   <div class="grid-item">
-    <img src="{{urls.small}}" />
+    <img src="{{urls.small}}" alt="Photo by {{user.name}}" />
     <p class="grid-item__caption">
-      <a href="{{links.html}}">{{user.name}}</a>
+      <a href="{{user.links.html}}?utm_source=infinite-scroll-demos&utm_medium=referral&utm_campaign=api-credit">{{user.name}}</a>
     </p>
   </div>
 </script>
@@ -96,14 +96,8 @@ var msnry = new Masonry( '.grid', {
   columnWidth: '.grid-sizer',
   percentPosition: true,
   stagger: 30,
-  visibleStyle: {
-    transform: 'translateY(0)',
-    opacity: 1,
-  },
-  hiddenStyle: {
-    transform: 'translateY(100px)',
-    opacity: 0,
-  },
+  visibleStyle: { transform: 'translateY(0)', opacity: 1 },
+  hiddenStyle: { transform: 'translateY(100px)', opacity: 0 },
 });
 
 var infScroll = new InfiniteScroll( '.grid', {
@@ -116,48 +110,24 @@ var infScroll = new InfiniteScroll( '.grid', {
 var proxyDiv = document.createElement('div');
 
 infScroll.on( 'load', function( response ) {
+  // parse response text as JSON
   var data = JSON.parse( response );
-  var itemsHTML = data.map( getItem );
+  // convert data into HTML
+  var itemsHTML = data.map( getItem ).join('');
+  // get elements from HTML string
   proxyDiv.innerHTML = itemsHTML;
-
-  masonryLoad2( proxyDiv )
-
-});
-
-function masonryLoad( response ) {
-  var fragment = document.createDocumentFragment();
-  var items = response.querySelectorAll('.grid-item');
-
-  for ( var i=0; i < items.length; i++ ) {
-    fragment.appendChild( items[i] );
-  }
-
-  imagesLoaded( items, function() {
-    grid.appendChild( fragment );
-    msnry.appended( items );
-  });
-}
-
-
-function masonryLoad2( response ) {
-  var items = response.querySelectorAll('.grid-item');
-
+  var items = proxyDiv.querySelectorAll('.grid-item');
+  // append items after imagesLoaded
   imagesLoaded( items, function() {
     infScroll.appendItems( items );
     msnry.appended( items );
   });
-}
+});
 
-function jQueryLoad( response ) {
-  var $items = $( response ).find('.grid-item');
-  $items.imagesLoaded( function() {
-    $grid.infiniteScroll( 'appendItems', $items )
-      .masonry( 'appended', $items );
-  });
-}
+// load first page
+infScroll.loadNextPage();
 
-
-
+// ----- template ----- //
 
 var itemTemplateSrc = document.querySelector('#item-template').innerHTML;
 
@@ -167,19 +137,16 @@ function getItem( photo ) {
 
 // micro templating, sort-of
 function microTemplate( src, data ) {
-  return src.replace( /\{\{([\w\-\.]+)\}\}/gi, function( match, key ) {
-    var parts = key.split('.');
+  // replace {{tags}} in source
+  return src.replace( /\{\{([\w\-_\.]+)\}\}/gi, function( match, key ) {
+    // walk through objects to get value
     var value = data;
-    for ( var i=0; i < parts.length; i++ ) {
-      var part = parts[i];
+    key.split('.').forEach( function( part ) {
       value = value[ part ];
-    }
+    });
     return value;
   });
 }
-
-// load first page
-infScroll.loadNextPage();
 
 </script>
 

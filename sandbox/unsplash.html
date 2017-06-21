@@ -15,16 +15,18 @@
 
   <h1>unsplash</h1>
 
+  <p>Loading photos from <a href="https://unsplash.com/developers?utm_source=infinite-scroll-demos&utm_medium=referral&utm_campaign=api-credit">Unsplash API</a></p>
+
   <div class="container"></div>
 
-<div id="item-template">
+<script type="text/html" id="item-template">
   <div class="item">
     <img src="{{urls.small}}" />
     <p class="caption">
-      <a href="{{links.html}}">{{user.name}}</a>
+      <a href="{{user.links.html}}?utm_source=infinite-scroll-demos&utm_medium=referral&utm_campaign=api-credit">{{user.name}}</a>
     </p>
   </div>
-</div>
+</script>
 
 <script src="../bower_components/ev-emitter/ev-emitter.js"></script>
 <script src="../bower_components/fizzy-ui-utils/utils.js"></script>

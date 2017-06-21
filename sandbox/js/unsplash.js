@@ -1,7 +1,9 @@
 var container = document.querySelector('.container');
 
+var unsplashID = '9ad80b14098bcead9c7de952435e937cc3723ae61084ba8e729adb642daf0251';
+
 var infScroll = new InfiniteScroll( '.container', {
-  path: 'https://api.unsplash.com/photos?client_id=9ad80b14098bcead9c7de952435e937cc3723ae61084ba8e729adb642daf0251&page={{#}}',
+  path: 'https://api.unsplash.com/photos?page={{#}}&client_id=' + unsplashID,
   responseType: '',
   history: false,
 });
@@ -20,13 +22,13 @@ function getItem( photo ) {
 
 // micro templating, sort-of
 function microTemplate( src, data ) {
-  return src.replace( /\{\{([\w\-\.]+)\}\}/gi, function( match, key ) {
-    var parts = key.split('.');
+  // replace {{tags}} in source
+  return src.replace( /\{\{([\w\-_\.]+)\}\}/gi, function( match, key ) {
+    // walk through objects to get value
     var value = data;
-    for ( var i=0; i < parts.length; i++ ) {
-      var part = parts[i];
+    key.split('.').forEach( function( part ) {
       value = value[ part ];
-    }
+    });
     return value;
   });
 }
