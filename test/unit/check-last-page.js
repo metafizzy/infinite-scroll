@@ -46,7 +46,7 @@ QUnit.test( 'checkLastPage', function( assert ) {
       scrollThreshold: false,
       history: false,
     });
-    
+
     infScroll.on( 'last', onStringLast1 );
     infScroll.once( 'append', onStringAppend1 );
     infScroll.loadNextPage();
@@ -66,6 +66,47 @@ QUnit.test( 'checkLastPage', function( assert ) {
   function loadStringPage3() {
     infScroll.once( 'last', function() {
       assert.ok( true, 'checkLastPage: \'string\', last triggered on 3rd page' );
+      setTimeout( checkPathFunction );
+    });
+
+    infScroll.loadNextPage();
+  }
+
+  // ----- path: function ----- //
+
+  function checkPathFunction() {
+    infScroll.destroy();
+    infScroll = new InfiniteScroll( '.demo--check-last-page', {
+      // provide only page/2.html, then falsy
+      path: function() {
+        if ( this.loadCount === 0 ) {
+          var nextIndex = this.loadCount + 2;
+          return 'page/' + nextIndex + '.html';
+        }
+      },
+      checkLastPage: true,
+      append: '.post',
+      scrollThreshold: false,
+      history: false,
+    });
+
+    infScroll.on( 'last', onFunctionLast2 );
+    infScroll.once( 'append', onFunctionAppend2 );
+
+    infScroll.loadNextPage();
+  }
+
+  function onFunctionLast2() {
+    assert.ok( false, 'last should not trigger on function page 2' );
+  }
+
+  function onFunctionAppend2() {
+    infScroll.off( 'last', onFunctionLast2 );
+
+    infScroll.on( 'last', function( response, path ) {
+      assert.ok( true, 'path: function, last triggered' );
+      assert.ok( response, 'path: function, response there on last' );
+      assert.ok( path, 'path: function, path there on last' );
       done();
     });
 

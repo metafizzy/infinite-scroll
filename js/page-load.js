@@ -167,24 +167,40 @@ proto.onAppendOutlayer = function( response, path, items ) {
 // check response for next element
 proto.checkLastPage = function( response, path ) {
   var checkLastPage = this.options.checkLastPage;
+  if ( !checkLastPage ) {
+    return;
+  }
+
+  var pathOpt = this.options.path;
+  // if path is function, check if next path is truthy
+  if ( typeof pathOpt == 'function' ) {
+    var nextPath = this.getPath();
+    if ( !nextPath ) {
+      this.lastPageReached( response, path );
+      return;
+    }
+  }
   // get selector from checkLastPage or path option
   var selector;
   if ( typeof checkLastPage == 'string' ) {
     selector = checkLastPage;
   } else if ( this.isPathSelector ) {
-    selector = this.options.path;
+    // path option is selector string
+    selector = pathOpt;
   }
-  // bail if checkLastPage disabled or no selector or not document response
-  if ( !checkLastPage || !selector || !response.querySelector ) {
+  // check last page for selector
+  // bail if no selector or not document response
+  if ( !selector || !response.querySelector ) {
     return;
   }
   // check if response has selector
   var nextElem = response.querySelector( selector );
-  if ( nextElem ) {
-    // page has selector element, keep going
-    return;
+  if ( !nextElem ) {
+    this.lastPageReached( response, path );
   }
-  // no next selector, last page hit
+};
+
+proto.lastPageReached = function( response, path ) {
   this.canLoad = false;
   this.dispatchEvent( 'last', null, [ response, path ] );
 };
