@@ -1,0 +1,31 @@
+{
+  "name": "components/jquery-infinite-scroll",
+  "version": "2.1.0",
+  "description": "Infinite Scroll jQuery Plugin",
+  "type": "component",
+  "homepage": "http://www.infinite-scroll.com/infinite-scroll-jquery-plugin",
+  "license": "MIT",
+  "support": {
+    "source": "https://github.com/paulirish/infinite-scroll"
+  },
+  "authors": [
+    {
+      "name": "Paul Irish",
+      "email": "holler@paulirish.com"
+    }
+  ],
+  "require": {
+    "components/jquery": "~1.9",
+    "robloach/component-installer": "*"
+  },
+  "extra": {
+    "component": {
+      "scripts": [
+        "jquery.infinitescroll.js"
+      ],
+      "files": [
+        "jquery.infinitescroll.min.js"
+      ]
+    }
+  }
+}
