@@ -2,11 +2,16 @@
 
 ### Reduced test case required
 
-All bug reports and problem issues require a [**reduced test case**](https://css-tricks.com/reduced-test-cases/) or **live URL**. Create one by forking any one of the [CodePen demos](https://codepen.io/desandro/tag/infinite-scroll-v3-docs) from [the docs](https://infinite-scroll.com).
+All bug reports and problem issues require a [**reduced test case**](https://css-tricks.com/reduced-test-cases/) or **live URL**.
 
 + A reduced test case clearly demonstrates the bug or issue.
 + It contains the bare minimum HTML, CSS, and JavaScript required to demonstrate the bug.
 + A link to your production site is **not** a reduced test case.
+
+Create one by forking any one of the [CodePen demos](https://codepen.io/desandro/tag/infinite-scroll-v3-docs) from [the docs](https://infinite-scroll.com).
+
++ [Scroll & append](https://codepen.io/desandro/pen/WOjqNM)
++ [Scroll & append, vanilla JS](https://codepen.io/desandro/pen/WOpjMM)
 
 Providing a reduced test case is the best way to get your issue addressed. They help you point out the problem. They help me verify and debug the problem. They help others understand the problem. Without a reduced test case or live URL, your issue may be closed.
 

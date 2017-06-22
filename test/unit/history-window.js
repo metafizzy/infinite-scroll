@@ -14,7 +14,7 @@ QUnit.test( 'history window', function( assert ) {
     // debug: true,
   });
 
-  var page1Top = getTop( demoElem );
+  var page1Top = getTop( demoElem ) - 100;
   var page2Top;
   var page3Top;
 

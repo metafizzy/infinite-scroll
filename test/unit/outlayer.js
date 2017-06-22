@@ -77,7 +77,7 @@ QUnit.test( 'outlayer', function( assert ) {
     infScroll.once( 'append', function( response, path, items ) {
       assert.equal( items.length, 0, 'appended 0 items' );
       done();
-    })
+    });
     infScroll.loadNextPage();
   }
 

@@ -1,5 +1,5 @@
 /*!
- * Infinite Scroll PACKAGED v3.0.0-beta.1
+ * Infinite Scroll PACKAGED v3.0.0
  * Automatically add next page
  *
  * Licensed GPLv3 for open source use
@@ -601,6 +601,7 @@ function InfiniteScroll( element, options ) {
 
   if ( !queryElem ) {
     console.error( 'Bad element for InfiniteScroll: ' + ( queryElem || element ) );
+    return;
   }
   element = queryElem;
   // do not initialize twice on same element
@@ -626,6 +627,7 @@ function InfiniteScroll( element, options ) {
 InfiniteScroll.defaults = {
   // path: null,
   // hideNav: null,
+  // debug: false,
 };
 
 // create & destroy methods
@@ -727,7 +729,7 @@ var loggers = {
 
 // log events
 proto.log = function( type, args ) {
-  if ( !this.options.log ) {
+  if ( !this.options.debug ) {
     return;
   }
   var message = '[InfiniteScroll] ' + type;
@@ -1039,6 +1041,7 @@ proto.appendNextPage = function( response, path ) {
     this.appendItems( items, fragment );
     this.isLoading = false;
     this.dispatchEvent( 'append', null, [ response, path, items ] );
+    this.checkLastPage( response, path );
   }.bind( this );
 
   // TODO add hook for option to trigger appendReady
@@ -1047,27 +1050,22 @@ proto.appendNextPage = function( response, path ) {
   } else {
     appendReady();
   }
-
-  this.checkLastPage( response, path );
 };
 
 proto.appendItems = function( items, fragment ) {
-  // get fragment if not provided
-  fragment = fragment || getItemsFragment( items );
-  if ( !fragment ) {
+  if ( !items || !items.length ) {
     return;
   }
+  // get fragment if not provided
+  fragment = fragment || getItemsFragment( items );
   refreshScripts( fragment );
   this.element.appendChild( fragment );
 };
 
 function getItemsFragment( items ) {
-  if ( !items || !items.length ) {
-    return;
-  }
   // add items to fragment
   var fragment = document.createDocumentFragment();
-  for ( var i=0; i < items.length; i++ ) {
+  for ( var i=0; items && i < items.length; i++ ) {
     fragment.appendChild( items[i] );
   }
   return fragment;
@@ -1111,25 +1109,50 @@ proto.onAppendOutlayer = function( response, path, items ) {
   this.options.outlayer.appended( items );
 };
 
-// -----  ----- //
+// ----- checkLastPage ----- //
 
-// check response for next element, set with path selector
+// check response for next element
 proto.checkLastPage = function( response, path ) {
-  // only works if path is selector
-  var cannotCheck = !this.options.checkLastPage ||
-    !this.isPathSelector;
-  if ( cannotCheck ) {
+  var checkLastPage = this.options.checkLastPage;
+  if ( !checkLastPage ) {
     return;
   }
-  var pathElem = response.querySelector( this.options.path );
-  if ( pathElem ) {
-    // page has next element, keep going
+
+  var pathOpt = this.options.path;
+  // if path is function, check if next path is truthy
+  if ( typeof pathOpt == 'function' ) {
+    var nextPath = this.getPath();
+    if ( !nextPath ) {
+      this.lastPageReached( response, path );
+      return;
+    }
+  }
+  // get selector from checkLastPage or path option
+  var selector;
+  if ( typeof checkLastPage == 'string' ) {
+    selector = checkLastPage;
+  } else if ( this.isPathSelector ) {
+    // path option is selector string
+    selector = pathOpt;
+  }
+  // check last page for selector
+  // bail if no selector or not document response
+  if ( !selector || !response.querySelector ) {
     return;
   }
-  // no next selector, last page hit
+  // check if response has selector
+  var nextElem = response.querySelector( selector );
+  if ( !nextElem ) {
+    this.lastPageReached( response, path );
+  }
+};
+
+proto.lastPageReached = function( response, path ) {
   this.canLoad = false;
   this.dispatchEvent( 'last', null, [ response, path ] );
 };
+
+// ----- error ----- //
 
 proto.onPageError = function( error, path ) {
   this.isLoading = false;
@@ -1728,7 +1751,7 @@ return InfiniteScroll;
 }));
 
 /*!
- * Infinite Scroll v3.0.0-beta.1
+ * Infinite Scroll v3.0.0
  * Automatically add next page
  *
  * Licensed GPLv3 for open source use
