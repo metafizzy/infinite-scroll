@@ -92,7 +92,8 @@ proto.createHistoryPageLoad = function() {
   this.on( 'load', this.onPageLoadHistory );
 };
 
-InfiniteScroll.destroy.history = function() {
+InfiniteScroll.destroy.history =
+proto.destroyHistory = function() {
   var isHistoryAppend = this.options.history && this.options.append;
   if ( isHistoryAppend ) {
     this.bindHistoryAppendEvents( false );
@@ -187,6 +188,8 @@ proto.onBeforeunload = function() {
   // calculate where scroll position would be on refresh
   var scrollPage = this.scrollPages[ pageIndex ];
   var scrollY = window.pageYOffset - scrollPage.top + this.top;
+  // disable scroll event before setting scroll #679
+  this.destroyHistory();
   scrollTo( 0, scrollY );
 };
 
