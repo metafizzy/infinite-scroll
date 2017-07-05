@@ -76,7 +76,7 @@ proto.createHistoryAppend = function() {
   this.scrollPageIndex = 0;
   // events
   this.scrollHistoryHandler = this.onScrollHistory.bind( this );
-  this.beforeunloadHandler = this.onBeforeunload.bind( this );
+  this.unloadHandler = this.onUnload.bind( this );
   this.scroller.addEventListener( 'scroll', this.scrollHistoryHandler );
   this.on( 'append', this.onAppendHistory );
   this.bindHistoryAppendEvents( true );
@@ -85,7 +85,7 @@ proto.createHistoryAppend = function() {
 proto.bindHistoryAppendEvents = function( isBind ) {
   var addRemove = isBind ? 'addEventListener' : 'removeEventListener';
   this.scroller[ addRemove ]( 'scroll', this.scrollHistoryHandler );
-  window[ addRemove ]( 'beforeunload', this.beforeunloadHandler );
+  window[ addRemove ]( 'unload', this.unloadHandler );
 };
 
 proto.createHistoryPageLoad = function() {
@@ -180,7 +180,7 @@ proto.setHistory = function( title, path ) {
 
 // scroll to top to prevent initial scroll-reset after page refresh
 // http://stackoverflow.com/a/18633915/182183
-proto.onBeforeunload = function() {
+proto.onUnload = function() {
   var pageIndex = this.scrollPageIndex;
   if ( pageIndex === 0 ) {
     return;
