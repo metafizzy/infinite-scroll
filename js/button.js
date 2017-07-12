@@ -40,7 +40,7 @@ InfiniteScroll.create.button = function() {
 
 InfiniteScroll.destroy.button = function() {
   if ( this.button ) {
-    this.button.destory();
+    this.button.destroy();
   }
 };
 
