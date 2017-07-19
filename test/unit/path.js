@@ -33,4 +33,13 @@ QUnit.test( 'path', function( assert ) {
     'path option set with selector string' );
   infScroll.destroy();
 
+  // path: bad
+  infScroll = new InfiniteScroll( '.demo--path', {
+    path: '.bad-path',
+    scrollThreshold: false,
+    history: false,
+  });
+  assert.ok( true, 'bad path does not throw error' );
+  infScroll.destroy();
+
 });

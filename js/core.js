@@ -92,6 +92,7 @@ proto.create = function() {
   // bail if getPath not set
   if ( !this.getPath ) {
     console.error('Disabling InfiniteScroll');
+    return;
   }
   this.updateGetAbsolutePath();
   this.log( 'initialized', [ this.element.className ] );
