@@ -41,7 +41,7 @@ QUnit.test( 'checkLastPage', function( assert ) {
     infScroll.destroy();
     infScroll = new InfiniteScroll( '.demo--check-last-page', {
       path: 'page/{{#}}.html',
-      checkLastPage: '.next-page-link',
+      checkLastPage: '.check-last-page-next-link',
       append: '.post',
       scrollThreshold: false,
       history: false,
@@ -79,8 +79,8 @@ QUnit.test( 'checkLastPage', function( assert ) {
     infScroll = new InfiniteScroll( '.demo--check-last-page', {
       // provide only page/2.html, then falsy
       path: function() {
-        if ( this.loadCount === 0 ) {
-          var nextIndex = this.loadCount + 2;
+        if ( this.pageIndex < 3 ) {
+          var nextIndex = this.pageIndex + 1;
           return 'page/' + nextIndex + '.html';
         }
       },

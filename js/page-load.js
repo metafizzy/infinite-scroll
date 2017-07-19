@@ -37,6 +37,7 @@ InfiniteScroll.defaults.responseType = 'document';
 InfiniteScroll.create.pageLoad = function() {
   this.canLoad = true;
   this.on( 'scrollThreshold', this.onScrollThresholdLoad );
+  this.on( 'append', this.checkLastPage );
   if ( this.options.outlayer ) {
     this.on( 'append', this.onAppendOutlayer );
   }
@@ -94,7 +95,6 @@ proto.appendNextPage = function( response, path ) {
     this.appendItems( items, fragment );
     this.isLoading = false;
     this.dispatchEvent( 'append', null, [ response, path, items ] );
-    this.checkLastPage( response, path );
   }.bind( this );
 
   // TODO add hook for option to trigger appendReady
@@ -229,6 +229,8 @@ InfiniteScroll.create.prefill = function() {
   this.updateScroller();
   this.isPrefilling = true;
   this.on( 'append', this.prefill );
+  this.once( 'error', this.stopPrefill );
+  this.once( 'last', this.stopPrefill );
   this.prefill();
 };
 
@@ -239,7 +241,7 @@ proto.prefill = function() {
     this.log('prefill');
     this.loadNextPage();
   } else {
-    this.off( 'append', this.prefill );
+    this.stopPrefill();
   }
 };
 
@@ -250,6 +252,11 @@ proto.getPrefillDistance = function() {
   }
   // window
   return this.windowHeight - this.element.clientHeight;
+};
+
+proto.stopPrefill = function() {
+  console.log('stopping prefill');
+  this.off( 'append', this.prefill );
 };
 
 // -------------------------- request -------------------------- //
