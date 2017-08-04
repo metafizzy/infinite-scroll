@@ -1,5 +1,5 @@
 /*!
- * Infinite Scroll PACKAGED v3.0.0
+ * Infinite Scroll PACKAGED v3.0.1
  * Automatically add next page
  *
  * Licensed GPLv3 for open source use
@@ -656,6 +656,7 @@ proto.create = function() {
   // bail if getPath not set
   if ( !this.getPath ) {
     console.error('Disabling InfiniteScroll');
+    return;
   }
   this.updateGetAbsolutePath();
   this.log( 'initialized', [ this.element.className ] );
@@ -984,6 +985,7 @@ InfiniteScroll.defaults.responseType = 'document';
 InfiniteScroll.create.pageLoad = function() {
   this.canLoad = true;
   this.on( 'scrollThreshold', this.onScrollThresholdLoad );
+  this.on( 'append', this.checkLastPage );
   if ( this.options.outlayer ) {
     this.on( 'append', this.onAppendOutlayer );
   }
@@ -1041,7 +1043,6 @@ proto.appendNextPage = function( response, path ) {
     this.appendItems( items, fragment );
     this.isLoading = false;
     this.dispatchEvent( 'append', null, [ response, path, items ] );
-    this.checkLastPage( response, path );
   }.bind( this );
 
   // TODO add hook for option to trigger appendReady
@@ -1176,6 +1177,8 @@ InfiniteScroll.create.prefill = function() {
   this.updateScroller();
   this.isPrefilling = true;
   this.on( 'append', this.prefill );
+  this.once( 'error', this.stopPrefill );
+  this.once( 'last', this.stopPrefill );
   this.prefill();
 };
 
@@ -1186,7 +1189,7 @@ proto.prefill = function() {
     this.log('prefill');
     this.loadNextPage();
   } else {
-    this.off( 'append', this.prefill );
+    this.stopPrefill();
   }
 };
 
@@ -1197,6 +1200,11 @@ proto.getPrefillDistance = function() {
   }
   // window
   return this.windowHeight - this.element.clientHeight;
+};
+
+proto.stopPrefill = function() {
+  console.log('stopping prefill');
+  this.off( 'append', this.prefill );
 };
 
 // -------------------------- request -------------------------- //
@@ -1427,7 +1435,7 @@ proto.createHistoryAppend = function() {
   this.scrollPageIndex = 0;
   // events
   this.scrollHistoryHandler = this.onScrollHistory.bind( this );
-  this.beforeunloadHandler = this.onBeforeunload.bind( this );
+  this.unloadHandler = this.onUnload.bind( this );
   this.scroller.addEventListener( 'scroll', this.scrollHistoryHandler );
   this.on( 'append', this.onAppendHistory );
   this.bindHistoryAppendEvents( true );
@@ -1436,14 +1444,15 @@ proto.createHistoryAppend = function() {
 proto.bindHistoryAppendEvents = function( isBind ) {
   var addRemove = isBind ? 'addEventListener' : 'removeEventListener';
   this.scroller[ addRemove ]( 'scroll', this.scrollHistoryHandler );
-  window[ addRemove ]( 'beforeunload', this.beforeunloadHandler );
+  window[ addRemove ]( 'unload', this.unloadHandler );
 };
 
 proto.createHistoryPageLoad = function() {
   this.on( 'load', this.onPageLoadHistory );
 };
 
-InfiniteScroll.destroy.history = function() {
+InfiniteScroll.destroy.history =
+proto.destroyHistory = function() {
   var isHistoryAppend = this.options.history && this.options.append;
   if ( isHistoryAppend ) {
     this.bindHistoryAppendEvents( false );
@@ -1530,7 +1539,7 @@ proto.setHistory = function( title, path ) {
 
 // scroll to top to prevent initial scroll-reset after page refresh
 // http://stackoverflow.com/a/18633915/182183
-proto.onBeforeunload = function() {
+proto.onUnload = function() {
   var pageIndex = this.scrollPageIndex;
   if ( pageIndex === 0 ) {
     return;
@@ -1538,6 +1547,8 @@ proto.onBeforeunload = function() {
   // calculate where scroll position would be on refresh
   var scrollPage = this.scrollPages[ pageIndex ];
   var scrollY = window.pageYOffset - scrollPage.top + this.top;
+  // disable scroll event before setting scroll #679
+  this.destroyHistory();
   scrollTo( 0, scrollY );
 };
 
@@ -1596,7 +1607,7 @@ InfiniteScroll.create.button = function() {
 
 InfiniteScroll.destroy.button = function() {
   if ( this.button ) {
-    this.button.destory();
+    this.button.destroy();
   }
 };
 
@@ -1751,7 +1762,7 @@ return InfiniteScroll;
 }));
 
 /*!
- * Infinite Scroll v3.0.0
+ * Infinite Scroll v3.0.1
  * Automatically add next page
  *
  * Licensed GPLv3 for open source use
