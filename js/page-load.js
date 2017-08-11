@@ -267,6 +267,9 @@ function request( url, responseType, onLoad, onError ) {
   // set responseType document to return DOM
   req.responseType = responseType || '';
 
+  // set X-Requested-With header to check that is ajax request
+  req.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
   req.onload = function() {
     if ( req.status == 200 ) {
       onLoad( req.response );
