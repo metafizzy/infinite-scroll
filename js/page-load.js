@@ -263,7 +263,7 @@ proto.stopPrefill = function() {
 
 function request( url, responseType, onLoad, onError ) {
   var req = new XMLHttpRequest();
-  req.open( 'GET', url );
+  req.open( 'GET', url, true );
   // set responseType document to return DOM
   req.responseType = responseType || '';
 
