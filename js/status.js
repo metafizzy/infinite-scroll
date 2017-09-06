@@ -48,8 +48,12 @@ InfiniteScroll.create.status = function() {
   this.on( 'request', this.showRequestStatus );
   this.on( 'error', this.showErrorStatus );
   this.on( 'last', this.showLastStatus );
+  this.bindHideStatus('on');
+};
+
+proto.bindHideStatus = function( bindMethod ) {
   var hideEvent = this.options.append ? 'append' : 'load';
-  this.on( hideEvent, this.hideAllStatus );
+  this[ bindMethod ]( hideEvent, this.hideAllStatus );
 };
 
 proto.showRequestStatus = function() {
@@ -62,6 +66,8 @@ proto.showErrorStatus = function() {
 
 proto.showLastStatus = function() {
   this.showStatus('last');
+  // prevent last then append event race condition from showing last status #706
+  this.bindHideStatus('off');
 };
 
 proto.showStatus = function( eventName ) {
