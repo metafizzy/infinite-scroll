@@ -77,21 +77,16 @@
 <script src="../js/scroll-watch.js"></script>
 <script src="../js/page-load.js"></script>
 <script src="../js/history.js"></script>
+<script src="../js/button.js"></script>
 <script>
 var container = document.querySelector('.posts-container');
 var infScroll = new InfiniteScroll( container, {
   path: '.pagination__next',
   append: '.post',
-  historyTitle: true,
+  button: '.load-more-button',
   loadOnScroll: false,
   history: false,
 });
-
-var loadMoreButton = document.querySelector('.load-more-button');
-
-loadMoreButton.onclick = function() {
-  infScroll.loadNextPage();
-};
 
 </script>
 

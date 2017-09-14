@@ -76,7 +76,7 @@ InfiniteScrollButton.prototype.hide = function() {
 };
 
 InfiniteScrollButton.prototype.destroy = function() {
-  this.element.removeEventListener( this.clickHandler );
+  this.element.removeEventListener( 'click', this.clickHandler );
 };
 
 // --------------------------  -------------------------- //
