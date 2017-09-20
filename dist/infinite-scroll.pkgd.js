@@ -1,5 +1,5 @@
 /*!
- * Infinite Scroll PACKAGED v3.0.1
+ * Infinite Scroll PACKAGED v3.0.2
  * Automatically add next page
  *
  * Licensed GPLv3 for open source use
@@ -1211,9 +1211,12 @@ proto.stopPrefill = function() {
 
 function request( url, responseType, onLoad, onError ) {
   var req = new XMLHttpRequest();
-  req.open( 'GET', url );
+  req.open( 'GET', url, true );
   // set responseType document to return DOM
   req.responseType = responseType || '';
+
+  // set X-Requested-With header to check that is ajax request
+  req.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
   req.onload = function() {
     if ( req.status == 200 ) {
@@ -1643,7 +1646,7 @@ InfiniteScrollButton.prototype.hide = function() {
 };
 
 InfiniteScrollButton.prototype.destroy = function() {
-  this.element.removeEventListener( this.clickHandler );
+  this.element.removeEventListener( 'click', this.clickHandler );
 };
 
 // --------------------------  -------------------------- //
@@ -1704,8 +1707,12 @@ InfiniteScroll.create.status = function() {
   this.on( 'request', this.showRequestStatus );
   this.on( 'error', this.showErrorStatus );
   this.on( 'last', this.showLastStatus );
+  this.bindHideStatus('on');
+};
+
+proto.bindHideStatus = function( bindMethod ) {
   var hideEvent = this.options.append ? 'append' : 'load';
-  this.on( hideEvent, this.hideAllStatus );
+  this[ bindMethod ]( hideEvent, this.hideAllStatus );
 };
 
 proto.showRequestStatus = function() {
@@ -1718,6 +1725,8 @@ proto.showErrorStatus = function() {
 
 proto.showLastStatus = function() {
   this.showStatus('last');
+  // prevent last then append event race condition from showing last status #706
+  this.bindHideStatus('off');
 };
 
 proto.showStatus = function( eventName ) {
@@ -1762,7 +1771,7 @@ return InfiniteScroll;
 }));
 
 /*!
- * Infinite Scroll v3.0.1
+ * Infinite Scroll v3.0.2
  * Automatically add next page
  *
  * Licensed GPLv3 for open source use
