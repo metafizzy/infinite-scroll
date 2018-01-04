@@ -37,7 +37,7 @@ InfiniteScroll.defaults.responseType = 'document';
 InfiniteScroll.create.pageLoad = function() {
   this.canLoad = true;
   this.on( 'scrollThreshold', this.onScrollThresholdLoad );
-  this.on( 'append', this.checkLastPage );
+  this.on( 'load', this.checkLastPage );
   if ( this.options.outlayer ) {
     this.on( 'append', this.onAppendOutlayer );
   }
