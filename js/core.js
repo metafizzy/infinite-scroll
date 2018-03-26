@@ -89,8 +89,9 @@ proto.create = function() {
   this.pageIndex = 1; // default to first page
   this.loadCount = 0;
   this.updateGetPath();
-  // bail if getPath not set
-  if ( !this.getPath ) {
+  // bail if getPath not set, or returns falsey #776
+  var hasPath = this.getPath && this.getPath();
+  if ( !hasPath ) {
     console.error('Disabling InfiniteScroll');
     return;
   }
