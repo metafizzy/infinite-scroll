@@ -103,6 +103,10 @@ proto.destroyHistory = function() {
 // ----- append history ----- //
 
 proto.onAppendHistory = function( response, path, items ) {
+  // do not proceed if no items. #779
+  if ( !items || !items.length ) {
+    return;
+  }
   var firstItem = items[0];
   var elemScrollY = this.getElementScrollY( firstItem );
   // resolve path
