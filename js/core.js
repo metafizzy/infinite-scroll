@@ -238,7 +238,7 @@ proto.updateGetPathTemplate = function( optPath ) {
   var match = location.href.match( templateRe );
   if ( match ) {
     this.pageIndex = parseInt( match[1], 10 );
-    this.log( 'pageIndex', this.pageIndex, 'template string' );
+    this.log( 'pageIndex', [ this.pageIndex, 'template string' ] );
   }
 };
 
