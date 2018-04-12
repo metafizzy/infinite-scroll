@@ -1073,12 +1073,16 @@ function getItemsFragment( items ) {
 // <script>s added by InfiniteScroll will not load
 // similar to https://stackoverflow.com/questions/610995
 function refreshScripts( fragment ) {
-  var scripts = fragment.querySelectorAll('script');
   for ( var i=0; i < scripts.length; i++ ) {
-    var script = scripts[i];
-    var freshScript = document.createElement('script');
-    copyAttributes( script, freshScript );
-    script.parentNode.replaceChild( freshScript, script );
+    if(scripts[i]['innerHTML'].length) {
+      eval(scripts[i]['innerHTML']);
+    }
+    else {
+      var script = scripts[i];
+      var freshScript = document.createElement('script');
+      copyAttributes( script, freshScript );
+      script.parentNode.replaceChild( freshScript, script );
+    }
   }
 }
 
