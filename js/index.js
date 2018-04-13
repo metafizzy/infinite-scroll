@@ -1,5 +1,5 @@
 /*!
- * Infinite Scroll v3.0.3
+ * Infinite Scroll v3.0.4
  * Automatically add next page
  *
  * Licensed GPLv3 for open source use

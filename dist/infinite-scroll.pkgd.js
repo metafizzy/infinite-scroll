@@ -1,5 +1,5 @@
 /*!
- * Infinite Scroll PACKAGED v3.0.3
+ * Infinite Scroll PACKAGED v3.0.4
  * Automatically add next page
  *
  * Licensed GPLv3 for open source use
@@ -321,7 +321,7 @@ return EvEmitter;
 }));
 
 /**
- * Fizzy UI utils v2.0.5
+ * Fizzy UI utils v2.0.7
  * MIT license
  */
 
@@ -376,23 +376,27 @@ utils.modulo = function( num, div ) {
 
 // ----- makeArray ----- //
 
+var arraySlice = Array.prototype.slice;
+
 // turn element or nodeList into an array
 utils.makeArray = function( obj ) {
-  var ary = [];
   if ( Array.isArray( obj ) ) {
     // use object if already an array
-    ary = obj;
-  } else if ( obj && typeof obj == 'object' &&
-    typeof obj.length == 'number' ) {
-    // convert nodeList to array
-    for ( var i=0; i < obj.length; i++ ) {
-      ary.push( obj[i] );
-    }
-  } else {
-    // array of single index
-    ary.push( obj );
+    return obj;
   }
-  return ary;
+  // return empty array if undefined or null. #6
+  if ( obj === null || obj === undefined ) {
+    return [];
+  }
+
+  var isArrayLike = typeof obj == 'object' && typeof obj.length == 'number';
+  if ( isArrayLike ) {
+    // convert nodeList to array
+    return arraySlice.call( obj );
+  }
+
+  // array of single index
+  return [ obj ];
 };
 
 // ----- removeFrom ----- //
@@ -471,22 +475,21 @@ utils.filterFindElements = function( elems, selector ) {
 // ----- debounceMethod ----- //
 
 utils.debounceMethod = function( _class, methodName, threshold ) {
+  threshold = threshold || 100;
   // original method
   var method = _class.prototype[ methodName ];
   var timeoutName = methodName + 'Timeout';
 
   _class.prototype[ methodName ] = function() {
     var timeout = this[ timeoutName ];
-    if ( timeout ) {
-      clearTimeout( timeout );
-    }
-    var args = arguments;
+    clearTimeout( timeout );
 
+    var args = arguments;
     var _this = this;
     this[ timeoutName ] = setTimeout( function() {
       method.apply( _this, args );
       delete _this[ timeoutName ];
-    }, threshold || 100 );
+    }, threshold );
   };
 };
 
@@ -650,8 +653,9 @@ proto.create = function() {
   this.pageIndex = 1; // default to first page
   this.loadCount = 0;
   this.updateGetPath();
-  // bail if getPath not set
-  if ( !this.getPath ) {
+  // bail if getPath not set, or returns falsey #776
+  var hasPath = this.getPath && this.getPath();
+  if ( !hasPath ) {
     console.error('Disabling InfiniteScroll');
     return;
   }
@@ -798,7 +802,7 @@ proto.updateGetPathTemplate = function( optPath ) {
   var match = location.href.match( templateRe );
   if ( match ) {
     this.pageIndex = parseInt( match[1], 10 );
-    this.log( 'pageIndex', this.pageIndex, 'template string' );
+    this.log( 'pageIndex', [ this.pageIndex, 'template string' ] );
   }
 };
 
@@ -1078,6 +1082,8 @@ function refreshScripts( fragment ) {
     var script = scripts[i];
     var freshScript = document.createElement('script');
     copyAttributes( script, freshScript );
+    // copy inner script code. #718, #782
+    freshScript.innerHTML = script.innerHTML;
     script.parentNode.replaceChild( freshScript, script );
   }
 }
@@ -1200,7 +1206,7 @@ proto.getPrefillDistance = function() {
 };
 
 proto.stopPrefill = function() {
-  console.log('stopping prefill');
+  this.log('stopPrefill');
   this.off( 'append', this.prefill );
 };
 
@@ -1462,6 +1468,10 @@ proto.destroyHistory = function() {
 // ----- append history ----- //
 
 proto.onAppendHistory = function( response, path, items ) {
+  // do not proceed if no items. #779
+  if ( !items || !items.length ) {
+    return;
+  }
   var firstItem = items[0];
   var elemScrollY = this.getElementScrollY( firstItem );
   // resolve path
@@ -1538,7 +1548,7 @@ proto.setHistory = function( title, path ) {
 };
 
 // scroll to top to prevent initial scroll-reset after page refresh
-// http://stackoverflow.com/a/18633915/182183
+// https://stackoverflow.com/a/18633915/182183
 proto.onUnload = function() {
   var pageIndex = this.scrollPageIndex;
   if ( pageIndex === 0 ) {
@@ -1768,7 +1778,7 @@ return InfiniteScroll;
 }));
 
 /*!
- * Infinite Scroll v3.0.3
+ * Infinite Scroll v3.0.4
  * Automatically add next page
  *
  * Licensed GPLv3 for open source use
