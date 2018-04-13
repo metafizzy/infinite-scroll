@@ -133,6 +133,8 @@ function refreshScripts( fragment ) {
     var script = scripts[i];
     var freshScript = document.createElement('script');
     copyAttributes( script, freshScript );
+    // copy inner script code. #718, #782
+    freshScript.innerHTML = script.innerHTML;
     script.parentNode.replaceChild( freshScript, script );
   }
 }

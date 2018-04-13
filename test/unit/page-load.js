@@ -35,6 +35,7 @@ QUnit.test( 'pageLoad', function( assert ) {
     assert.equal( items.length, 2, 'items argument, length 2' );
     assert.ok( demoElem.children[1] === items[0], 'item0 appended' );
     assert.ok( demoElem.children[2] === items[1], 'item1 appended' );
+    assert.ok( window.page2InlineScriptLoaded, 'inline script executed' );
     done();
     setTimeout( page3 ); // do next thing
   });
@@ -42,6 +43,9 @@ QUnit.test( 'pageLoad', function( assert ) {
   infScroll.loadNextPage();
 
   function page3() {
+    // check async external script, test not working
+    // assert.ok( window.page2ExternalScriptLoaded, 'external script executed' );
+
     infScroll.once( 'request', function( path ) {
       assert.ok( path.match('page/3.html'),
         'request event, path has page/3.html' );

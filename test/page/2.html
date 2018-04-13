@@ -11,9 +11,17 @@
 
   <h1>test page 2</h1>
 
-<div class="post">page 2, post 1</div>
+<div class="post">
+  page 2, post 1
+  <script src="page/2.js"></script>
+</div>
 
-<div class="post">page 2, post 2</div>
+<div class="post">
+  page 2, post 2
+  <script>
+    window.page2InlineScriptLoaded = true;
+  </script>
+</div>
 
 <a class="page-load-next-link check-last-page-next-link" href="3.html">Page 3</a>
 
