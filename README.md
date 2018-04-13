@@ -139,4 +139,4 @@ The Infinite Scroll WordPress plugin will be in development in a separate repo.
 
 ---
 
-By [Metafizzy](http://metafizzy.co)
+By [Metafizzy 🌈🐻](https://metafizzy.co)

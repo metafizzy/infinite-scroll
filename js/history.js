@@ -183,7 +183,7 @@ proto.setHistory = function( title, path ) {
 };
 
 // scroll to top to prevent initial scroll-reset after page refresh
-// http://stackoverflow.com/a/18633915/182183
+// https://stackoverflow.com/a/18633915/182183
 proto.onUnload = function() {
   var pageIndex = this.scrollPageIndex;
   if ( pageIndex === 0 ) {
