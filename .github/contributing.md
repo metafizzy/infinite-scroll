@@ -17,4 +17,12 @@ Providing a reduced test case is the best way to get your issue addressed. They 
 
 ## Pull requests
 
-Contributions are welcome! Please note: your code may be used as part of a commercial product if merged. Be clear about what license applies to your patch. [The MIT license](https://choosealicense.com/licenses/mit/) or [public domain unlicense](https://choosealicense.com/licenses/unlicense/) are permissive, and allow integration of your patch into Flickity as part of a commercial product.
+Contributions are welcome! 
+
++ **For typos and one-line fixes,** send those right in.
++ **For larger features,** open an issue before starting any significant work. Let's discuss to see how your feature fits within Infinite Scroll's vision.
++ **Follow the code style.** Spaces in brackets, semicolons, trailing commas.
++ **Do not edit `infinite-scroll.pkgd.js`.** Make your edits to source files in `js/`.
++ **Do not run `gulp` to update `dist/` files.** I'll take care of this when I create a new release.
+
+Your code will be used as part of a commercial product if merged. By submitting a Pull Request, you are giving your consent for your code to be integrated into Flickity as part of a commercial product. 
