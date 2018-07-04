@@ -332,6 +332,10 @@ proto.destroy = function() {
 
   delete this.element.infiniteScrollGUID;
   delete instances[ this.guid ];
+  // remove jQuery data. #807
+  if ( jQuery && this.$element ) {
+    jQuery.removeData( this.element, 'infiniteScroll' );
+  }
 };
 
 // -------------------------- utilities -------------------------- //
