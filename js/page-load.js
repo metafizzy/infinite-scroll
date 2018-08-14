@@ -65,7 +65,7 @@ proto.loadNextPage = function() {
     this.onPageError( error, path );
   }.bind( this );
 
-  request( path, this.options.responseType, onLoad, onError );
+  request( path, this.options.responseType, onLoad, onError, this.options.request_options );
   this.dispatchEvent( 'request', null, [ path ] );
 };
 
@@ -263,15 +263,36 @@ proto.stopPrefill = function() {
 
 // -------------------------- request -------------------------- //
 
-function request( url, responseType, onLoad, onError ) {
+function request( url, responseType, onLoad, onError, options ) {
   var req = new XMLHttpRequest();
-  req.open( 'GET', url, true );
+  var request_method = typeof options !== 'undefined' && options.request_method ? options.request_method : 'GET';
+  req.open( request_method, url, true );
   // set responseType document to return DOM
   req.responseType = responseType || '';
+
+  // Handle xhr progress and abort
+  if( typeof options !== 'undefined' && options.onProgress && typeof options.onProgress === 'function' ) {
+    req.addEventListener('progress', options.onProgress);
+  }
+
+  if( typeof options !== 'undefined' && options.onAbort && typeof options.onAbort === 'function' ) {
+    req.addEventListener('abort', options.onAbort);
+  }
 
   // set X-Requested-With header to check that is ajax request
   req.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
+  // set additional request headers
+  if( typeof options !== 'undefined' && options.request_headers ) {
+    for( var key in options.request_headers ) {
+      var request_header = typeof options.request_headers[key] === 'function' ? options.request_headers[key].apply(this) : options.request_headers[key];
+      if(key.substring(0,2).toUpperCase() !== 'X-') {
+        key = 'X-' + key;
+      }
+      req.setRequestHeader(key, request_header);
+    }
+  }
+  
   req.onload = function() {
     if ( req.status == 200 ) {
       onLoad( req.response );
@@ -288,7 +309,9 @@ function request( url, responseType, onLoad, onError ) {
     onError( error );
   };
 
-  req.send();
+  var request_body = typeof options !== 'undefined' && options.request_body ? options.request_body : null;
+  
+  req.send(request_body);
 }
 
 // --------------------------  -------------------------- //
