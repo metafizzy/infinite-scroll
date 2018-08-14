@@ -309,7 +309,7 @@ function request( url, responseType, onLoad, onError, options ) {
     onError( error );
   };
 
-  var request_body = typeof options !== 'undefined' && options.request_body ? options.request_body : null;
+  var request_body = typeof options !== 'undefined' && options.request_body ? (typeof options.request_body === 'function' ? options.request_body.apply(this) : options.request_body) : null;
   
   req.send(request_body);
 }
