@@ -1,5 +1,5 @@
 /*!
- * Infinite Scroll PACKAGED v3.0.4
+ * Infinite Scroll PACKAGED v3.0.5
  * Automatically add next page
  *
  * Licensed GPLv3 for open source use
@@ -896,6 +896,10 @@ proto.destroy = function() {
 
   delete this.element.infiniteScrollGUID;
   delete instances[ this.guid ];
+  // remove jQuery data. #807
+  if ( jQuery && this.$element ) {
+    jQuery.removeData( this.element, 'infiniteScroll' );
+  }
 };
 
 // -------------------------- utilities -------------------------- //
@@ -936,6 +940,9 @@ InfiniteScroll.setJQuery = function( $ ) {
 // -------------------------- setup -------------------------- //
 
 utils.htmlInit( InfiniteScroll, 'infinite-scroll' );
+
+// add noop _init method for jQuery Bridget. #768
+proto._init = function() {};
 
 if ( jQuery && jQuery.bridget ) {
   jQuery.bridget( 'infiniteScroll', InfiniteScroll );
@@ -1778,7 +1785,7 @@ return InfiniteScroll;
 }));
 
 /*!
- * Infinite Scroll v3.0.4
+ * Infinite Scroll v3.0.5
  * Automatically add next page
  *
  * Licensed GPLv3 for open source use
