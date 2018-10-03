@@ -38,4 +38,17 @@ QUnit.test( 'pageIndex', function( assert ) {
   assert.equal( infScroll.pageIndex, 8, 'pageIndex from GET param with {{#}}' );
 
   history.replaceState( null, document.title, prevURL );
+
+  infScroll.destroy();
+
+  history.replaceState(null, document.title, 'page?currPage=8');
+  infScroll = new InfiniteScroll( demoElem, {
+    path: 'page\\?currPage={{#}}',
+    history: false,
+    scrollThreshold: false,
+  });
+
+  assert.equal( infScroll.pageIndex, 8, 'pageIndex from GET param with {{#}} and pre-escaped regexp' );
+
+  history.replaceState( null, document.title, prevURL );
 });
