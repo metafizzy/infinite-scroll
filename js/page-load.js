@@ -65,7 +65,11 @@ proto.loadNextPage = function() {
     this.onPageError( error, path );
   }.bind( this );
 
-  request( path, this.options.responseType, onLoad, onError );
+  var onLast = function( response ) {
+    this.lastPageReached( response, path );
+  }.bind( this );
+
+  request( path, this.options.responseType, onLoad, onError, onLast );
   this.dispatchEvent( 'request', null, [ path ] );
 };
 
@@ -263,7 +267,7 @@ proto.stopPrefill = function() {
 
 // -------------------------- request -------------------------- //
 
-function request( url, responseType, onLoad, onError ) {
+function request( url, responseType, onLoad, onError, onLast ) {
   var req = new XMLHttpRequest();
   req.open( 'GET', url, true );
   // set responseType document to return DOM
@@ -275,6 +279,8 @@ function request( url, responseType, onLoad, onError ) {
   req.onload = function() {
     if ( req.status == 200 ) {
       onLoad( req.response );
+    } else if ( req.status == 204 ) {
+      onLast( req.response );
     } else {
       // not 200 OK, error
       var error = new Error( req.statusText );
