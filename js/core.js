@@ -233,9 +233,13 @@ proto.updateGetPathTemplate = function( optPath ) {
   }.bind( this );
   // get pageIndex from location
   // convert path option into regex to look for pattern in location
-  var regexString = optPath.replace( '{{#}}', '(\\d\\d?\\d?)' );
+  // escape query (?) in url, allows for parsing GET parameters 
+  var regexString = optPath
+    .replace(/(?<!\\)\?/, '\\?')
+    .replace( '{{#}}', '(\\d\\d?\\d?)' );
   var templateRe = new RegExp( regexString );
   var match = location.href.match( templateRe );
+
   if ( match ) {
     this.pageIndex = parseInt( match[1], 10 );
     this.log( 'pageIndex', [ this.pageIndex, 'template string' ] );
