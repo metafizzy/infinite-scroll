@@ -299,9 +299,17 @@ proto.updateGetAbsolutePath = function() {
   }
 
   var pathname = location.pathname;
+  // query parameter #829. example.com/?pg=2
+  var isQuery = path.match( /^\?/ );
+  if ( isQuery ) {
+    this.getAbsolutePath = function() {
+      return pathname + this.getPath();
+    };
+    return;
+  }
+
   // /foo/bar/index.html => /foo/bar
   var directory = pathname.substring( 0, pathname.lastIndexOf('/') );
-
   this.getAbsolutePath = function() {
     return directory + '/' + this.getPath();
   };
