@@ -44,13 +44,13 @@ InfiniteScroll.create.pageLoad = function() {
 };
 
 proto.onScrollThresholdLoad = function() {
-  if ( this.options.loadOnScroll ) {
+  if ( this.options.loadOnScroll && this.canLoad ) {
     this.loadNextPage();
   }
 };
 
 proto.loadNextPage = function() {
-  if ( this.isLoading || !this.canLoad ) {
+  if ( this.isLoading ) {
     return;
   }
 
@@ -78,6 +78,7 @@ proto.onPageLoad = function( response, path ) {
   if ( !this.options.append ) {
     this.isLoading = false;
   }
+  this.canLoad = true;
   this.pageIndex++;
   this.loadCount++;
   this.dispatchEvent( 'load', null, [ response, path ] );
