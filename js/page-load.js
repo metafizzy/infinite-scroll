@@ -284,7 +284,7 @@ function request( url, responseType, onLoad, onError, onLast ) {
       onLast( req.response );
     } else {
       // not 200 OK, error
-      var error = new Error( req.statusText );
+      var error = new Error( req.response );
       onError( error );
     }
   };
