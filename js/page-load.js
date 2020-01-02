@@ -31,6 +31,7 @@ var proto = InfiniteScroll.prototype;
 InfiniteScroll.defaults.loadOnScroll = true;
 InfiniteScroll.defaults.checkLastPage = true;
 InfiniteScroll.defaults.responseType = 'document';
+InfiniteScroll.defaults.method = 'GET';
 // InfiniteScroll.defaults.prefill = false;
 // InfiniteScroll.defaults.outlayer = null;
 
@@ -69,7 +70,7 @@ proto.loadNextPage = function() {
     this.lastPageReached( response, path );
   }.bind( this );
 
-  request( path, this.options.responseType, onLoad, onError, onLast );
+  request( path, this.options.responseType, onLoad, onError, onLast , this.options.method, this.options.params );
   this.dispatchEvent( 'request', null, [ path ] );
 };
 
@@ -265,36 +266,69 @@ proto.stopPrefill = function() {
   this.off( 'append', this.prefill );
 };
 
+proto.method = function () {
+  this.log('method');
+};
+
 // -------------------------- request -------------------------- //
+function request( url, responseType, onLoad, onError, onLast, method, params ) {
+  if (typeof params === 'function') {
+    params = params();
+  }
 
-function request( url, responseType, onLoad, onError, onLast ) {
-  var req = new XMLHttpRequest();
-  req.open( 'GET', url, true );
-  // set responseType document to return DOM
-  req.responseType = responseType || '';
-
-  // set X-Requested-With header to check that is ajax request
-  req.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-
-  req.onload = function() {
-    if ( req.status == 200 ) {
-      onLoad( req.response );
-    } else if ( req.status == 204 ) {
-      onLast( req.response );
-    } else {
-      // not 200 OK, error
-      var error = new Error( req.statusText );
-      onError( error );
+  if (typeof params === 'object') {
+      if (params instanceof HTMLFormElement) {
+        params = new FormData(params);
+      } else {
+        params = Object.keys(params).map(function(key) {
+          return key + '=' + params[key];
+        }).join('&');
+      }
+  }
+  // console.log(method);
+  fetch(url, {
+    method: method,
+    headers: { 'Content-type': 'application/x-www-form-urlencoded' },
+    credentials: 'include',
+    body: params
+  }).then(function(response) {
+    var responseData;
+    // console.log(responseType);
+    switch (responseType) {
+      case 'arraybuffer':
+        responseData = response.arrayBuffer();
+        break;
+      case 'blob':
+        responseData = response.blob();
+        break;
+      case 'json':
+        responseData = response.json();
+        break;
+      case 'document':
+        responseData = response.text().then(
+          function(res) {
+            var doc = document.implementation.createHTMLDocument('');
+            doc.open();doc.write(res);doc.close();
+            return Promise.resolve(doc);
+          });
+        break;
+      case 'text':
+      default:
+        responseData = response.text();
+        break;
     }
-  };
+    if (200 === response.status) {
+      return responseData.then(function(res){ onLoad(res);});
+    }
+    if (204 === response.status) {
+      return responseData.then(function(res){ onLast(res);});
+    }
+    var error =  new Error(response.statusText);
+    return onError(error);
 
-  // Handle network errors
-  req.onerror = function() {
-    var error = new Error( 'Network error requesting ' + url );
-    onError( error );
-  };
-
-  req.send();
+  }).catch(function() {
+    return onError(new Error("Network error requesting " + url));
+  });
 }
 
 // --------------------------  -------------------------- //
