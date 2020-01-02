@@ -3,6 +3,7 @@
   "devel": true,
   "unused": true,
   "undef": true,
+  "esversion": 9,
   "globals": {
     "InfiniteScroll": false,
     "QUnit": false

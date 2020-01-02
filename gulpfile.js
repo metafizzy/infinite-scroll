@@ -35,11 +35,11 @@ gulp.task( 'jsonlint', function() {
     .pipe( jsonlint.report('verbose') );
 });
 
-gulp.task( 'hint', [ 'hint-js', 'hint-test', 'hint-task', 'jsonlint' ]);
+gulp.task( 'hint', gulp.series( 'hint-js', 'hint-test', 'hint-task', 'jsonlint' ));
 
 // -------------------------- RequireJS makes pkgd -------------------------- //
 
-var gutil = require('gulp-util');
+var log = require('fancy-log');
 var chalk = require('chalk');
 var rjsOptimize = require('gulp-requirejs-optimize');
 
@@ -94,15 +94,17 @@ gulp.task( 'requirejs', function() {
 
 var uglify = require('gulp-uglify');
 
-gulp.task( 'uglify', [ 'requirejs' ], function() {
+gulp.task( 'uglify-min', function() {
   var banner = getBanner();
-  gulp.src('dist/infinite-scroll.pkgd.js')
+  return gulp.src('dist/infinite-scroll.pkgd.js')
     .pipe( uglify() )
     // add banner
     .pipe( addBanner( banner ) )
     .pipe( rename('infinite-scroll.pkgd.min.js') )
     .pipe( gulp.dest('dist') );
 });
+
+gulp.task( 'uglify', gulp.series( 'requirejs' , 'uglify-min'));
 
 // ----- version ----- //
 
@@ -115,10 +117,10 @@ gulp.task( 'version', function() {
   var args = minimist( process.argv.slice(3) );
   var version = args.t;
   if ( !version || !/\d\.\d\.\d/.test( version ) ) {
-    gutil.log( 'invalid version: ' + chalk.red( version ) );
+    log( 'invalid version: ' + chalk.red( version ) );
     return;
   }
-  gutil.log( 'ticking version to ' + chalk.green( version ) );
+  log( 'ticking version to ' + chalk.green( version ) );
 
   gulp.src('js/index.js')
     .pipe( replace( /Infinite Scroll v\d\.\d+\.\d+/, 'Infinite Scroll v' + version ) )
@@ -131,7 +133,7 @@ gulp.task( 'version', function() {
 
 // ----- default ----- //
 
-gulp.task( 'default', [
+gulp.task( 'default', gulp.series(
   'hint',
-  'uglify',
-]);
+  'uglify'
+));
