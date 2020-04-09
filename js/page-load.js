@@ -65,7 +65,11 @@ proto.loadNextPage = function() {
     this.onPageError( error, path );
   }.bind( this );
 
-  request( path, this.options.responseType, onLoad, onError, this.options.request_options );
+  var onLast = function( response ) {
+    this.lastPageReached( response, path );
+  }.bind( this );
+
+  request( path, this.options.responseType, onLoad, onError, onLast, this.options.request_options );
   this.dispatchEvent( 'request', null, [ path ] );
 };
 
@@ -263,7 +267,7 @@ proto.stopPrefill = function() {
 
 // -------------------------- request -------------------------- //
 
-function request( url, responseType, onLoad, onError, options ) {
+function request( url, responseType, onLoad, onError, onLast, options ) {
   var req = new XMLHttpRequest();
   var request_method = typeof options !== 'undefined' && options.request_method ? options.request_method : 'GET';
   req.open( request_method, url, true );
@@ -296,6 +300,8 @@ function request( url, responseType, onLoad, onError, options ) {
   req.onload = function() {
     if ( req.status == 200 ) {
       onLoad( req.response );
+    } else if ( req.status == 204 ) {
+      onLast( req.response );
     } else {
       // not 200 OK, error
       var error = new Error( req.statusText );
