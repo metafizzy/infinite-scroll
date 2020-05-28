@@ -294,8 +294,6 @@ function request( url, headers, responseType, onLoad, onError, onLast ) {
     }
   };
 
-
-
   // Handle network errors
   req.onerror = function() {
     var error = new Error( 'Network error requesting ' + url );
