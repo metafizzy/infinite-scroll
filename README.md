@@ -128,6 +128,14 @@ var infScroll = new InfiniteScroll( '.container', {
   //   this.on( 'append', function() {...})
   // }
 
+  headers: undefined,
+  // set specific headers on each request
+  // header: function() {
+  //   return [
+  //     ["key", value]
+  //   ]
+  // }
+
   debug: false,
   // Logs events and state changes to the console.
 })

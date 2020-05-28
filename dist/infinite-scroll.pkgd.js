@@ -797,7 +797,7 @@ proto.updateGetPathTemplate = function( optPath ) {
   }.bind( this );
   // get pageIndex from location
   // convert path option into regex to look for pattern in location
-  // escape query (?) in url, allows for parsing GET parameters 
+  // escape query (?) in url, allows for parsing GET parameters
   var regexString = optPath
     .replace( /(\\\?|\?)/, '\\?' )
     .replace( '{{#}}', '(\\d\\d?\\d?)' );
@@ -1037,7 +1037,7 @@ proto.loadNextPage = function() {
     this.lastPageReached( response, path );
   }.bind( this );
 
-  request( path, this.options.responseType, onLoad, onError, onLast );
+  request( path, this.options.headers, this.options.responseType, onLoad, onError, onLast );
   this.dispatchEvent( 'request', null, [ path ] );
 };
 
@@ -1235,7 +1235,7 @@ proto.stopPrefill = function() {
 
 // -------------------------- request -------------------------- //
 
-function request( url, responseType, onLoad, onError, onLast ) {
+function request(url, headers, responseType, onLoad, onError, onLast ) {
   var req = new XMLHttpRequest();
   req.open( 'GET', url, true );
   // set responseType document to return DOM
@@ -1243,6 +1243,12 @@ function request( url, responseType, onLoad, onError, onLast ) {
 
   // set X-Requested-With header to check that is ajax request
   req.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+  if (headers && typeof(headers) === "function") {
+    headers().forEach(function (header) {
+      req.setRequestHeader([header[0]], header[1]);
+    });
+  }
 
   req.onload = function() {
     if ( req.status == 200 ) {
@@ -1717,7 +1723,7 @@ return InfiniteScroll;
     );
   }
 
-}( window, function factory( window, InfiniteScroll, utils ) { 
+}( window, function factory( window, InfiniteScroll, utils ) {
 
 var proto = InfiniteScroll.prototype;
 
