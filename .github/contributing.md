@@ -1,6 +1,6 @@
 ## Submitting issues
 
-### Reduced test case required
+### Reduced masato case required
 
 All bug reports and problem issues require a [**reduced test case**](https://css-tricks.com/reduced-test-cases/) or **live URL**.
 
