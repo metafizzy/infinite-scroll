@@ -1,7 +1,6 @@
 // scroll-watch
 ( function( window, factory ) {
   // universal module definition
-  /* globals define, module, require */
   if ( typeof define == 'function' && define.amd ) {
     // AMD
     define( [
@@ -9,26 +8,26 @@
       'fizzy-ui-utils/utils',
     ], function( InfiniteScroll, utils ) {
       return factory( window, InfiniteScroll, utils );
-    });
+    } );
   } else if ( typeof module == 'object' && module.exports ) {
     // CommonJS
     module.exports = factory(
-      window,
-      require('./core'),
-      require('fizzy-ui-utils')
+        window,
+        require('./core'),
+        require('fizzy-ui-utils'),
     );
   } else {
     // browser global
     factory(
-      window,
-      window.InfiniteScroll,
-      window.fizzyUIUtils
+        window,
+        window.InfiniteScroll,
+        window.fizzyUIUtils,
     );
   }
 
 }( window, function factory( window, InfiniteScroll, utils ) {
 
-var proto = InfiniteScroll.prototype;
+let proto = InfiniteScroll.prototype;
 
 // default options
 InfiniteScroll.defaults.scrollThreshold = 400;
@@ -39,8 +38,8 @@ InfiniteScroll.create.scrollWatch = function() {
   this.pageScrollHandler = this.onPageScroll.bind( this );
   this.resizeHandler = this.onResize.bind( this );
 
-  var scrollThreshold = this.options.scrollThreshold;
-  var isEnable = scrollThreshold || scrollThreshold === 0;
+  let scrollThreshold = this.options.scrollThreshold;
+  let isEnable = scrollThreshold || scrollThreshold === 0;
   if ( isEnable ) {
     this.enableScrollWatch();
   }
@@ -71,17 +70,17 @@ proto.disableScrollWatch = function() {
 };
 
 proto.bindScrollWatchEvents = function( isBind ) {
-  var addRemove = isBind ? 'addEventListener' : 'removeEventListener';
+  let addRemove = isBind ? 'addEventListener' : 'removeEventListener';
   this.scroller[ addRemove ]( 'scroll', this.pageScrollHandler );
   window[ addRemove ]( 'resize', this.resizeHandler );
 };
 
 proto.onPageScroll = InfiniteScroll.throttle( function() {
-  var distance = this.getBottomDistance();
+  let distance = this.getBottomDistance();
   if ( distance <= this.options.scrollThreshold ) {
     this.dispatchEvent('scrollThreshold');
   }
-});
+} );
 
 proto.getBottomDistance = function() {
   if ( this.options.elementScroll ) {
@@ -92,14 +91,14 @@ proto.getBottomDistance = function() {
 };
 
 proto.getWindowBottomDistance = function() {
-  var bottom = this.top + this.element.clientHeight;
-  var scrollY = window.pageYOffset + this.windowHeight;
+  let bottom = this.top + this.element.clientHeight;
+  let scrollY = window.pageYOffset + this.windowHeight;
   return bottom - scrollY;
 };
 
 proto.getElementBottomDistance = function() {
-  var bottom = this.scroller.scrollHeight;
-  var scrollY = this.scroller.scrollTop + this.scroller.clientHeight;
+  let bottom = this.scroller.scrollHeight;
+  let scrollY = this.scroller.scrollTop + this.scroller.clientHeight;
   return bottom - scrollY;
 };
 
@@ -113,4 +112,4 @@ utils.debounceMethod( InfiniteScroll, 'onResize', 150 );
 
 return InfiniteScroll;
 
-}));
+} ) );

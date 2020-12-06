@@ -1,16 +1,16 @@
 QUnit.test( 'path', function( assert ) {
 
   // path: function
-  var infScroll = new InfiniteScroll( '.demo--path', {
+  let infScroll = new InfiniteScroll( '.demo--path', {
     path: function() {
-      var nextIndex = this.loadCount + 1;
+      let nextIndex = this.loadCount + 1;
       return '/fn/page' + nextIndex + '.html';
     },
     scrollThreshold: false,
     history: false,
-  });
+  } );
   assert.equal( infScroll.getPath(), '/fn/page1.html',
-    'path option set with function' );
+      'path option set with function' );
   infScroll.destroy();
 
   // path: string{{#}}
@@ -18,9 +18,9 @@ QUnit.test( 'path', function( assert ) {
     path: '/string/page{{#}}.html',
     scrollThreshold: false,
     history: false,
-  });
+  } );
   assert.equal( infScroll.getPath(), '/string/page2.html',
-    'path option set with {{#}} string' );
+      'path option set with {{#}} string' );
   infScroll.destroy();
 
   // path: selector string
@@ -28,9 +28,9 @@ QUnit.test( 'path', function( assert ) {
     path: '.path-next-link',
     scrollThreshold: false,
     history: false,
-  });
+  } );
   assert.equal( infScroll.getPath(), '/area51/selector/page10.html',
-    'path option set with selector string' );
+      'path option set with selector string' );
   infScroll.destroy();
 
   // path: bad
@@ -38,8 +38,8 @@ QUnit.test( 'path', function( assert ) {
     path: '.bad-path',
     scrollThreshold: false,
     history: false,
-  });
+  } );
   assert.ok( true, 'bad path does not throw error' );
   infScroll.destroy();
 
-});
+} );

@@ -1,18 +1,18 @@
 QUnit.test( 'scrollWatch element', function( assert ) {
 
-  var done = assert.async();
+  let done = assert.async();
 
-  var demoElem = document.querySelector('.demo--scroll-watch-element');
+  let demoElem = document.querySelector('.demo--scroll-watch-element');
 
-  var infScroll = new InfiniteScroll( demoElem, {
+  let infScroll = new InfiniteScroll( demoElem, {
     path: 'page/{{#}}',
     scrollThreshold: 200,
     elementScroll: true,
     loadOnScroll: false,
     history: false,
-  });
+  } );
 
-  var bottom;
+  let bottom;
   function updateBottom() {
     bottom = demoElem.scrollHeight - demoElem.clientHeight;
   }
@@ -29,7 +29,7 @@ QUnit.test( 'scrollWatch element', function( assert ) {
     demoElem.scrollTop = 100;
     // setTimeout to trigger debounced scroll listeners
     setTimeout( step2, 300 );
-  });
+  } );
 
   // scroll close to threshold, but not over
   function step2() {
@@ -44,7 +44,7 @@ QUnit.test( 'scrollWatch element', function( assert ) {
     infScroll.once( 'scrollThreshold', function() {
       assert.ok( true, 'scrollThreshold triggered at bottom' );
       setTimeout( step4, 300 );
-    });
+    } );
     // scroll past threshold
     demoElem.scrollTop = bottom - 150;
   }
@@ -64,7 +64,7 @@ QUnit.test( 'scrollWatch element', function( assert ) {
       assert.ok( true, 'scrollThreshold triggered at new bottom' );
       infScroll.destroy();
       done();
-    });
+    } );
     demoElem.appendChild( getPost() );
     demoElem.appendChild( getPost() );
     updateBottom();
@@ -72,9 +72,9 @@ QUnit.test( 'scrollWatch element', function( assert ) {
   }
 
   function getPost() {
-    var post = document.createElement('div');
+    let post = document.createElement('div');
     post.className = 'post';
     return post;
   }
 
-});
+} );

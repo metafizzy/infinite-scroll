@@ -1,4 +1,4 @@
-/*global requirejs: false*/
+/* global requirejs: false*/
 
 // ---- bower components ---- //
 
@@ -11,7 +11,7 @@
 // ---- pkgd ---- //
 
 requirejs( [
-  '../../dist/infinite-scroll.pkgd.js'
+  '../../dist/infinite-scroll.pkgd.js',
 ], initScroll );
 
 function initScroll( InfiniteScroll ) {
@@ -22,5 +22,5 @@ function initScroll( InfiniteScroll ) {
     status: '.scroll-status',
     debug: true,
     history: false,
-  });
+  } );
 }

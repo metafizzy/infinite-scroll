@@ -1,31 +1,30 @@
 // page-load
 ( function( window, factory ) {
   // universal module definition
-  /* globals define, module, require */
   if ( typeof define == 'function' && define.amd ) {
     // AMD
     define( [
       './core',
     ], function( InfiniteScroll ) {
       return factory( window, InfiniteScroll );
-    });
+    } );
   } else if ( typeof module == 'object' && module.exports ) {
     // CommonJS
     module.exports = factory(
-      window,
-      require('./core')
+        window,
+        require('./core'),
     );
   } else {
     // browser global
     factory(
-      window,
-      window.InfiniteScroll
+        window,
+        window.InfiniteScroll,
     );
   }
 
 }( window, function factory( window, InfiniteScroll ) {
 
-var proto = InfiniteScroll.prototype;
+let proto = InfiniteScroll.prototype;
 
 // InfiniteScroll.defaults.append = false;
 InfiniteScroll.defaults.loadOnScroll = true;
@@ -54,18 +53,18 @@ proto.loadNextPage = function() {
     return;
   }
 
-  var path = this.getAbsolutePath();
+  let path = this.getAbsolutePath();
   this.isLoading = true;
 
-  var onLoad = function( response ) {
+  let onLoad = function( response ) {
     this.onPageLoad( response, path );
   }.bind( this );
 
-  var onError = function( error ) {
+  let onError = function( error ) {
     this.onPageError( error, path );
   }.bind( this );
 
-  var onLast = function( response ) {
+  let onLast = function( response ) {
     this.lastPageReached( response, path );
   }.bind( this );
 
@@ -86,16 +85,16 @@ proto.onPageLoad = function( response, path ) {
 };
 
 proto.appendNextPage = function( response, path ) {
-  var optAppend = this.options.append;
+  let optAppend = this.options.append;
   // do not append json
-  var isDocument = this.options.responseType == 'document';
+  let isDocument = this.options.responseType == 'document';
   if ( !isDocument || !optAppend ) {
     return;
   }
 
-  var items = response.querySelectorAll( optAppend );
-  var fragment = getItemsFragment( items );
-  var appendReady = function () {
+  let items = response.querySelectorAll( optAppend );
+  let fragment = getItemsFragment( items );
+  let appendReady = function() {
     this.appendItems( items, fragment );
     this.isLoading = false;
     this.dispatchEvent( 'append', null, [ response, path, items ] );
@@ -121,9 +120,11 @@ proto.appendItems = function( items, fragment ) {
 
 function getItemsFragment( items ) {
   // add items to fragment
-  var fragment = document.createDocumentFragment();
-  for ( var i=0; items && i < items.length; i++ ) {
-    fragment.appendChild( items[i] );
+  let fragment = document.createDocumentFragment();
+  if ( items ) {
+    for ( let i = 0; i < items.length; i++ ) {
+      fragment.appendChild( items[i] );
+    }
   }
   return fragment;
 }
@@ -132,10 +133,10 @@ function getItemsFragment( items ) {
 // <script>s added by InfiniteScroll will not load
 // similar to https://stackoverflow.com/questions/610995
 function refreshScripts( fragment ) {
-  var scripts = fragment.querySelectorAll('script');
-  for ( var i=0; i < scripts.length; i++ ) {
-    var script = scripts[i];
-    var freshScript = document.createElement('script');
+  let scripts = fragment.querySelectorAll('script');
+  for ( let i = 0; i < scripts.length; i++ ) {
+    let script = scripts[i];
+    let freshScript = document.createElement('script');
     copyAttributes( script, freshScript );
     // copy inner script code. #718, #782
     freshScript.innerHTML = script.innerHTML;
@@ -144,9 +145,9 @@ function refreshScripts( fragment ) {
 }
 
 function copyAttributes( fromNode, toNode ) {
-  var attrs = fromNode.attributes;
-  for ( var i=0; i < attrs.length; i++ ) {
-    var attr = attrs[i];
+  let attrs = fromNode.attributes;
+  for ( let i = 0; i < attrs.length; i++ ) {
+    let attr = attrs[i];
     toNode.setAttribute( attr.name, attr.value );
   }
 }
@@ -154,7 +155,7 @@ function copyAttributes( fromNode, toNode ) {
 // ----- outlayer ----- //
 
 proto.appendOutlayerItems = function( fragment, appendReady ) {
-  var imagesLoaded = InfiniteScroll.imagesLoaded || window.imagesLoaded;
+  let imagesLoaded = InfiniteScroll.imagesLoaded || window.imagesLoaded;
   if ( !imagesLoaded ) {
     console.error('[InfiniteScroll] imagesLoaded required for outlayer option');
     this.isLoading = false;
@@ -172,22 +173,22 @@ proto.onAppendOutlayer = function( response, path, items ) {
 
 // check response for next element
 proto.checkLastPage = function( response, path ) {
-  var checkLastPage = this.options.checkLastPage;
+  let checkLastPage = this.options.checkLastPage;
   if ( !checkLastPage ) {
     return;
   }
 
-  var pathOpt = this.options.path;
+  let pathOpt = this.options.path;
   // if path is function, check if next path is truthy
   if ( typeof pathOpt == 'function' ) {
-    var nextPath = this.getPath();
+    let nextPath = this.getPath();
     if ( !nextPath ) {
       this.lastPageReached( response, path );
       return;
     }
   }
   // get selector from checkLastPage or path option
-  var selector;
+  let selector;
   if ( typeof checkLastPage == 'string' ) {
     selector = checkLastPage;
   } else if ( this.isPathSelector ) {
@@ -200,7 +201,7 @@ proto.checkLastPage = function( response, path ) {
     return;
   }
   // check if response has selector
-  var nextElem = response.querySelector( selector );
+  let nextElem = response.querySelector( selector );
   if ( !nextElem ) {
     this.lastPageReached( response, path );
   }
@@ -226,7 +227,7 @@ InfiniteScroll.create.prefill = function() {
   if ( !this.options.prefill ) {
     return;
   }
-  var append = this.options.append;
+  let append = this.options.append;
   if ( !append ) {
     console.error( 'append option required for prefill. Set as :' + append );
     return;
@@ -241,7 +242,7 @@ InfiniteScroll.create.prefill = function() {
 };
 
 proto.prefill = function() {
-  var distance = this.getPrefillDistance();
+  let distance = this.getPrefillDistance();
   this.isPrefilling = distance >= 0;
   if ( this.isPrefilling ) {
     this.log('prefill');
@@ -267,14 +268,15 @@ proto.stopPrefill = function() {
 
 // -------------------------- request -------------------------- //
 
+/* eslint-disable-next-line max-params */
 function request( url, responseType, onLoad, onError, onLast ) {
-  var req = new XMLHttpRequest();
+  let req = new XMLHttpRequest();
   req.open( 'GET', url, true );
   // set responseType document to return DOM
   req.responseType = responseType || '';
 
   // set X-Requested-With header to check that is ajax request
-  req.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+  req.setRequestHeader( 'X-Requested-With', 'XMLHttpRequest' );
 
   req.onload = function() {
     if ( req.status == 200 ) {
@@ -283,14 +285,14 @@ function request( url, responseType, onLoad, onError, onLast ) {
       onLast( req.response );
     } else {
       // not 200 OK, error
-      var error = new Error( req.statusText );
+      let error = new Error( req.statusText );
       onError( error );
     }
   };
 
   // Handle network errors
   req.onerror = function() {
-    var error = new Error( 'Network error requesting ' + url );
+    let error = new Error( 'Network error requesting ' + url );
     onError( error );
   };
 
@@ -301,4 +303,4 @@ function request( url, responseType, onLoad, onError, onLast ) {
 
 return InfiniteScroll;
 
-}));
+} ) );

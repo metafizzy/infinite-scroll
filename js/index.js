@@ -11,7 +11,6 @@
 
 ( function( window, factory ) {
   // universal module definition
-  /* globals define, module, require */
   if ( typeof define == 'function' && define.amd ) {
     // AMD
     define( [
@@ -25,15 +24,15 @@
   } else if ( typeof module == 'object' && module.exports ) {
     // CommonJS
     module.exports = factory(
-      require('./core'),
-      require('./page-load'),
-      require('./scroll-watch'),
-      require('./history'),
-      require('./button'),
-      require('./status')
+        require('./core'),
+        require('./page-load'),
+        require('./scroll-watch'),
+        require('./history'),
+        require('./button'),
+        require('./status'),
     );
   }
 
-})( window, function factory( InfiniteScroll ) {
+} )( window, function factory( InfiniteScroll ) {
   return InfiniteScroll;
-});
+} );

@@ -1,7 +1,6 @@
 // history
 ( function( window, factory ) {
   // universal module definition
-  /* globals define, module, require */
   if ( typeof define == 'function' && define.amd ) {
     // AMD
     define( [
@@ -9,31 +8,31 @@
       'fizzy-ui-utils/utils',
     ], function( InfiniteScroll, utils ) {
       return factory( window, InfiniteScroll, utils );
-    });
+    } );
   } else if ( typeof module == 'object' && module.exports ) {
     // CommonJS
     module.exports = factory(
-      window,
-      require('./core'),
-      require('fizzy-ui-utils')
+        window,
+        require('./core'),
+        require('fizzy-ui-utils'),
     );
   } else {
     // browser global
     factory(
-      window,
-      window.InfiniteScroll,
-      window.fizzyUIUtils
+        window,
+        window.InfiniteScroll,
+        window.fizzyUIUtils,
     );
   }
 
 }( window, function factory( window, InfiniteScroll, utils ) {
 
-var proto = InfiniteScroll.prototype;
+let proto = InfiniteScroll.prototype;
 
 InfiniteScroll.defaults.history = 'replace';
 // InfiniteScroll.defaults.historyTitle = false;
 
-var link = document.createElement('a');
+let link = document.createElement('a');
 
 // ----- create/destroy ----- //
 
@@ -43,9 +42,10 @@ InfiniteScroll.create.history = function() {
   }
   // check for same origin
   link.href = this.getAbsolutePath();
-  // MS Edge does not have origin on link https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/12236493/
-  var linkOrigin = link.origin || link.protocol + '//' + link.host;
-  var isSameOrigin = linkOrigin == location.origin;
+  // MS Edge does not have origin on link
+  // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/12236493/
+  let linkOrigin = link.origin || link.protocol + '//' + link.host;
+  let isSameOrigin = linkOrigin == location.origin;
   if ( !isSameOrigin ) {
     console.error( '[InfiniteScroll] cannot set history with different origin: ' +
       link.origin + ' on ' + location.origin +
@@ -71,7 +71,7 @@ proto.createHistoryAppend = function() {
       top: 0,
       path: location.href,
       title: document.title,
-    }
+    },
   ];
   this.scrollPageIndex = 0;
   // events
@@ -83,7 +83,7 @@ proto.createHistoryAppend = function() {
 };
 
 proto.bindHistoryAppendEvents = function( isBind ) {
-  var addRemove = isBind ? 'addEventListener' : 'removeEventListener';
+  let addRemove = isBind ? 'addEventListener' : 'removeEventListener';
   this.scroller[ addRemove ]( 'scroll', this.scrollHistoryHandler );
   window[ addRemove ]( 'unload', this.unloadHandler );
 };
@@ -94,7 +94,7 @@ proto.createHistoryPageLoad = function() {
 
 InfiniteScroll.destroy.history =
 proto.destroyHistory = function() {
-  var isHistoryAppend = this.options.history && this.options.append;
+  let isHistoryAppend = this.options.history && this.options.append;
   if ( isHistoryAppend ) {
     this.bindHistoryAppendEvents( false );
   }
@@ -107,8 +107,8 @@ proto.onAppendHistory = function( response, path, items ) {
   if ( !items || !items.length ) {
     return;
   }
-  var firstItem = items[0];
-  var elemScrollY = this.getElementScrollY( firstItem );
+  let firstItem = items[0];
+  let elemScrollY = this.getElementScrollY( firstItem );
   // resolve path
   link.href = path;
   // add page data to hash
@@ -128,7 +128,7 @@ proto.getElementScrollY = function( elem ) {
 };
 
 proto.getElementWindowScrollY = function( elem ) {
-  var rect = elem.getBoundingClientRect();
+  let rect = elem.getBoundingClientRect();
   return rect.top + window.pageYOffset;
 };
 
@@ -139,10 +139,10 @@ proto.getElementElementScrollY = function( elem ) {
 
 proto.onScrollHistory = function() {
   // cycle through positions, find biggest without going over
-  var scrollViewY = this.getScrollViewY();
-  var pageIndex, page;
-  for ( var i=0; i < this.scrollPages.length; i++ ) {
-    var scrollPage = this.scrollPages[i];
+  let scrollViewY = this.getScrollViewY();
+  let pageIndex, page;
+  for ( let i = 0; i < this.scrollPages.length; i++ ) {
+    let scrollPage = this.scrollPages[i];
     if ( scrollPage.top >= scrollViewY ) {
       break;
     }
@@ -160,15 +160,15 @@ utils.debounceMethod( InfiniteScroll, 'onScrollHistory', 150 );
 
 proto.getScrollViewY = function() {
   if ( this.options.elementScroll ) {
-    return this.scroller.scrollTop + this.scroller.clientHeight/2;
+    return this.scroller.scrollTop + this.scroller.clientHeight / 2;
   } else {
-    return window.pageYOffset + this.windowHeight/2;
+    return window.pageYOffset + this.windowHeight / 2;
   }
 };
 
 proto.setHistory = function( title, path ) {
-  var optHistory = this.options.history;
-  var historyMethod = optHistory && history[ optHistory + 'State' ];
+  let optHistory = this.options.history;
+  let historyMethod = optHistory && history[ optHistory + 'State' ];
   if ( !historyMethod ) {
     return;
   }
@@ -185,13 +185,13 @@ proto.setHistory = function( title, path ) {
 // scroll to top to prevent initial scroll-reset after page refresh
 // https://stackoverflow.com/a/18633915/182183
 proto.onUnload = function() {
-  var pageIndex = this.scrollPageIndex;
+  let pageIndex = this.scrollPageIndex;
   if ( pageIndex === 0 ) {
     return;
   }
   // calculate where scroll position would be on refresh
-  var scrollPage = this.scrollPages[ pageIndex ];
-  var scrollY = window.pageYOffset - scrollPage.top + this.top;
+  let scrollPage = this.scrollPages[ pageIndex ];
+  let scrollY = window.pageYOffset - scrollPage.top + this.top;
   // disable scroll event before setting scroll #679
   this.destroyHistory();
   scrollTo( 0, scrollY );
@@ -208,4 +208,4 @@ proto.onPageLoadHistory = function( response, path ) {
 
 return InfiniteScroll;
 
-}));
+} ) );

@@ -1,7 +1,6 @@
 // status
 ( function( window, factory ) {
   // universal module definition
-  /* globals define, module, require */
   if ( typeof define == 'function' && define.amd ) {
     // AMD
     define( [
@@ -9,31 +8,31 @@
       'fizzy-ui-utils/utils',
     ], function( InfiniteScroll, utils ) {
       return factory( window, InfiniteScroll, utils );
-    });
+    } );
   } else if ( typeof module == 'object' && module.exports ) {
     // CommonJS
     module.exports = factory(
-      window,
-      require('./core'),
-      require('fizzy-ui-utils')
+        window,
+        require('./core'),
+        require('fizzy-ui-utils'),
     );
   } else {
     // browser global
     factory(
-      window,
-      window.InfiniteScroll,
-      window.fizzyUIUtils
+        window,
+        window.InfiniteScroll,
+        window.fizzyUIUtils,
     );
   }
 
-}( window, function factory( window, InfiniteScroll, utils ) { 
+}( window, function factory( window, InfiniteScroll, utils ) {
 
-var proto = InfiniteScroll.prototype;
+let proto = InfiniteScroll.prototype;
 
 // InfiniteScroll.defaults.status = null;
 
 InfiniteScroll.create.status = function() {
-  var statusElem = utils.getQueryElement( this.options.status );
+  let statusElem = utils.getQueryElement( this.options.status );
   if ( !statusElem ) {
     return;
   }
@@ -52,7 +51,7 @@ InfiniteScroll.create.status = function() {
 };
 
 proto.bindHideStatus = function( bindMethod ) {
-  var hideEvent = this.options.append ? 'append' : 'load';
+  let hideEvent = this.options.append ? 'append' : 'load';
   this[ bindMethod ]( hideEvent, this.hideAllStatus );
 };
 
@@ -73,7 +72,7 @@ proto.showLastStatus = function() {
 proto.showStatus = function( eventName ) {
   show( this.statusElement );
   this.hideStatusEventElements();
-  var eventElem = this.statusEventElements[ eventName ];
+  let eventElem = this.statusEventElements[ eventName ];
   show( eventElem );
 };
 
@@ -83,8 +82,8 @@ proto.hideAllStatus = function() {
 };
 
 proto.hideStatusEventElements = function() {
-  for ( var type in this.statusEventElements ) {
-    var eventElem = this.statusEventElements[ type ];
+  for ( let type in this.statusEventElements ) {
+    let eventElem = this.statusEventElements[ type ];
     hide( eventElem );
   }
 };
@@ -109,4 +108,4 @@ function setDisplay( elem, value ) {
 
 return InfiniteScroll;
 
-}));
+} ) );

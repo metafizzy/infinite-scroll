@@ -1,39 +1,38 @@
 // core
 ( function( window, factory ) {
   // universal module definition
-  /* globals define, module, require */
   if ( typeof define == 'function' && define.amd ) {
     // AMD
     define( [
       'ev-emitter/ev-emitter',
       'fizzy-ui-utils/utils',
-    ], function( EvEmitter, utils) {
+    ], function( EvEmitter, utils ) {
       return factory( window, EvEmitter, utils );
-    });
+    } );
   } else if ( typeof module == 'object' && module.exports ) {
     // CommonJS
     module.exports = factory(
-      window,
-      require('ev-emitter'),
-      require('fizzy-ui-utils')
+        window,
+        require('ev-emitter'),
+        require('fizzy-ui-utils'),
     );
   } else {
     // browser global
     window.InfiniteScroll = factory(
-      window,
-      window.EvEmitter,
-      window.fizzyUIUtils
+        window,
+        window.EvEmitter,
+        window.fizzyUIUtils,
     );
   }
 
 }( window, function factory( window, EvEmitter, utils ) {
 
-var jQuery = window.jQuery;
+let jQuery = window.jQuery;
 // internal store of all InfiniteScroll intances
-var instances = {};
+let instances = {};
 
 function InfiniteScroll( element, options ) {
-  var queryElem = utils.getQueryElement( element );
+  let queryElem = utils.getQueryElement( element );
 
   if ( !queryElem ) {
     console.error( 'Bad element for InfiniteScroll: ' + ( queryElem || element ) );
@@ -42,7 +41,7 @@ function InfiniteScroll( element, options ) {
   element = queryElem;
   // do not initialize twice on same element
   if ( element.infiniteScrollGUID ) {
-    var instance = instances[ element.infiniteScrollGUID ];
+    let instance = instances[ element.infiniteScrollGUID ];
     instance.option( options );
     return instance;
   }
@@ -70,19 +69,19 @@ InfiniteScroll.defaults = {
 InfiniteScroll.create = {};
 InfiniteScroll.destroy = {};
 
-var proto = InfiniteScroll.prototype;
+let proto = InfiniteScroll.prototype;
 // inherit EvEmitter
 utils.extend( proto, EvEmitter.prototype );
 
 // --------------------------  -------------------------- //
 
 // globally unique identifiers
-var GUID = 0;
+let GUID = 0;
 
 proto.create = function() {
   // create core
   // add id for InfiniteScroll.data
-  var id = this.guid = ++GUID;
+  let id = this.guid = ++GUID;
   this.element.infiniteScrollGUID = id; // expando
   instances[ id ] = this; // associate via id
   // properties
@@ -90,7 +89,7 @@ proto.create = function() {
   this.loadCount = 0;
   this.updateGetPath();
   // bail if getPath not set, or returns falsey #776
-  var hasPath = this.getPath && this.getPath();
+  let hasPath = this.getPath && this.getPath();
   if ( !hasPath ) {
     console.error('Disabling InfiniteScroll');
     return;
@@ -99,7 +98,7 @@ proto.create = function() {
   this.log( 'initialized', [ this.element.className ] );
   this.callOnInit();
   // create features
-  for ( var method in InfiniteScroll.create ) {
+  for ( let method in InfiniteScroll.create ) {
     InfiniteScroll.create[ method ].call( this );
   }
 };
@@ -110,7 +109,7 @@ proto.option = function( opts ) {
 
 // call onInit option, used for binding events on init
 proto.callOnInit = function() {
-  var onInit = this.options.onInit;
+  let onInit = this.options.onInit;
   if ( onInit ) {
     onInit.call( this, this );
   }
@@ -120,7 +119,7 @@ proto.callOnInit = function() {
 
 proto.dispatchEvent = function( type, event, args ) {
   this.log( type, args );
-  var emitArgs = event ? [ event ].concat( args ) : args;
+  let emitArgs = event ? [ event ].concat( args ) : args;
   this.emitEvent( type, emitArgs );
   // trigger jQuery event
   if ( !jQuery || !this.$element ) {
@@ -128,17 +127,18 @@ proto.dispatchEvent = function( type, event, args ) {
   }
   // namespace jQuery event
   type += '.infiniteScroll';
-  var $event = type;
+  let $event = type;
   if ( event ) {
     // create jQuery event
-    var jQEvent = jQuery.Event( event );
+    /* eslint-disable-next-line new-cap */
+    let jQEvent = jQuery.Event( event );
     jQEvent.type = type;
     $event = jQEvent;
   }
   this.$element.trigger( $event, args );
 };
 
-var loggers = {
+let loggers = {
   initialized: function( className ) {
     return 'on ' + className;
   },
@@ -170,8 +170,8 @@ proto.log = function( type, args ) {
   if ( !this.options.debug ) {
     return;
   }
-  var message = '[InfiniteScroll] ' + type;
-  var logger = loggers[ type ];
+  let message = '[InfiniteScroll] ' + type;
+  let logger = loggers[ type ];
   if ( logger ) {
     message += '. ' + logger.apply( this, args );
   }
@@ -182,12 +182,12 @@ proto.log = function( type, args ) {
 
 proto.updateMeasurements = function() {
   this.windowHeight = window.innerHeight;
-  var rect = this.element.getBoundingClientRect();
+  let rect = this.element.getBoundingClientRect();
   this.top = rect.top + window.pageYOffset;
 };
 
 proto.updateScroller = function() {
-  var elementScroll = this.options.elementScroll;
+  let elementScroll = this.options.elementScroll;
   if ( !elementScroll ) {
     // default, use window
     this.scroller = window;
@@ -197,26 +197,26 @@ proto.updateScroller = function() {
   this.scroller = elementScroll === true ? this.element :
     utils.getQueryElement( elementScroll );
   if ( !this.scroller ) {
-    throw 'Unable to find elementScroll: ' + elementScroll;
+    throw new Error( 'Unable to find elementScroll: ' + elementScroll );
   }
 };
 
 // -------------------------- page path -------------------------- //
 
 proto.updateGetPath = function() {
-  var optPath = this.options.path;
+  let optPath = this.options.path;
   if ( !optPath ) {
     console.error( 'InfiniteScroll path option required. Set as: ' + optPath );
     return;
   }
   // function
-  var type = typeof optPath;
+  let type = typeof optPath;
   if ( type == 'function' ) {
     this.getPath = optPath;
     return;
   }
   // template string: '/pages/{{#}}.html'
-  var templateMatch = type == 'string' && optPath.match('{{#}}');
+  let templateMatch = type == 'string' && optPath.match('{{#}}');
   if ( templateMatch ) {
     this.updateGetPathTemplate( optPath );
     return;
@@ -228,17 +228,17 @@ proto.updateGetPath = function() {
 proto.updateGetPathTemplate = function( optPath ) {
   // set getPath with template string
   this.getPath = function() {
-    var nextIndex = this.pageIndex + 1;
+    let nextIndex = this.pageIndex + 1;
     return optPath.replace( '{{#}}', nextIndex );
   }.bind( this );
   // get pageIndex from location
   // convert path option into regex to look for pattern in location
-  // escape query (?) in url, allows for parsing GET parameters 
-  var regexString = optPath
+  // escape query (?) in url, allows for parsing GET parameters
+  let regexString = optPath
     .replace( /(\\\?|\?)/, '\\?' )
     .replace( '{{#}}', '(\\d\\d?\\d?)' );
-  var templateRe = new RegExp( regexString );
-  var match = location.href.match( templateRe );
+  let templateRe = new RegExp( regexString );
+  let match = location.href.match( templateRe );
 
   if ( match ) {
     this.pageIndex = parseInt( match[1], 10 );
@@ -246,7 +246,7 @@ proto.updateGetPathTemplate = function( optPath ) {
   }
 };
 
-var pathRegexes = [
+let pathRegexes = [
   // WordPress & Tumblr - example.com/page/2
   // Jekyll - example.com/page2
   /^(.*?\/?page\/?)(\d\d?\d?)(.*?$)/,
@@ -258,21 +258,23 @@ var pathRegexes = [
 
 proto.updateGetPathSelector = function( optPath ) {
   // parse href of link: '.next-page-link'
-  var hrefElem = document.querySelector( optPath );
+  let hrefElem = document.querySelector( optPath );
   if ( !hrefElem ) {
     console.error( 'Bad InfiniteScroll path option. Next link not found: ' +
       optPath );
     return;
   }
-  var href = hrefElem.getAttribute('href');
+  let href = hrefElem.getAttribute('href');
   // try matching href to pathRegexes patterns
-  var pathParts, regex;
-  for ( var i=0; href && i < pathRegexes.length; i++ ) {
-    regex = pathRegexes[i];
-    var match = href.match( regex );
-    if ( match ) {
-      pathParts = match.slice(1); // remove first part
-      break;
+  let pathParts, regex;
+  if ( href ) {
+    for ( let i = 0; i < pathRegexes.length; i++ ) {
+      regex = pathRegexes[i];
+      let match = href.match( regex );
+      if ( match ) {
+        pathParts = match.slice( 1 ); // remove first part
+        break;
+      }
     }
   }
   if ( !pathParts ) {
@@ -281,7 +283,7 @@ proto.updateGetPathSelector = function( optPath ) {
   }
   this.isPathSelector = true; // flag for checkLastPage()
   this.getPath = function() {
-    var nextIndex = this.pageIndex + 1;
+    let nextIndex = this.pageIndex + 1;
     return pathParts[0] + nextIndex + pathParts[2];
   }.bind( this );
   // get pageIndex from href
@@ -290,17 +292,17 @@ proto.updateGetPathSelector = function( optPath ) {
 };
 
 proto.updateGetAbsolutePath = function() {
-  var path = this.getPath();
+  let path = this.getPath();
   // path doesn't start with http or /
-  var isAbsolute = path.match( /^http/ ) || path.match( /^\// );
+  let isAbsolute = path.match( /^http/ ) || path.match( /^\// );
   if ( isAbsolute ) {
     this.getAbsolutePath = this.getPath;
     return;
   }
 
-  var pathname = location.pathname;
+  let pathname = location.pathname;
   // query parameter #829. example.com/?pg=2
-  var isQuery = path.match( /^\?/ );
+  let isQuery = path.match( /^\?/ );
   if ( isQuery ) {
     this.getAbsolutePath = function() {
       return pathname + this.getPath();
@@ -309,7 +311,7 @@ proto.updateGetAbsolutePath = function() {
   }
 
   // /foo/bar/index.html => /foo/bar
-  var directory = pathname.substring( 0, pathname.lastIndexOf('/') );
+  let directory = pathname.substring( 0, pathname.lastIndexOf('/') );
   this.getAbsolutePath = function() {
     return directory + '/' + this.getPath();
   };
@@ -319,7 +321,7 @@ proto.updateGetAbsolutePath = function() {
 
 // hide navigation
 InfiniteScroll.create.hideNav = function() {
-  var nav = utils.getQueryElement( this.options.hideNav );
+  let nav = utils.getQueryElement( this.options.hideNav );
   if ( !nav ) {
     return;
   }
@@ -338,7 +340,7 @@ InfiniteScroll.destroy.hideNav = function() {
 proto.destroy = function() {
   this.allOff(); // remove all event listeners
   // call destroy methods
-  for ( var method in InfiniteScroll.destroy ) {
+  for ( let method in InfiniteScroll.destroy ) {
     InfiniteScroll.destroy[ method ].call( this );
   }
 
@@ -355,12 +357,12 @@ proto.destroy = function() {
 // https://remysharp.com/2010/07/21/throttling-function-calls
 InfiniteScroll.throttle = function( fn, threshold ) {
   threshold = threshold || 200;
-  var last, timeout;
+  let last, timeout;
 
   return function() {
-    var now = +new Date();
-    var args = arguments;
-    var trigger = function() {
+    let now = +new Date();
+    let args = arguments;
+    let trigger = function() {
       last = now;
       fn.apply( this, args );
     }.bind( this );
@@ -376,13 +378,13 @@ InfiniteScroll.throttle = function( fn, threshold ) {
 
 InfiniteScroll.data = function( elem ) {
   elem = utils.getQueryElement( elem );
-  var id = elem && elem.infiniteScrollGUID;
+  let id = elem && elem.infiniteScrollGUID;
   return id && instances[ id ];
 };
 
 // set internal jQuery, for Webpack + jQuery v3
-InfiniteScroll.setJQuery = function( $ ) {
-  jQuery = $;
+InfiniteScroll.setJQuery = function( jqry ) {
+  jQuery = jqry;
 };
 
 // -------------------------- setup -------------------------- //
@@ -400,4 +402,4 @@ if ( jQuery && jQuery.bridget ) {
 
 return InfiniteScroll;
 
-}));
+} ) );

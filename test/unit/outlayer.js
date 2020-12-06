@@ -2,17 +2,17 @@
 
 QUnit.test( 'outlayer', function( assert ) {
 
-  var msnry, infScroll;
-  var demoElem = document.querySelector('.demo--outlayer');
+  let msnry, infScroll;
+  let demoElem = document.querySelector('.demo--outlayer');
 
-  var done = assert.async( 7 );
+  let done = assert.async( 7 );
 
   imagesLoaded( demoElem, function() {
 
     msnry = new Masonry( demoElem, {
       itemSelector: '.outlayer-item',
       transitionDuration: '0.1s',
-    });
+    } );
 
     infScroll = new InfiniteScroll( demoElem, {
       path: 'page/outlayer{{#}}.html',
@@ -20,7 +20,7 @@ QUnit.test( 'outlayer', function( assert ) {
       outlayer: msnry,
       history: false,
       scrollThreshold: false,
-    });
+    } );
 
     msnry.once( 'layoutComplete', onLayoutComplete2 );
     infScroll.once( 'load', done ); // confirm load event triggers
@@ -28,7 +28,7 @@ QUnit.test( 'outlayer', function( assert ) {
 
     infScroll.loadNextPage();
 
-  });
+  } );
 
   function onLayoutComplete2( items ) {
     assert.equal( items.length, 8, '8 items laid out on page 2' );
@@ -38,12 +38,12 @@ QUnit.test( 'outlayer', function( assert ) {
   }
 
   function checkItems( items ) {
-    for ( var i=0; i < items.length; i++ ) {
-      var item = items[i];
-      var itemElem = item.element;
-      assert.equal( item.element.parentNode, infScroll.element, 
-        'item ' + i + ' has infScroll parent' );
-      var leftAndTop = itemElem.style.left && itemElem.style.top;
+    for ( let i = 0; i < items.length; i++ ) {
+      let item = items[i];
+      let itemElem = item.element;
+      assert.equal( item.element.parentNode, infScroll.element,
+          'item ' + i + ' has infScroll parent' );
+      let leftAndTop = itemElem.style.left && itemElem.style.top;
       assert.ok( leftAndTop, 'item ' + i + ' has left & top style set' );
     }
   }
@@ -71,14 +71,14 @@ QUnit.test( 'outlayer', function( assert ) {
       outlayer: msnry,
       history: false,
       scrollThreshold: false,
-    });
+    } );
 
     infScroll.once( 'load', done );
     infScroll.once( 'append', function( response, path, items ) {
       assert.equal( items.length, 0, 'appended 0 items' );
       done();
-    });
+    } );
     infScroll.loadNextPage();
   }
 
-});
+} );

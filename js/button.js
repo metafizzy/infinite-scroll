@@ -1,7 +1,6 @@
 // button
 ( function( window, factory ) {
   // universal module definition
-  /* globals define, module, require */
   if ( typeof define == 'function' && define.amd ) {
     // AMD
     define( [
@@ -9,20 +8,20 @@
       'fizzy-ui-utils/utils',
     ], function( InfiniteScroll, utils ) {
       return factory( window, InfiniteScroll, utils );
-    });
+    } );
   } else if ( typeof module == 'object' && module.exports ) {
     // CommonJS
     module.exports = factory(
-      window,
-      require('./core'),
-      require('fizzy-ui-utils')
+        window,
+        require('./core'),
+        require('fizzy-ui-utils'),
     );
   } else {
     // browser global
     factory(
-      window,
-      window.InfiniteScroll,
-      window.fizzyUIUtils
+        window,
+        window.InfiniteScroll,
+        window.fizzyUIUtils,
     );
   }
 
@@ -31,10 +30,9 @@
 // InfiniteScroll.defaults.button = null;
 
 InfiniteScroll.create.button = function() {
-  var buttonElem = utils.getQueryElement( this.options.button );
+  let buttonElem = utils.getQueryElement( this.options.button );
   if ( buttonElem ) {
     this.button = new InfiniteScrollButton( buttonElem, this );
-    return;
   }
 };
 
@@ -85,4 +83,4 @@ InfiniteScroll.Button = InfiniteScrollButton;
 
 return InfiniteScroll;
 
-}));
+} ) );

@@ -1,36 +1,35 @@
 QUnit.test( 'history window', function( assert ) {
 
-  var done = assert.async();
-  var origHref = location.href;
-  var origTitle = document.title;
+  let done = assert.async();
+  let origHref = location.href;
+  let origTitle = document.title;
 
-  var demoElem = document.querySelector('.demo--history-window');
-  var infScroll = new InfiniteScroll( demoElem, {
+  let demoElem = document.querySelector('.demo--history-window');
+  let infScroll = new InfiniteScroll( demoElem, {
     path: 'page/{{#}}.html',
     append: '.post',
     scrollThreshold: false,
     history: 'replace',
     historyTitle: true,
     // debug: true,
-  });
+  } );
 
-  var page1Top = getTop( demoElem ) - 100;
-  var page2Top;
-  var page3Top;
+  let page1Top = getTop( demoElem ) - 100;
+  let page2Top, page3Top;
 
   function getTop( elem ) {
     return elem.getBoundingClientRect().top + window.pageYOffset;
   }
 
-  infScroll.once( 'append', function( response, path, items ) {
+  infScroll.once( 'append', function( response, _path, items ) {
     page2Top = getTop( items[0] );
     infScroll.once( 'history', function( title, path ) {
       assert.equal( path, location.href, '2nd page history url changed to ' + path );
       assert.equal( title, document.title, 'document title changed to ' + title );
       setTimeout( step2, 300 );
-    });
-    scrollTo( 0, page2Top - window.innerHeight/4 );
-  });
+    } );
+    scrollTo( 0, page2Top - window.innerHeight / 4 );
+  } );
 
   infScroll.loadNextPage();
 
@@ -39,7 +38,7 @@ QUnit.test( 'history window', function( assert ) {
       assert.equal( path, location.href, '1st page history, url changed to ' + path );
       assert.equal( title, document.title, 'document title changed to ' + title );
       step3();
-    });
+    } );
     scrollTo( 0, page1Top );
   }
 
@@ -50,9 +49,9 @@ QUnit.test( 'history window', function( assert ) {
         assert.equal( path, location.href, '3rd page history url changed to ' + path );
         assert.equal( title, document.title, 'document title changed to ' + title );
         allDone();
-      });
-      scrollTo( 0, page3Top - window.innerHeight/4 );
-    });
+      } );
+      scrollTo( 0, page3Top - window.innerHeight / 4 );
+    } );
     infScroll.loadNextPage();
   }
 
@@ -63,4 +62,4 @@ QUnit.test( 'history window', function( assert ) {
     done();
   }
 
-});
+} );

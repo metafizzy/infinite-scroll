@@ -1,15 +1,15 @@
 QUnit.test( 'checkLastPage', function( assert ) {
 
-  var done = assert.async();
+  let done = assert.async();
 
   // ----- checkLastPage: true ----- //
 
-  var infScroll = new InfiniteScroll( '.demo--check-last-page', {
+  let infScroll = new InfiniteScroll( '.demo--check-last-page', {
     path: '.check-last-page-next-link',
     append: '.post',
     scrollThreshold: false,
     history: false,
-  });
+  } );
 
   infScroll.on( 'last', onTrueLast1 );
   infScroll.once( 'append', onTrueAppend1 );
@@ -29,7 +29,7 @@ QUnit.test( 'checkLastPage', function( assert ) {
     infScroll.once( 'last', function() {
       assert.ok( true, 'checkLastPage: true, last triggered on 3rd page' );
       checkString();
-    });
+    } );
 
     infScroll.loadNextPage();
   }
@@ -45,7 +45,7 @@ QUnit.test( 'checkLastPage', function( assert ) {
       append: '.post',
       scrollThreshold: false,
       history: false,
-    });
+    } );
 
     infScroll.on( 'last', onStringLast1 );
     infScroll.once( 'append', onStringAppend1 );
@@ -67,7 +67,7 @@ QUnit.test( 'checkLastPage', function( assert ) {
     infScroll.once( 'last', function() {
       assert.ok( true, 'checkLastPage: \'string\', last triggered on 3rd page' );
       setTimeout( checkPathFunction );
-    });
+    } );
 
     infScroll.loadNextPage();
   }
@@ -80,7 +80,7 @@ QUnit.test( 'checkLastPage', function( assert ) {
       // provide only page/2.html, then falsy
       path: function() {
         if ( this.pageIndex < 3 ) {
-          var nextIndex = this.pageIndex + 1;
+          let nextIndex = this.pageIndex + 1;
           return 'page/' + nextIndex + '.html';
         }
       },
@@ -88,7 +88,7 @@ QUnit.test( 'checkLastPage', function( assert ) {
       append: '.post',
       scrollThreshold: false,
       history: false,
-    });
+    } );
 
     infScroll.on( 'last', onFunctionLast2 );
     infScroll.once( 'append', onFunctionAppend2 );
@@ -108,9 +108,9 @@ QUnit.test( 'checkLastPage', function( assert ) {
       assert.ok( response, 'path: function, response there on last' );
       assert.ok( path, 'path: function, path there on last' );
       done();
-    });
+    } );
 
     infScroll.loadNextPage();
   }
 
-});
+} );
