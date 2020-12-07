@@ -1,0 +1,22 @@
+body {
+  font-family: sans-serif;
+}
+
+.post {
+  background: #EEE;
+  margin-bottom: 10px;
+}
+
+.container {
+  border: 1px solid #CCC;
+}
+
+.container--big-posts .post {
+  height: 190px; /* 200px total height*/
+}
+
+/* space for scrolling past */
+.footer {
+  background: #DDD;
+  height: 600px;
+}

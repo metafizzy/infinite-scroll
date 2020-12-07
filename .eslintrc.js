@@ -11,10 +11,13 @@ module.exports = {
     ecmaVersion: 2018,
   },
   globals: {
-    InfiniteScroll: 'readonly',
-    QUnit: 'readonly',
     define: 'readonly',
+    InfiniteScroll: 'readonly',
+    Promise: 'readonly',
+    QUnit: 'readonly',
+    serialT: 'readonly',
   },
   rules: {
+    'arrow-body-style': [ 'error', 'as-needed' ],
   },
 };

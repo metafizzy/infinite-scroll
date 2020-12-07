@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+
+  <title>Infinite Scroll test - page-load</title>
+
+  <link rel="stylesheet" href="test.css" />
+  <style>
+    .container--prefill-element {
+      height: 500px;
+      overflow-y: scroll;
+    }
+  </style>
+
+  <!-- dependencies -->
+  <script src="../../node_modules/ev-emitter/ev-emitter.js"></script>
+  <script src="../../node_modules/desandro-matches-selector/matches-selector.js"></script>
+  <script src="../../node_modules/fizzy-ui-utils/utils.js"></script>
+  <!-- infinite scroll -->
+  <script src="../../js/core.js"></script>
+  <script src="../../js/scroll-watch.js"></script>
+  <script src="../../js/page-load.js"></script>
+  <script src="../../js/history.js"></script>
+  <script src="../../js/button.js"></script>
+  <script src="../../js/status.js"></script>
+  <!-- test helper -->
+  <script src="_serial-t.js"></script>
+
+</head>
+<body>
+
+<h1>Infinite Scroll test - prefill</h1>
+
+<div class="container container--prefill-window container--big-posts"></div>
+
+<div class="container container--prefill-element container--big-posts"></div>
+
+</body>
+</html>

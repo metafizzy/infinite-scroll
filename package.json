@@ -12,9 +12,11 @@
     "fizzy-ui-utils": "^2.0.5"
   },
   "devDependencies": {
+    "ava": "^3.13.0",
     "chalk": "^0.5.1",
     "eslint": "^7.15.0",
     "eslint-plugin-metafizzy": "^1.1.1",
+    "get-port": "^5.1.1",
     "gulp": "^3.9.1",
     "gulp-jshint": "^1.12.0",
     "gulp-json-lint": "0.0.1",
@@ -23,16 +25,18 @@
     "gulp-requirejs-optimize": "github:metafizzy/gulp-requirejs-optimize",
     "gulp-uglify": "^1.5.4",
     "gulp-util": "^3.0.8",
-    "imagesloaded": "^4.1.3",
-    "jquery": "^3.2.1",
+    "imagesloaded": "^4.1.4",
+    "jquery": "^3.5.1",
     "jquery-bridget": "^2.0.1",
-    "masonry-layout": "^4.2.0",
+    "masonry-layout": "^4.2.2",
     "minimist": "^1.2.0",
-    "qunitjs": "^2.3.2"
+    "puppeteer": "^5.5.0",
+    "qunitjs": "^2.3.2",
+    "tape": "^5.0.1"
   },
   "scripts": {
     "lint": "npx eslint .",
-    "test": "echo \"View test/ in browser\" && exit 1"
+    "test": "npm run lint && ava"
   },
   "repository": {
     "type": "git",
