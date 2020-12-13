@@ -11,7 +11,6 @@ module.exports = {
     ecmaVersion: 2018,
   },
   globals: {
-    define: 'readonly',
     InfiniteScroll: 'readonly',
     Promise: 'readonly',
     QUnit: 'readonly',

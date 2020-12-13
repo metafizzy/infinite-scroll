@@ -1,15 +1,7 @@
 // button
 ( function( window, factory ) {
   // universal module definition
-  if ( typeof define == 'function' && define.amd ) {
-    // AMD
-    define( [
-      './core',
-      'fizzy-ui-utils/utils',
-    ], function( InfiniteScroll, utils ) {
-      return factory( window, InfiniteScroll, utils );
-    } );
-  } else if ( typeof module == 'object' && module.exports ) {
+  if ( typeof module == 'object' && module.exports ) {
     // CommonJS
     module.exports = factory(
         window,

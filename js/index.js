@@ -11,17 +11,7 @@
 
 ( function( window, factory ) {
   // universal module definition
-  if ( typeof define == 'function' && define.amd ) {
-    // AMD
-    define( [
-      './core',
-      './page-load',
-      './scroll-watch',
-      './history',
-      './button',
-      './status',
-    ], factory );
-  } else if ( typeof module == 'object' && module.exports ) {
+  if ( typeof module == 'object' && module.exports ) {
     // CommonJS
     module.exports = factory(
         require('./core'),
