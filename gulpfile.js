@@ -5,43 +5,10 @@ let gulp = require('gulp');
 let rename = require('gulp-rename');
 let replace = require('gulp-replace');
 
-// ----- hint ----- //
-
-let jshint = require('gulp-jshint');
-
-gulp.task( 'hint-js', function() {
-  return gulp.src('js/**/*.js')
-    .pipe( jshint() )
-    .pipe( jshint.reporter('default') );
-} );
-
-gulp.task( 'hint-test', function() {
-  return gulp.src('test/unit/*.js')
-    .pipe( jshint() )
-    .pipe( jshint.reporter('default') );
-} );
-
-gulp.task( 'hint-task', function() {
-  return gulp.src('gulpfile.js')
-    .pipe( jshint() )
-    .pipe( jshint.reporter('default') );
-} );
-
-let jsonlint = require('gulp-json-lint');
-
-gulp.task( 'jsonlint', function() {
-  return gulp.src('*.json')
-    .pipe( jsonlint() )
-    .pipe( jsonlint.report('verbose') );
-} );
-
-gulp.task( 'hint', [ 'hint-js', 'hint-test', 'hint-task', 'jsonlint' ] );
-
 // -------------------------- RequireJS makes pkgd -------------------------- //
 
 let gutil = require('gulp-util');
 let chalk = require('chalk');
-let rjsOptimize = require('gulp-requirejs-optimize');
 
 // regex for banner comment
 let reBannerComment = new RegExp('^\\s*(?:\\/\\*[\\s\\S]*?\\*\\/)\\s*');
@@ -56,38 +23,6 @@ function getBanner() {
 function addBanner( str ) {
   return replace( /^/, str );
 }
-
-gulp.task( 'requirejs', function() {
-  let banner = getBanner();
-  let definitionRE = /define\(\s*'infinite-scroll\/js\/index'(.|\n)+\],\s*factory/;
-  // HACK src is not needed
-  // should refactor rjsOptimize to produce src
-  return gulp.src('js/index.js')
-    .pipe( rjsOptimize({
-      baseUrl: 'bower_components',
-      optimize: 'none',
-      include: [
-        'jquery-bridget/jquery-bridget',
-        'infinite-scroll/js/index',
-        'imagesloaded/imagesloaded',
-      ],
-      paths: {
-        'infinite-scroll': '../',
-        jquery: 'empty:',
-      },
-    }) )
-    // munge AMD definition
-    .pipe( replace( definitionRE, function( definition ) {
-      // remove named module
-      return definition.replace( "'infinite-scroll/js/index',", '' )
-        // use explicit file paths, './history' -> 'infinite-scroll/js/history'
-        .replace( /'.\//g, "'infinite-scroll/js/" );
-    } ) )
-    // add banner
-    .pipe( addBanner( banner ) )
-    .pipe( rename('infinite-scroll.pkgd.js') )
-    .pipe( gulp.dest('dist') );
-} );
 
 // ----- uglify ----- //
 
