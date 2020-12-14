@@ -248,38 +248,38 @@ let pathRegexes = [
   /(.*?)(\d\d?\d?)(?!.*\d)(.*?$)/,
 ];
 
+// try matching href to pathRegexes patterns
+let getPathParts = InfiniteScroll.getPathParts = function( href ) {
+  if ( !href ) return;
+  for ( let regex of pathRegexes ) {
+    let match = href.match( regex );
+    if ( match ) {
+      let [ , begin, index, end ] = match;
+      return { begin, index, end };
+    }
+  }
+};
+
 proto.updateGetPathSelector = function( optPath ) {
   // parse href of link: '.next-page-link'
   let hrefElem = document.querySelector( optPath );
   if ( !hrefElem ) {
-    console.error( 'Bad InfiniteScroll path option. Next link not found: ' +
-      optPath );
+    console.error( `Bad InfiniteScroll path option. Next link not found: ${optPath}` );
     return;
   }
+
   let href = hrefElem.getAttribute('href');
-  // try matching href to pathRegexes patterns
-  let pathParts, regex;
-  if ( href ) {
-    for ( let i = 0; i < pathRegexes.length; i++ ) {
-      regex = pathRegexes[i];
-      let match = href.match( regex );
-      if ( match ) {
-        pathParts = match.slice( 1 ); // remove first part
-        break;
-      }
-    }
-  }
+  let pathParts = getPathParts( href );
   if ( !pathParts ) {
-    console.error( 'InfiniteScroll unable to parse next link href: ' + href );
+    console.error( `InfiniteScroll unable to parse next link href: ${href}` );
     return;
   }
+
+  let { begin, index, end } = pathParts;
   this.isPathSelector = true; // flag for checkLastPage()
-  this.getPath = function() {
-    let nextIndex = this.pageIndex + 1;
-    return pathParts[0] + nextIndex + pathParts[2];
-  }.bind( this );
+  this.getPath = () => begin + ( this.pageIndex + 1 ) + end;
   // get pageIndex from href
-  this.pageIndex = parseInt( pathParts[1], 10 ) - 1;
+  this.pageIndex = parseInt( index, 10 ) - 1;
   this.log( 'pageIndex', [ this.pageIndex, 'next link' ] );
 };
 
