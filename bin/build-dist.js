@@ -1,8 +1,10 @@
 const fs = require('fs');
 const { execSync } = require('child_process');
+const { minify } = require('terser');
 
 const indexPath = 'js/index.js';
 const distPath = 'dist/infinite-scroll.pkgd.js';
+const distMinPath = 'dist/infinite-scroll.pkgd.min.js';
 
 let indexContent = fs.readFileSync( `./${indexPath}`, 'utf8' );
 // get file paths from index.js
@@ -31,4 +33,11 @@ execSync( `cat ${paths.join(' ')} > ${distPath}` );
 let banner = indexContent.split(' */')[0] + ' */\n\n';
 banner = banner.replace( 'Infinite Scroll', 'Infinite Scroll PACKAGED' );
 let distJsContent = fs.readFileSync( distPath, 'utf8' );
-fs.writeFileSync( distPath, banner + distJsContent );
+distJsContent = banner + distJsContent;
+fs.writeFileSync( distPath, distJsContent );
+
+// minify
+( async function() {
+  let { code } = await minify( distJsContent, { mangle: true } );
+  fs.writeFileSync( distMinPath, code );
+} )();

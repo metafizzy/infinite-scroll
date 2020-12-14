@@ -19,11 +19,14 @@
     "jquery": "^3.5.1",
     "jquery-bridget": "^2.0.1",
     "masonry-layout": "^4.2.2",
-    "puppeteer": "^5.5.0"
+    "puppeteer": "^5.5.0",
+    "terser": "^5.5.1"
   },
   "scripts": {
+    "dist": "node bin/build-dist.js",
     "lint": "npx eslint .",
-    "test": "npm run lint && ava"
+    "test": "npm run lint && ava",
+    "version": "node bin/version.js && npm run dist && git add -A . dist"
   },
   "repository": {
     "type": "git",
