@@ -19,12 +19,14 @@
 
 let proto = InfiniteScroll.prototype;
 
-// InfiniteScroll.defaults.append = false;
-InfiniteScroll.defaults.loadOnScroll = true;
-InfiniteScroll.defaults.checkLastPage = true;
-InfiniteScroll.defaults.responseType = 'document';
-// InfiniteScroll.defaults.prefill = false;
-// InfiniteScroll.defaults.outlayer = null;
+Object.assign( InfiniteScroll.defaults, {
+  // append: false,
+  loadOnScroll: true,
+  checkLastPage: true,
+  responseType: 'document',
+  // prefill: false,
+  // outlayer: null,
+} );
 
 InfiniteScroll.create.pageLoad = function() {
   this.canLoad = true;
@@ -36,62 +38,66 @@ InfiniteScroll.create.pageLoad = function() {
 };
 
 proto.onScrollThresholdLoad = function() {
-  if ( this.options.loadOnScroll ) {
-    this.loadNextPage();
-  }
+  if ( this.options.loadOnScroll ) this.loadNextPage();
 };
 
+let domParser = new DOMParser();
+
 proto.loadNextPage = function() {
-  if ( this.isLoading || !this.canLoad ) {
-    return;
-  }
+  if ( this.isLoading || !this.canLoad ) return;
 
   let path = this.getAbsolutePath();
   this.isLoading = true;
 
-  let onLoad = function( response ) {
-    this.onPageLoad( response, path );
-  }.bind( this );
+  // TODO add fetch options
+  let fetchPromise = fetch( path ).then( ( response ) => {
+    if ( !response.ok ) {
+      let error = new Error( response.statusText );
+      this.onPageError( error, path );
+      return response;
+    }
 
-  let onError = function( error ) {
-    this.onPageError( error, path );
-  }.bind( this );
+    return response.text().then( ( text ) => {
+      let doc = domParser.parseFromString( text, 'text/html' );
+      if ( response.status == 204 ) {
+        this.lastPageReached( doc, path );
+      } else {
+        this.onPageLoad( doc, path );
+      }
+      return response;
+    } );
+  } );
 
-  let onLast = function( response ) {
-    this.lastPageReached( response, path );
-  }.bind( this );
-
-  request( path, this.options.responseType, onLoad, onError, onLast );
   this.dispatchEvent( 'request', null, [ path ] );
+
+  return fetchPromise;
 };
 
-proto.onPageLoad = function( response, path ) {
+proto.onPageLoad = function( doc, path ) {
   // done loading if not appending
   if ( !this.options.append ) {
     this.isLoading = false;
   }
   this.pageIndex++;
   this.loadCount++;
-  this.dispatchEvent( 'load', null, [ response, path ] );
-  this.appendNextPage( response, path );
-  return response;
+  this.dispatchEvent( 'load', null, [ doc, path ] );
+  this.appendNextPage( doc, path );
+  return doc;
 };
 
-proto.appendNextPage = function( response, path ) {
+proto.appendNextPage = function( doc, path ) {
   let optAppend = this.options.append;
   // do not append json
   let isDocument = this.options.responseType == 'document';
-  if ( !isDocument || !optAppend ) {
-    return;
-  }
+  if ( !isDocument || !optAppend ) return;
 
-  let items = response.querySelectorAll( optAppend );
+  let items = doc.querySelectorAll( optAppend );
   let fragment = getItemsFragment( items );
-  let appendReady = function() {
+  let appendReady = () => {
     this.appendItems( items, fragment );
     this.isLoading = false;
-    this.dispatchEvent( 'append', null, [ response, path, items ] );
-  }.bind( this );
+    this.dispatchEvent( 'append', null, [ doc, path, items ] );
+  };
 
   // TODO add hook for option to trigger appendReady
   if ( this.options.outlayer ) {
@@ -102,9 +108,8 @@ proto.appendNextPage = function( response, path ) {
 };
 
 proto.appendItems = function( items, fragment ) {
-  if ( !items || !items.length ) {
-    return;
-  }
+  if ( !items || !items.length ) return;
+
   // get fragment if not provided
   fragment = fragment || getItemsFragment( items );
   refreshScripts( fragment );
@@ -165,18 +170,16 @@ proto.onAppendOutlayer = function( response, path, items ) {
 // ----- checkLastPage ----- //
 
 // check response for next element
-proto.checkLastPage = function( response, path ) {
-  let checkLastPage = this.options.checkLastPage;
-  if ( !checkLastPage ) {
-    return;
-  }
+proto.checkLastPage = function( doc, path ) {
+  let { checkLastPage } = this.options;
+  if ( !checkLastPage ) return;
 
   let pathOpt = this.options.path;
   // if path is function, check if next path is truthy
   if ( typeof pathOpt == 'function' ) {
     let nextPath = this.getPath();
     if ( !nextPath ) {
-      this.lastPageReached( response, path );
+      this.lastPageReached( doc, path );
       return;
     }
   }
@@ -190,19 +193,16 @@ proto.checkLastPage = function( response, path ) {
   }
   // check last page for selector
   // bail if no selector or not document response
-  if ( !selector || !response.querySelector ) {
-    return;
-  }
+  if ( !selector || !doc.querySelector ) return;
+
   // check if response has selector
-  let nextElem = response.querySelector( selector );
-  if ( !nextElem ) {
-    this.lastPageReached( response, path );
-  }
+  let nextElem = doc.querySelector( selector );
+  if ( !nextElem ) this.lastPageReached( doc, path );
 };
 
-proto.lastPageReached = function( response, path ) {
+proto.lastPageReached = function( doc, path ) {
   this.canLoad = false;
-  this.dispatchEvent( 'last', null, [ response, path ] );
+  this.dispatchEvent( 'last', null, [ doc, path ] );
 };
 
 // ----- error ----- //
@@ -217,12 +217,11 @@ proto.onPageError = function( error, path ) {
 // -------------------------- prefill -------------------------- //
 
 InfiniteScroll.create.prefill = function() {
-  if ( !this.options.prefill ) {
-    return;
-  }
+  if ( !this.options.prefill ) return;
+
   let append = this.options.append;
   if ( !append ) {
-    console.error( 'append option required for prefill. Set as :' + append );
+    console.error( `append option required for prefill. Set as :${append}` );
     return;
   }
   this.updateMeasurements();
@@ -258,39 +257,6 @@ proto.stopPrefill = function() {
   this.log('stopPrefill');
   this.off( 'append', this.prefill );
 };
-
-// -------------------------- request -------------------------- //
-
-/* eslint-disable-next-line max-params */
-function request( url, responseType, onLoad, onError, onLast ) {
-  let req = new XMLHttpRequest();
-  req.open( 'GET', url, true );
-  // set responseType document to return DOM
-  req.responseType = responseType || '';
-
-  // set X-Requested-With header to check that is ajax request
-  req.setRequestHeader( 'X-Requested-With', 'XMLHttpRequest' );
-
-  req.onload = function() {
-    if ( req.status == 200 ) {
-      onLoad( req.response );
-    } else if ( req.status == 204 ) {
-      onLast( req.response );
-    } else {
-      // not 200 OK, error
-      let error = new Error( req.statusText );
-      onError( error );
-    }
-  };
-
-  // Handle network errors
-  req.onerror = function() {
-    let error = new Error( 'Network error requesting ' + url );
-    onError( error );
-  };
-
-  req.send();
-}
 
 // --------------------------  -------------------------- //
 

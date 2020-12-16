@@ -3,7 +3,7 @@ let container = document.querySelector('.container');
 let unsplashID = '9ad80b14098bcead9c7de952435e937cc3723ae61084ba8e729adb642daf0251';
 
 let infScroll = new InfiniteScroll( '.container', {
-  path: 'https://api.unsplash.com/photos?page={{#}}&client_id=' + unsplashID,
+  path: `https://api.unsplash.com/photos?page={{#}}&client_id=${unsplashID}`,
   responseType: '',
   history: false,
 } );
