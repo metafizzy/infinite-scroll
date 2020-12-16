@@ -160,7 +160,7 @@ proto.log = function( type, args ) {
 proto.updateMeasurements = function() {
   this.windowHeight = window.innerHeight;
   let rect = this.element.getBoundingClientRect();
-  this.top = rect.top + window.pageYOffset;
+  this.top = rect.top + window.scrollY;
 };
 
 proto.updateScroller = function() {

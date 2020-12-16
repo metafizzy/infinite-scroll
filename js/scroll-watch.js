@@ -84,7 +84,7 @@ proto.getBottomDistance = function() {
 
 proto.getWindowBottomDistance = function() {
   let bottom = this.top + this.element.clientHeight;
-  let scrollY = window.pageYOffset + this.windowHeight;
+  let scrollY = window.scrollY + this.windowHeight;
   return bottom - scrollY;
 };
 

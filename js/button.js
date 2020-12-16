@@ -19,6 +19,46 @@
 
 }( window, function factory( window, InfiniteScroll, utils ) {
 
+// -------------------------- InfiniteScrollButton -------------------------- //
+
+class InfiniteScrollButton {
+  constructor( element, infScroll ) {
+    this.element = element;
+    this.infScroll = infScroll;
+    // events
+    this.clickHandler = this.onClick.bind( this );
+    this.element.addEventListener( 'click', this.clickHandler );
+    infScroll.on( 'request', this.disable.bind( this ) );
+    infScroll.on( 'load', this.enable.bind( this ) );
+    infScroll.on( 'error', this.hide.bind( this ) );
+    infScroll.on( 'last', this.hide.bind( this ) );
+  }
+
+  onClick( event ) {
+    event.preventDefault();
+    this.infScroll.loadNextPage();
+  }
+
+  enable() {
+    this.element.removeAttribute('disabled');
+  }
+
+  disable() {
+    this.element.disabled = 'disabled';
+  }
+
+  hide() {
+    this.element.style.display = 'none';
+  }
+
+  destroy() {
+    this.element.removeEventListener( 'click', this.clickHandler );
+  }
+
+}
+
+// -------------------------- InfiniteScroll methods -------------------------- //
+
 // InfiniteScroll.defaults.button = null;
 
 InfiniteScroll.create.button = function() {
@@ -29,44 +69,7 @@ InfiniteScroll.create.button = function() {
 };
 
 InfiniteScroll.destroy.button = function() {
-  if ( this.button ) {
-    this.button.destroy();
-  }
-};
-
-// -------------------------- InfiniteScrollButton -------------------------- //
-
-function InfiniteScrollButton( element, infScroll ) {
-  this.element = element;
-  this.infScroll = infScroll;
-  // events
-  this.clickHandler = this.onClick.bind( this );
-  this.element.addEventListener( 'click', this.clickHandler );
-  infScroll.on( 'request', this.disable.bind( this ) );
-  infScroll.on( 'load', this.enable.bind( this ) );
-  infScroll.on( 'error', this.hide.bind( this ) );
-  infScroll.on( 'last', this.hide.bind( this ) );
-}
-
-InfiniteScrollButton.prototype.onClick = function( event ) {
-  event.preventDefault();
-  this.infScroll.loadNextPage();
-};
-
-InfiniteScrollButton.prototype.enable = function() {
-  this.element.removeAttribute('disabled');
-};
-
-InfiniteScrollButton.prototype.disable = function() {
-  this.element.disabled = 'disabled';
-};
-
-InfiniteScrollButton.prototype.hide = function() {
-  this.element.style.display = 'none';
-};
-
-InfiniteScrollButton.prototype.destroy = function() {
-  this.element.removeEventListener( 'click', this.clickHandler );
+  if ( this.button ) this.button.destroy();
 };
 
 // --------------------------  -------------------------- //
