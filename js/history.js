@@ -21,17 +21,18 @@
 
 let proto = InfiniteScroll.prototype;
 
-InfiniteScroll.defaults.history = 'replace';
-// InfiniteScroll.defaults.historyTitle = false;
+Object.assign( InfiniteScroll.defaults, {
+  history: 'replace',
+  // historyTitle: false,
+} );
 
 let link = document.createElement('a');
 
 // ----- create/destroy ----- //
 
 InfiniteScroll.create.history = function() {
-  if ( !this.options.history ) {
-    return;
-  }
+  if ( !this.options.history ) return;
+
   // check for same origin
   link.href = this.getAbsolutePath();
   // MS Edge does not have origin on link
@@ -40,8 +41,7 @@ InfiniteScroll.create.history = function() {
   let isSameOrigin = linkOrigin == location.origin;
   if ( !isSameOrigin ) {
     console.error( '[InfiniteScroll] cannot set history with different origin: ' +
-      link.origin + ' on ' + location.origin +
-      ' . History behavior disabled.' );
+      `${link.origin} on ${location.origin} . History behavior disabled.` );
     return;
   }
 
@@ -58,14 +58,14 @@ proto.createHistoryAppend = function() {
   this.updateScroller();
   // array of scroll positions of appended pages
   this.scrollPages = [
+    // first page
     {
-      // first page
       top: 0,
       path: location.href,
       title: document.title,
     },
   ];
-  this.scrollPageIndex = 0;
+  this.scrollPage = this.scrollPages[0];
   // events
   this.scrollHistoryHandler = this.onScrollHistory.bind( this );
   this.unloadHandler = this.onUnload.bind( this );
@@ -96,9 +96,8 @@ proto.destroyHistory = function() {
 
 proto.onAppendHistory = function( response, path, items ) {
   // do not proceed if no items. #779
-  if ( !items || !items.length ) {
-    return;
-  }
+  if ( !items || !items.length ) return;
+
   let firstItem = items[0];
   let elemScrollY = this.getElementScrollY( firstItem );
   // resolve path
@@ -113,77 +112,59 @@ proto.onAppendHistory = function( response, path, items ) {
 
 proto.getElementScrollY = function( elem ) {
   if ( this.options.elementScroll ) {
-    return this.getElementElementScrollY( elem );
+    return elem.offsetTop - this.top;
   } else {
-    return this.getElementWindowScrollY( elem );
+    let rect = elem.getBoundingClientRect();
+    return rect.top + window.scrollY;
   }
-};
-
-proto.getElementWindowScrollY = function( elem ) {
-  let rect = elem.getBoundingClientRect();
-  return rect.top + window.pageYOffset;
-};
-
-// wow, stupid name
-proto.getElementElementScrollY = function( elem ) {
-  return elem.offsetTop - this.top;
 };
 
 proto.onScrollHistory = function() {
   // cycle through positions, find biggest without going over
-  let scrollViewY = this.getScrollViewY();
-  let pageIndex, page;
-  for ( let i = 0; i < this.scrollPages.length; i++ ) {
-    let scrollPage = this.scrollPages[i];
-    if ( scrollPage.top >= scrollViewY ) {
-      break;
-    }
-    pageIndex = i;
-    page = scrollPage;
-  }
+  let scrollPage = this.getClosestScrollPage();
   // set history if changed
-  if ( pageIndex != this.scrollPageIndex ) {
-    this.scrollPageIndex = pageIndex;
-    this.setHistory( page.title, page.path );
+  if ( scrollPage != this.scrollPage ) {
+    this.scrollPage = scrollPage;
+    this.setHistory( scrollPage.title, scrollPage.path );
   }
 };
 
 utils.debounceMethod( InfiniteScroll, 'onScrollHistory', 150 );
 
-proto.getScrollViewY = function() {
+proto.getClosestScrollPage = function() {
+  let scrollViewY;
   if ( this.options.elementScroll ) {
-    return this.scroller.scrollTop + this.scroller.clientHeight / 2;
+    scrollViewY = this.scroller.scrollTop + this.scroller.clientHeight / 2;
   } else {
-    return window.pageYOffset + this.windowHeight / 2;
+    scrollViewY = window.scrollY + this.windowHeight / 2;
   }
+
+  let scrollPage;
+  for ( let page of this.scrollPages ) {
+    if ( page.top >= scrollViewY ) break;
+
+    scrollPage = page;
+  }
+  return scrollPage;
 };
 
 proto.setHistory = function( title, path ) {
   let optHistory = this.options.history;
   let historyMethod = optHistory && history[ optHistory + 'State' ];
-  if ( !historyMethod ) {
-    return;
-  }
+  if ( !historyMethod ) return;
 
   history[ optHistory + 'State' ]( null, title, path );
-
-  if ( this.options.historyTitle ) {
-    document.title = title;
-  }
-
+  if ( this.options.historyTitle ) document.title = title;
   this.dispatchEvent( 'history', null, [ title, path ] );
 };
 
 // scroll to top to prevent initial scroll-reset after page refresh
 // https://stackoverflow.com/a/18633915/182183
 proto.onUnload = function() {
-  let pageIndex = this.scrollPageIndex;
-  if ( pageIndex === 0 ) {
-    return;
-  }
+  if ( this.scrollPage.top === 0 ) return;
+
   // calculate where scroll position would be on refresh
-  let scrollPage = this.scrollPages[ pageIndex ];
-  let scrollY = window.pageYOffset - scrollPage.top + this.top;
+  let scrollY = window.scrollY - this.scrollPage.top + this.top;
   // disable scroll event before setting scroll #679
   this.destroyHistory();
   scrollTo( 0, scrollY );
