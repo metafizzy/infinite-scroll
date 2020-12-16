@@ -40,7 +40,7 @@ function InfiniteScroll( element, options ) {
 
   this.element = element;
   // options
-  this.options = utils.extend( {}, InfiniteScroll.defaults );
+  this.options = { ...InfiniteScroll.defaults };
   this.option( options );
   // add jQuery
   if ( jQuery ) {
@@ -63,7 +63,7 @@ InfiniteScroll.destroy = {};
 
 let proto = InfiniteScroll.prototype;
 // inherit EvEmitter
-utils.extend( proto, EvEmitter.prototype );
+Object.assign( proto, EvEmitter.prototype );
 
 // --------------------------  -------------------------- //
 
@@ -131,38 +131,23 @@ proto.dispatchEvent = function( type, event, args ) {
 };
 
 let loggers = {
-  initialized: function( className ) {
-    return 'on ' + className;
-  },
-  request: function( path ) {
-    return 'URL: ' + path;
-  },
-  load: function( response, path ) {
-    return ( response.title || '' ) + '. URL: ' + path;
-  },
-  error: function( error, path ) {
-    return error + '. URL: ' + path;
-  },
-  append: function( response, path, items ) {
-    return items.length + ' items. URL: ' + path;
-  },
-  last: function( response, path ) {
-    return 'URL: ' + path;
-  },
-  history: function( title, path ) {
-    return 'URL: ' + path;
-  },
+  initialized: ( className ) => `on ${className}`,
+  request: ( path ) => `URL: ${path}`,
+  load: ( response, path ) => `${response.title || ''}. URL: ${path}`,
+  error: ( error, path ) => `${error}. URL: ${path}`,
+  append: ( response, path, items ) => `${items.length} items. URL: ${path}`,
+  last: ( response, path ) => `URL: ${path}`,
+  history: ( title, path ) => `URL: ${path}`,
   pageIndex: function( index, origin ) {
-    return 'current page determined to be: ' + index + ' from ' + origin;
+    return `current page determined to be: ${index} from ${origin}`;
   },
 };
 
 // log events
 proto.log = function( type, args ) {
-  if ( !this.options.debug ) {
-    return;
-  }
-  let message = '[InfiniteScroll] ' + type;
+  if ( !this.options.debug ) return;
+
+  let message = `[InfiniteScroll] ${type}`;
   let logger = loggers[ type ];
   if ( logger ) {
     message += '. ' + logger.apply( this, args );
@@ -189,7 +174,7 @@ proto.updateScroller = function() {
   this.scroller = elementScroll === true ? this.element :
     utils.getQueryElement( elementScroll );
   if ( !this.scroller ) {
-    throw new Error( 'Unable to find elementScroll: ' + elementScroll );
+    throw new Error( `Unable to find elementScroll: ${elementScroll}` );
   }
 };
 
@@ -198,7 +183,7 @@ proto.updateScroller = function() {
 proto.updateGetPath = function() {
   let optPath = this.options.path;
   if ( !optPath ) {
-    console.error( 'InfiniteScroll path option required. Set as: ' + optPath );
+    console.error( `InfiniteScroll path option required. Set as: ${optPath}` );
     return;
   }
   // function
@@ -219,10 +204,10 @@ proto.updateGetPath = function() {
 
 proto.updateGetPathTemplate = function( optPath ) {
   // set getPath with template string
-  this.getPath = function() {
+  this.getPath = () => {
     let nextIndex = this.pageIndex + 1;
     return optPath.replace( '{{#}}', nextIndex );
-  }.bind( this );
+  };
   // get pageIndex from location
   // convert path option into regex to look for pattern in location
   // escape query (?) in url, allows for parsing GET parameters
@@ -314,17 +299,14 @@ proto.updateGetAbsolutePath = function() {
 // hide navigation
 InfiniteScroll.create.hideNav = function() {
   let nav = utils.getQueryElement( this.options.hideNav );
-  if ( !nav ) {
-    return;
-  }
+  if ( !nav ) return;
+
   nav.style.display = 'none';
   this.nav = nav;
 };
 
 InfiniteScroll.destroy.hideNav = function() {
-  if ( this.nav ) {
-    this.nav.style.display = '';
-  }
+  if ( this.nav ) this.nav.style.display = '';
 };
 
 // -------------------------- destroy -------------------------- //
@@ -354,10 +336,10 @@ InfiniteScroll.throttle = function( fn, threshold ) {
   return function() {
     let now = +new Date();
     let args = arguments;
-    let trigger = function() {
+    let trigger = () => {
       last = now;
       fn.apply( this, args );
-    }.bind( this );
+    };
     if ( last && now < last + threshold ) {
       // hold on to it
       clearTimeout( timeout );
