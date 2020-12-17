@@ -25,9 +25,8 @@ let proto = InfiniteScroll.prototype;
 
 InfiniteScroll.create.status = function() {
   let statusElem = utils.getQueryElement( this.options.status );
-  if ( !statusElem ) {
-    return;
-  }
+  if ( !statusElem ) return;
+
   // elements
   this.statusElement = statusElem;
   this.statusEventElements = {

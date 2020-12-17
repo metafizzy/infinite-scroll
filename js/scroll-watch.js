@@ -22,8 +22,10 @@
 let proto = InfiniteScroll.prototype;
 
 // default options
-InfiniteScroll.defaults.scrollThreshold = 400;
-// InfiniteScroll.defaults.elementScroll = null;
+Object.assign( InfiniteScroll.defaults, {
+  scrollThreshold: 400,
+  // elementScroll: null,
+} );
 
 InfiniteScroll.create.scrollWatch = function() {
   // events
@@ -32,9 +34,7 @@ InfiniteScroll.create.scrollWatch = function() {
 
   let scrollThreshold = this.options.scrollThreshold;
   let isEnable = scrollThreshold || scrollThreshold === 0;
-  if ( isEnable ) {
-    this.enableScrollWatch();
-  }
+  if ( isEnable ) this.enableScrollWatch();
 };
 
 InfiniteScroll.destroy.scrollWatch = function() {
@@ -42,9 +42,8 @@ InfiniteScroll.destroy.scrollWatch = function() {
 };
 
 proto.enableScrollWatch = function() {
-  if ( this.isScrollWatching ) {
-    return;
-  }
+  if ( this.isScrollWatching ) return;
+
   this.isScrollWatching = true;
   this.updateMeasurements();
   this.updateScroller();
@@ -54,9 +53,8 @@ proto.enableScrollWatch = function() {
 };
 
 proto.disableScrollWatch = function() {
-  if ( !this.isScrollWatching ) {
-    return;
-  }
+  if ( !this.isScrollWatching ) return;
+
   this.bindScrollWatchEvents( false );
   delete this.isScrollWatching;
 };
@@ -75,22 +73,14 @@ proto.onPageScroll = InfiniteScroll.throttle( function() {
 } );
 
 proto.getBottomDistance = function() {
+  let bottom, scrollY;
   if ( this.options.elementScroll ) {
-    return this.getElementBottomDistance();
+    bottom = this.scroller.scrollHeight;
+    scrollY = this.scroller.scrollTop + this.scroller.clientHeight;
   } else {
-    return this.getWindowBottomDistance();
+    bottom = this.top + this.element.clientHeight;
+    scrollY = window.scrollY + this.windowHeight;
   }
-};
-
-proto.getWindowBottomDistance = function() {
-  let bottom = this.top + this.element.clientHeight;
-  let scrollY = window.scrollY + this.windowHeight;
-  return bottom - scrollY;
-};
-
-proto.getElementBottomDistance = function() {
-  let bottom = this.scroller.scrollHeight;
-  let scrollY = this.scroller.scrollTop + this.scroller.clientHeight;
   return bottom - scrollY;
 };
 
