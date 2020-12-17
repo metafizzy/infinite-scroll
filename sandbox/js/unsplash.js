@@ -4,12 +4,11 @@ let unsplashID = '9ad80b14098bcead9c7de952435e937cc3723ae61084ba8e729adb642daf02
 
 let infScroll = new InfiniteScroll( '.container', {
   path: `https://api.unsplash.com/photos?page={{#}}&client_id=${unsplashID}`,
-  responseType: '',
+  responseBody: 'json',
   history: false,
 } );
 
-infScroll.on( 'load', function( response ) {
-  let data = JSON.parse( response );
+infScroll.on( 'load', function( data ) {
   let itemsHTML = data.map( getItem ).join('');
   container.innerHTML += itemsHTML;
 } );

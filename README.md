@@ -83,9 +83,13 @@ var infScroll = new InfiniteScroll( '.container', {
   prefill: false,
   // Loads and appends pages on intialization until scroll requirement is met.
 
-  responseType: 'document',
-  // Sets the type of response returned by the page request.
-  // Set to 'text' to return flat text for loading JSON.
+  responseBody: 'text',
+  // Sets the method used on the response.
+  // Set to 'json' to load JSON.
+
+  domParseResponse: true,
+  // enables parsing response body into a DOM
+  // disable to load flat text
 
   outlayer: false,
   // Integrates Masonry, Isotope or Packery

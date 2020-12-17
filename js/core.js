@@ -96,7 +96,7 @@ proto.create = function() {
 };
 
 proto.option = function( opts ) {
-  utils.extend( this.options, opts );
+  Object.assign( this.options, opts );
 };
 
 // call onInit option, used for binding events on init

@@ -23,7 +23,8 @@ Object.assign( InfiniteScroll.defaults, {
   // append: false,
   loadOnScroll: true,
   checkLastPage: true,
-  responseType: 'document',
+  responseBody: 'text',
+  domParseResponse: true,
   // prefill: false,
   // outlayer: null,
 } );
@@ -46,6 +47,7 @@ let domParser = new DOMParser();
 proto.loadNextPage = function() {
   if ( this.isLoading || !this.canLoad ) return;
 
+  let { responseBody, domParseResponse } = this.options;
   let path = this.getAbsolutePath();
   this.isLoading = true;
 
@@ -57,12 +59,15 @@ proto.loadNextPage = function() {
       return response;
     }
 
-    return response.text().then( ( text ) => {
-      let doc = domParser.parseFromString( text, 'text/html' );
+    return response[ responseBody ]().then( ( body ) => {
+      let canDomParse = responseBody == 'text' && domParseResponse;
+      if ( canDomParse ) {
+        body = domParser.parseFromString( body, 'text/html' );
+      }
       if ( response.status == 204 ) {
-        this.lastPageReached( doc, path );
+        this.lastPageReached( body, path );
       } else {
-        this.onPageLoad( doc, path );
+        this.onPageLoad( body, path );
       }
       return response;
     } );
@@ -73,30 +78,30 @@ proto.loadNextPage = function() {
   return fetchPromise;
 };
 
-proto.onPageLoad = function( doc, path ) {
+proto.onPageLoad = function( body, path ) {
   // done loading if not appending
   if ( !this.options.append ) {
     this.isLoading = false;
   }
   this.pageIndex++;
   this.loadCount++;
-  this.dispatchEvent( 'load', null, [ doc, path ] );
-  this.appendNextPage( doc, path );
-  return doc;
+  this.dispatchEvent( 'load', null, [ body, path ] );
+  this.appendNextPage( body, path );
+  return body;
 };
 
-proto.appendNextPage = function( doc, path ) {
-  let optAppend = this.options.append;
+proto.appendNextPage = function( body, path ) {
+  let { append, responseBody } = this.options;
   // do not append json
-  let isDocument = this.options.responseType == 'document';
-  if ( !isDocument || !optAppend ) return;
+  let isDocument = responseBody == 'text';
+  if ( !isDocument || !append ) return;
 
-  let items = doc.querySelectorAll( optAppend );
+  let items = body.querySelectorAll( append );
   let fragment = getItemsFragment( items );
   let appendReady = () => {
     this.appendItems( items, fragment );
     this.isLoading = false;
-    this.dispatchEvent( 'append', null, [ doc, path, items ] );
+    this.dispatchEvent( 'append', null, [ body, path, items ] );
   };
 
   // TODO add hook for option to trigger appendReady
@@ -170,7 +175,7 @@ proto.onAppendOutlayer = function( response, path, items ) {
 // ----- checkLastPage ----- //
 
 // check response for next element
-proto.checkLastPage = function( doc, path ) {
+proto.checkLastPage = function( body, path ) {
   let { checkLastPage } = this.options;
   if ( !checkLastPage ) return;
 
@@ -179,7 +184,7 @@ proto.checkLastPage = function( doc, path ) {
   if ( typeof pathOpt == 'function' ) {
     let nextPath = this.getPath();
     if ( !nextPath ) {
-      this.lastPageReached( doc, path );
+      this.lastPageReached( body, path );
       return;
     }
   }
@@ -193,16 +198,16 @@ proto.checkLastPage = function( doc, path ) {
   }
   // check last page for selector
   // bail if no selector or not document response
-  if ( !selector || !doc.querySelector ) return;
+  if ( !selector || !body.querySelector ) return;
 
   // check if response has selector
-  let nextElem = doc.querySelector( selector );
-  if ( !nextElem ) this.lastPageReached( doc, path );
+  let nextElem = body.querySelector( selector );
+  if ( !nextElem ) this.lastPageReached( body, path );
 };
 
-proto.lastPageReached = function( doc, path ) {
+proto.lastPageReached = function( body, path ) {
   this.canLoad = false;
-  this.dispatchEvent( 'last', null, [ doc, path ] );
+  this.dispatchEvent( 'last', null, [ body, path ] );
 };
 
 // ----- error ----- //

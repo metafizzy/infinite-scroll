@@ -88,67 +88,7 @@ body {
 <script src="../js/page-load.js"></script>
 <script src="../js/history.js"></script>
 <script src="../js/status.js"></script>
-<script>
-var grid = document.querySelector('.grid');
-
-var msnry = new Masonry( '.grid', {
-  itemSelector: '.grid-item',
-  columnWidth: '.grid-sizer',
-  percentPosition: true,
-  stagger: 30,
-  visibleStyle: { transform: 'translateY(0)', opacity: 1 },
-  hiddenStyle: { transform: 'translateY(100px)', opacity: 0 },
-});
-
-var infScroll = new InfiniteScroll( '.grid', {
-  path: 'https://api.unsplash.com/photos?client_id=9ad80b14098bcead9c7de952435e937cc3723ae61084ba8e729adb642daf0251&page={{#}}',
-  responseType: 'text',
-  status: '.scroll-status',
-  history: false,
-});
-
-var proxyDiv = document.createElement('div');
-
-infScroll.on( 'load', function( response ) {
-  // parse response text as JSON
-  var data = JSON.parse( response );
-  // convert data into HTML
-  var itemsHTML = data.map( getItem ).join('');
-  // get elements from HTML string
-  proxyDiv.innerHTML = itemsHTML;
-  var items = proxyDiv.querySelectorAll('.grid-item');
-  // append items after imagesLoaded
-  imagesLoaded( items, function() {
-    infScroll.appendItems( items );
-    msnry.appended( items );
-  });
-});
-
-// load first page
-infScroll.loadNextPage();
-
-// ----- template ----- //
-
-var itemTemplateSrc = document.querySelector('#item-template').innerHTML;
-
-function getItem( photo ) {
-  return microTemplate( itemTemplateSrc, photo );
-}
-
-// micro templating, sort-of
-function microTemplate( src, data ) {
-  // replace {{tags}} in source
-  return src.replace( /\{\{([\w\-_\.]+)\}\}/gi, function( match, key ) {
-    // walk through objects to get value
-    var value = data;
-    key.split('.').forEach( function( part ) {
-      value = value[ part ];
-    });
-    return value;
-  });
-}
-
-</script>
+<script src="js/unsplash-masonry.js"></script>
 
 </body>
 </html>
