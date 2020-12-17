@@ -22,7 +22,6 @@ let paths = [
   'node_modules/desandro-matches-selector/matches-selector.js',
   'node_modules/fizzy-ui-utils/utils.js',
   ...jsPaths,
-  indexPath,
   'node_modules/imagesloaded/imagesloaded.js',
 ];
 
