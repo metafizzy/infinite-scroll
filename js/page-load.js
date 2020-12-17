@@ -124,11 +124,7 @@ proto.appendItems = function( items, fragment ) {
 function getItemsFragment( items ) {
   // add items to fragment
   let fragment = document.createDocumentFragment();
-  if ( items ) {
-    for ( let i = 0; i < items.length; i++ ) {
-      fragment.appendChild( items[i] );
-    }
-  }
+  if ( items ) fragment.append( ...items );
   return fragment;
 }
 
@@ -137,21 +133,16 @@ function getItemsFragment( items ) {
 // similar to https://stackoverflow.com/questions/610995
 function refreshScripts( fragment ) {
   let scripts = fragment.querySelectorAll('script');
-  for ( let i = 0; i < scripts.length; i++ ) {
-    let script = scripts[i];
+  for ( let script of scripts ) {
     let freshScript = document.createElement('script');
-    copyAttributes( script, freshScript );
+    // copy attributes
+    let attrs = script.attributes;
+    for ( let attr of attrs ) {
+      freshScript.setAttribute( attr.name, attr.value );
+    }
     // copy inner script code. #718, #782
     freshScript.innerHTML = script.innerHTML;
     script.parentNode.replaceChild( freshScript, script );
-  }
-}
-
-function copyAttributes( fromNode, toNode ) {
-  let attrs = fromNode.attributes;
-  for ( let i = 0; i < attrs.length; i++ ) {
-    let attr = attrs[i];
-    toNode.setAttribute( attr.name, attr.value );
   }
 }
 
