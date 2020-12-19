@@ -17,6 +17,5 @@ module.exports = {
     serialT: 'readonly',
   },
   rules: {
-    'arrow-body-style': [ 'error', 'as-needed' ],
   },
 };
