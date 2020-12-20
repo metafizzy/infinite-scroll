@@ -167,10 +167,9 @@ proto.onAppendOutlayer = function( response, path, items ) {
 
 // check response for next element
 proto.checkLastPage = function( body, path ) {
-  let { checkLastPage } = this.options;
+  let { checkLastPage, path: pathOpt } = this.options;
   if ( !checkLastPage ) return;
 
-  let pathOpt = this.options.path;
   // if path is function, check if next path is truthy
   if ( typeof pathOpt == 'function' ) {
     let nextPath = this.getPath();
