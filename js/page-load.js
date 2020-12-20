@@ -56,7 +56,7 @@ proto.loadNextPage = function() {
     if ( !response.ok ) {
       let error = new Error( response.statusText );
       this.onPageError( error, path );
-      return response;
+      return { response };
     }
 
     return response[ responseBody ]().then( ( body ) => {
@@ -66,10 +66,10 @@ proto.loadNextPage = function() {
       }
       if ( response.status == 204 ) {
         this.lastPageReached( body, path );
+        return { body, response };
       } else {
-        this.onPageLoad( body, path );
+        return this.onPageLoad( body, path, response );
       }
-      return response;
     } );
   } );
 
@@ -78,23 +78,22 @@ proto.loadNextPage = function() {
   return fetchPromise;
 };
 
-proto.onPageLoad = function( body, path ) {
+proto.onPageLoad = function( body, path, response ) {
   // done loading if not appending
   if ( !this.options.append ) {
     this.isLoading = false;
   }
   this.pageIndex++;
   this.loadCount++;
-  this.dispatchEvent( 'load', null, [ body, path ] );
-  this.appendNextPage( body, path );
-  return body;
+  this.dispatchEvent( 'load', null, [ body, path, response ] );
+  return this.appendNextPage( body, path, response );
 };
 
-proto.appendNextPage = function( body, path ) {
+proto.appendNextPage = function( body, path, response ) {
   let { append, responseBody } = this.options;
   // do not append json
   let isDocument = responseBody == 'text';
-  if ( !isDocument || !append ) return;
+  if ( !isDocument || !append ) return { body, response };
 
   let items = body.querySelectorAll( append );
   let fragment = getItemsFragment( items );
@@ -102,13 +101,14 @@ proto.appendNextPage = function( body, path ) {
     this.appendItems( items, fragment );
     this.isLoading = false;
     this.dispatchEvent( 'append', null, [ body, path, items ] );
+    return { body, response, items };
   };
 
   // TODO add hook for option to trigger appendReady
   if ( this.options.outlayer ) {
-    this.appendOutlayerItems( fragment, appendReady );
+    return this.appendOutlayerItems( fragment, appendReady );
   } else {
-    appendReady();
+    return appendReady();
   }
 };
 
@@ -156,7 +156,12 @@ proto.appendOutlayerItems = function( fragment, appendReady ) {
     return;
   }
   // append once images loaded
-  imagesLoaded( fragment, appendReady );
+  return new Promise( function( resolve ) {
+    imagesLoaded( fragment, function() {
+      let bodyResponse = appendReady();
+      resolve( bodyResponse );
+    } );
+  } );
 };
 
 proto.onAppendOutlayer = function( response, path, items ) {
