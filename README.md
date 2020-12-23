@@ -89,6 +89,11 @@ let infScroll = new InfiniteScroll( '.container', {
   // enables parsing response body into a DOM
   // disable to load flat text
 
+  fetchOptions: undefined,
+  // sets custom settings for the fetch() request
+  // for setting headers, cors, or POST method
+  // can be set to an object, or a function that returns an object
+
   outlayer: false,
   // Integrates Masonry, Isotope or Packery
   // Appended items will be added to the layout

@@ -47,12 +47,13 @@ let domParser = new DOMParser();
 proto.loadNextPage = function() {
   if ( this.isLoading || !this.canLoad ) return;
 
-  let { responseBody, domParseResponse } = this.options;
+  let { responseBody, domParseResponse, fetchOptions } = this.options;
   let path = this.getAbsolutePath();
   this.isLoading = true;
+  if ( typeof fetchOptions == 'function' ) fetchOptions = fetchOptions();
 
   // TODO add fetch options
-  let fetchPromise = fetch( path ).then( ( response ) => {
+  let fetchPromise = fetch( path, fetchOptions ).then( ( response ) => {
     if ( !response.ok ) {
       let error = new Error( response.statusText );
       this.onPageError( error, path );

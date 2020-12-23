@@ -149,9 +149,7 @@ proto.log = function( type, args ) {
 
   let message = `[InfiniteScroll] ${type}`;
   let logger = loggers[ type ];
-  if ( logger ) {
-    message += '. ' + logger.apply( this, args );
-  }
+  if ( logger ) message += '. ' + logger.apply( this, args );
   console.log( message );
 };
 
