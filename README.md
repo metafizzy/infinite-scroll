@@ -8,24 +8,22 @@ See [infinite-scroll.com](https://infinite-scroll.com) for complete docs and dem
 
 ### Download
 
-- [infinite-scroll.pkgd.min.js](https://unpkg.com/infinite-scroll@3/dist/infinite-scroll.pkgd.min.js) minified, or
-- [infinite-scroll.pkgd.js](https://unpkg.com/infinite-scroll@3/dist/infinite-scroll.pkgd.js) un-minified
+- [infinite-scroll.pkgd.min.js](https://unpkg.com/infinite-scroll@4/dist/infinite-scroll.pkgd.min.js) minified, or
+- [infinite-scroll.pkgd.js](https://unpkg.com/infinite-scroll@4/dist/infinite-scroll.pkgd.js) un-minified
 
 ### CDN
 
 Link directly to Infinite Scroll files on [unpkg](https://unpkg.com).
 
 ``` html
-<script src="https://unpkg.com/infinite-scroll@3/dist/infinite-scroll.pkgd.min.js"></script>
+<script src="https://unpkg.com/infinite-scroll@4/dist/infinite-scroll.pkgd.min.js"></script>
 <!-- or -->
-<script src="https://unpkg.com/infinite-scroll@3/dist/infinite-scroll.pkgd.js"></script>
+<script src="https://unpkg.com/infinite-scroll@4/dist/infinite-scroll.pkgd.js"></script>
 ```
 
 ### Package managers
 
 npm: `npm install infinite-scroll`
-
-Bower: `bower install infinite-scroll --save`
 
 Yarn: `yarn add infinite-scroll`
 
@@ -57,7 +55,7 @@ Infinite Scroll works on a container element with its child item elements
 ### Options
 
 ``` js
-var infScroll = new InfiniteScroll( '.container', {
+let infScroll = new InfiniteScroll( '.container', {
   // defaults listed
 
   path: undefined,
@@ -137,9 +135,37 @@ var infScroll = new InfiniteScroll( '.container', {
 })
 ```
 
-## WordPress plugin
+## Browser support
 
-The Infinite Scroll WordPress plugin will be in development in a separate repo.
+Infinite Scroll v4 supports Chrome 60+, Edge 79+, Firefox 55+, Safari 11+.
+
+For IE10 and Android 4 support, try [Infinite Scroll v3](https://v3.infinite-scroll.com/).
+
+## Development
+
+This package is developed with Node.js v14 and npm v6. Manage Node and npm version with [nvm](https://github.com/nvm-sh/nvm).
+
+``` sh
+nvm use
+```
+
+Install dependencies
+
+``` sh
+npm install
+```
+
+Lint
+
+``` sh
+npm run lint
+```
+
+Run tests
+
+``` sh
+npm test
+```
 
 ---
 
