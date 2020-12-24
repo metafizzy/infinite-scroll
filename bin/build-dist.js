@@ -19,7 +19,6 @@ jsPaths = jsPaths.map( function( path ) {
 let paths = [
   'node_modules/jquery-bridget/jquery-bridget.js',
   'node_modules/ev-emitter/ev-emitter.js',
-  'node_modules/desandro-matches-selector/matches-selector.js',
   'node_modules/fizzy-ui-utils/utils.js',
   ...jsPaths,
   'node_modules/imagesloaded/imagesloaded.js',
