@@ -6,7 +6,7 @@
  * or Infinite Scroll Commercial License for commercial use
  *
  * https://infinite-scroll.com
- * Copyright 2018 Metafizzy
+ * Copyright 2018-2020 Metafizzy
  */
 
 ( function( window, factory ) {
