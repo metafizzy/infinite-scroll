@@ -6,15 +6,10 @@
   "description": "infinite scroll",
   "main": "js/index.js",
   "dependencies": {
-    "ev-emitter": "^1.1.0",
-    "fizzy-ui-utils": "^2.0.5"
+    "ev-emitter": "^2.1.0",
+    "fizzy-ui-utils": "^3.0.0"
   },
-  "devDependencies": {
-    "masonry": "^4.2.0",
-    "imagesloaded": "^4.1.3",
-    "jquery": "^3.2.1",
-    "jquery-bridget": "^2.0.1"
-  },
+  "devDependencies": {},
   "keywords": [
     "infinite scroll",
     "infinite",
