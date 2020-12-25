@@ -18,7 +18,7 @@ test.after( async function() {
 
 async function withPage( t, run ) {
   let page = await browser.newPage();
-  await page.goto( `http://localhost:${port}/test/html/prefill.html` );
+  await page.goto(`http://localhost:${port}/test/html/prefill.html`);
 
   try {
     await run( t, page );
@@ -47,7 +47,7 @@ test( 'prefill', withPage, async( t, page ) => {
       } );
 
       function onAppend() {
-        serialT.pass( `prefill window appended post ${infScroll.loadCount}` );
+        serialT.pass(`prefill window appended post ${infScroll.loadCount}`);
         if ( infScroll.loadCount == expLoadCount ) {
           serialT.is( infScroll.loadCount, expLoadCount,
               `${expLoadCount} pages appended` );
@@ -79,7 +79,7 @@ test( 'prefill with elementScroll', withPage, async( t, page ) => {
       } );
 
       function onAppend() {
-        serialT.pass( `prefill window appended post ${infScroll.loadCount}` );
+        serialT.pass(`prefill window appended post ${infScroll.loadCount}`);
         if ( infScroll.loadCount == expLoadCount ) {
           serialT.is( infScroll.loadCount, expLoadCount,
               `${expLoadCount} pages appended` );
@@ -113,7 +113,7 @@ test( 'prefill, last hit', withPage, async( t, page ) => {
       } );
 
       function onAppend() {
-        serialT.pass( `prefill window appended post ${infScroll.loadCount}` );
+        serialT.pass(`prefill window appended post ${infScroll.loadCount}`);
         if ( infScroll.loadCount == expLoadCount ) {
           serialT.is( infScroll.loadCount, expLoadCount,
               `${expLoadCount} pages appended` );

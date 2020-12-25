@@ -18,7 +18,7 @@ test.after( async function() {
 
 async function withPage( t, run ) {
   let page = await browser.newPage();
-  await page.goto( `http://localhost:${port}/test/html/path.html` );
+  await page.goto(`http://localhost:${port}/test/html/path.html`);
 
   try {
     await run( t, page );

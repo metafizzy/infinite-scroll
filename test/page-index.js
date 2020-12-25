@@ -18,7 +18,7 @@ test.after( async function() {
 
 async function withPage( t, run ) {
   const page = await browser.newPage();
-  await page.goto( `http://localhost:${port}/test/html/page-index.html` );
+  await page.goto(`http://localhost:${port}/test/html/page-index.html`);
   try {
     await run( t, page );
   } finally {

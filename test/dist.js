@@ -10,7 +10,7 @@ test.before( async function() {
   server.listen( port );
   browser = await puppeteer.launch();
   page = await browser.newPage();
-  await page.goto( `http://localhost:${port}/test/html/dist.html` );
+  await page.goto(`http://localhost:${port}/test/html/dist.html`);
 } );
 
 test.after( async function() {

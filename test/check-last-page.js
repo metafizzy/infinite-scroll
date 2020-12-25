@@ -18,7 +18,7 @@ test.after( async function() {
 
 async function withPage( t, run ) {
   const page = await browser.newPage();
-  await page.goto( `http://localhost:${port}/test/html/page-load.html` );
+  await page.goto(`http://localhost:${port}/test/html/page-load.html`);
   try {
     await run( t, page );
   } finally {
@@ -50,7 +50,7 @@ function getPageAssertions() {
 
     let promise = new Promise( function( resolve ) {
       infScroll.once( 'last', function() {
-        serialT.pass( `last event triggered on ${infScroll.pageIndex}` );
+        serialT.pass(`last event triggered on ${infScroll.pageIndex}`);
         resolve( serialT.assertions );
       } );
     } );

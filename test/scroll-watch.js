@@ -22,7 +22,7 @@ test( 'scrollWatch window', async( t ) => {
   t.plan( 2 );
 
   let page = await browser.newPage();
-  await page.goto( `http://localhost:${port}/test/html/scroll-watch-window.html` );
+  await page.goto(`http://localhost:${port}/test/html/scroll-watch-window.html`);
 
   let assertions = await page.evaluate( function() {
     let $container = document.querySelector('.container');
@@ -107,7 +107,7 @@ test( 'scrollWatch element', async( t ) => {
   t.plan( 2 );
 
   let page = await browser.newPage();
-  await page.goto( `http://localhost:${port}/test/html/scroll-watch-element.html` );
+  await page.goto(`http://localhost:${port}/test/html/scroll-watch-element.html`);
 
   let assertions = await page.evaluate( function() {
     let $container = document.querySelector('.container');

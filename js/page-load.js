@@ -222,7 +222,7 @@ InfiniteScroll.create.prefill = function() {
 
   let append = this.options.append;
   if ( !append ) {
-    console.error( `append option required for prefill. Set as :${append}` );
+    console.error(`append option required for prefill. Set as :${append}`);
     return;
   }
   this.updateMeasurements();

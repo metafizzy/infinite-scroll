@@ -172,7 +172,7 @@ proto.updateScroller = function() {
   this.scroller = elementScroll === true ? this.element :
     utils.getQueryElement( elementScroll );
   if ( !this.scroller ) {
-    throw new Error( `Unable to find elementScroll: ${elementScroll}` );
+    throw new Error(`Unable to find elementScroll: ${elementScroll}`);
   }
 };
 
@@ -181,7 +181,7 @@ proto.updateScroller = function() {
 proto.updateGetPath = function() {
   let optPath = this.options.path;
   if ( !optPath ) {
-    console.error( `InfiniteScroll path option required. Set as: ${optPath}` );
+    console.error(`InfiniteScroll path option required. Set as: ${optPath}`);
     return;
   }
   // function
@@ -247,14 +247,14 @@ proto.updateGetPathSelector = function( optPath ) {
   // parse href of link: '.next-page-link'
   let hrefElem = document.querySelector( optPath );
   if ( !hrefElem ) {
-    console.error( `Bad InfiniteScroll path option. Next link not found: ${optPath}` );
+    console.error(`Bad InfiniteScroll path option. Next link not found: ${optPath}`);
     return;
   }
 
   let href = hrefElem.getAttribute('href');
   let pathParts = getPathParts( href );
   if ( !pathParts ) {
-    console.error( `InfiniteScroll unable to parse next link href: ${href}` );
+    console.error(`InfiniteScroll unable to parse next link href: ${href}`);
     return;
   }
 

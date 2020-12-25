@@ -14,7 +14,7 @@
   "devDependencies": {
     "ava": "^3.13.0",
     "eslint": "^7.15.0",
-    "eslint-plugin-metafizzy": "^1.1.2",
+    "eslint-plugin-metafizzy": "^1.2.1",
     "imagesloaded": "^4.1.4",
     "jquery": "^3.5.1",
     "jquery-bridget": "^2.0.1",

@@ -25,7 +25,7 @@ let paths = [
 ];
 
 // concatenate files
-execSync( `cat ${paths.join(' ')} > ${distPath}` );
+execSync(`cat ${paths.join(' ')} > ${distPath}`);
 
 // add banner
 let banner = indexContent.split(' */')[0] + ' */\n\n';
