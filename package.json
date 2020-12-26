@@ -17,7 +17,7 @@
     "eslint-plugin-metafizzy": "^1.2.1",
     "imagesloaded": "^4.1.4",
     "jquery": "^3.5.1",
-    "jquery-bridget": "^2.0.1",
+    "jquery-bridget": "^3.0.0",
     "masonry-layout": "^4.2.2",
     "puppeteer": "^5.5.0",
     "terser": "^5.5.1"
