@@ -9,6 +9,6 @@ function dir( file ) {
 }
 
 let content = fs.readFileSync( dir('../js/index.js'), 'utf8' );
-content = content.replace( /Infinite Scroll v\d+\.\d+\.\d+/,
+content = content.replace( /Infinite Scroll v[\w\.\-]+/,
     `Infinite Scroll v${version}` );
 fs.writeFileSync( dir('../js/index.js'), content, 'utf8' );
