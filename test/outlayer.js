@@ -113,20 +113,15 @@ test( 'outlayer none', withPage, async( t, page ) => {
           scrollThreshold: false,
         } );
 
-        let promises = [
-          new Promise( ( resolve ) => infScroll.once( 'load', resolve ) ),
-          new Promise( ( resolve ) => {
-            infScroll.once( 'append', function( response, path, items ) {
-              resolve( items );
-            } );
-          } ),
-        ];
+        let promise = new Promise( ( resolve ) => {
+          infScroll.once( 'load', () => {
+            serialT.pass('load triggered but not append');
+            resolve();
+          } );
+        } );
 
         infScroll.loadNextPage();
-        return Promise.all( promises );
-      } )
-      .then( ([ , items ]) => {
-        serialT.is( items.length, 0, 'appended 0 items' );
+        return promise;
       } )
       .then( () => serialT.assertions );
   } );

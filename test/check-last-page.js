@@ -36,17 +36,9 @@ function getPageAssertions() {
       serialT.fail('last event should not trigger when not last page');
     }
 
-    await ( function() {
-      let promise = new Promise( function( resolve ) {
-        infScroll.once( 'append', function() {
-          infScroll.off( 'last', onLast );
-          resolve();
-        } );
-      } );
-      // load page 2
-      infScroll.loadNextPage();
-      return promise;
-    } )();
+    await infScroll.loadNextPage().then( function() {
+      infScroll.off( 'last', onLast );
+    } );
 
     let promise = new Promise( function( resolve ) {
       infScroll.once( 'last', function() {
@@ -88,13 +80,15 @@ test( 'checkLastPage: ".selector-string"', withPage, async function( t, page ) {
   assertions.forEach( ({ method, args }) => t[ method ]( ...args ) );
 } );
 
-test( 'checkLastPage with path: function() {}', withPage, async function( t, page ) {
+test( 'checkLastPage with empty page', withPage, async function( t, page ) {
   await page.evaluate( function() {
     window.infScroll = new InfiniteScroll( '.container', {
       // provide only page/2.html, then falsy
       path: function() {
-        if ( this.pageIndex < 3 ) {
+        if ( this.pageIndex < 2 ) {
           return `page/${this.pageIndex + 1}.html`;
+        } else {
+          return 'page/empty.html';
         }
       },
       // checkLastPage: true, // true by default
@@ -103,5 +97,34 @@ test( 'checkLastPage with path: function() {}', withPage, async function( t, pag
   } );
 
   let assertions = await page.evaluate( getPageAssertions() );
+  assertions.forEach( ({ method, args }) => t[ method ]( ...args ) );
+} );
+
+test( 'checkLastPage with path: function() {}', withPage, async function( t, page ) {
+  let assertions = await page.evaluate( function() {
+    let infScroll = new InfiniteScroll( '.container', {
+      // provide only page/2.html, then falsy
+      path: function() {
+        if ( this.pageIndex < 2 ) {
+          return `page/${this.pageIndex + 1}.html`;
+        }
+      },
+      // checkLastPage: true, // true by default
+      append: '.post',
+    } );
+
+    // function returning falsey will trigger last right after pageLoad
+    let promise = new Promise( function( resolve ) {
+      infScroll.once( 'last', function() {
+        serialT.is( infScroll.pageIndex, 2 );
+        resolve( serialT.assertions );
+      } );
+    } );
+
+    // load page 2
+    infScroll.loadNextPage();
+    return promise;
+  } );
+
   assertions.forEach( ({ method, args }) => t[ method ]( ...args ) );
 } );

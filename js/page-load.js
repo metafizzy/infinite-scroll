@@ -91,18 +91,25 @@ proto.onPageLoad = function( body, path, response ) {
 };
 
 proto.appendNextPage = function( body, path, response ) {
-  let { append, responseBody } = this.options;
+  let { append, responseBody, domParseResponse } = this.options;
   // do not append json
-  let isDocument = responseBody == 'text';
+  let isDocument = responseBody == 'text' && domParseResponse;
   if ( !isDocument || !append ) return { body, response };
 
   let items = body.querySelectorAll( append );
+  let promiseValue = { body, response, items };
+  // last page hit if no items. #840
+  if ( !items || !items.length ) {
+    this.lastPageReached( body, path );
+    return promiseValue;
+  }
+
   let fragment = getItemsFragment( items );
   let appendReady = () => {
     this.appendItems( items, fragment );
     this.isLoading = false;
     this.dispatchEvent( 'append', null, [ body, path, items ] );
-    return { body, response, items };
+    return promiseValue;
   };
 
   // TODO add hook for option to trigger appendReady
