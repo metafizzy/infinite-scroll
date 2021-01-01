@@ -1,5 +1,5 @@
 /*!
- * Infinite Scroll PACKAGED v4.0.0-beta.0
+ * Infinite Scroll PACKAGED v4.0.0
  * Automatically add next page
  *
  * Licensed GPLv3 for open source use
@@ -844,11 +844,10 @@ proto.loadNextPage = function() {
   this.isLoading = true;
   if ( typeof fetchOptions == 'function' ) fetchOptions = fetchOptions();
 
-  // TODO add fetch options
   let fetchPromise = fetch( path, fetchOptions ).then( ( response ) => {
     if ( !response.ok ) {
       let error = new Error( response.statusText );
-      this.onPageError( error, path );
+      this.onPageError( error, path, response );
       return { response };
     }
 
@@ -866,7 +865,7 @@ proto.loadNextPage = function() {
     } );
   } );
 
-  this.dispatchEvent( 'request', null, [ path ] );
+  this.dispatchEvent( 'request', null, [ path, fetchPromise ] );
 
   return fetchPromise;
 };
@@ -883,18 +882,25 @@ proto.onPageLoad = function( body, path, response ) {
 };
 
 proto.appendNextPage = function( body, path, response ) {
-  let { append, responseBody } = this.options;
+  let { append, responseBody, domParseResponse } = this.options;
   // do not append json
-  let isDocument = responseBody == 'text';
+  let isDocument = responseBody == 'text' && domParseResponse;
   if ( !isDocument || !append ) return { body, response };
 
   let items = body.querySelectorAll( append );
+  let promiseValue = { body, response, items };
+  // last page hit if no items. #840
+  if ( !items || !items.length ) {
+    this.lastPageReached( body, path );
+    return promiseValue;
+  }
+
   let fragment = getItemsFragment( items );
   let appendReady = () => {
     this.appendItems( items, fragment );
     this.isLoading = false;
-    this.dispatchEvent( 'append', null, [ body, path, items ] );
-    return { body, response, items };
+    this.dispatchEvent( 'append', null, [ body, path, items, response ] );
+    return promiseValue;
   };
 
   // TODO add hook for option to trigger appendReady
@@ -1000,10 +1006,10 @@ proto.lastPageReached = function( body, path ) {
 
 // ----- error ----- //
 
-proto.onPageError = function( error, path ) {
+proto.onPageError = function( error, path, response ) {
   this.isLoading = false;
   this.canLoad = false;
-  this.dispatchEvent( 'error', null, [ error, path ] );
+  this.dispatchEvent( 'error', null, [ error, path, response ] );
   return error;
 };
 
