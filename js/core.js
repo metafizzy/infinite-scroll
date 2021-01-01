@@ -359,8 +359,9 @@ utils.htmlInit( InfiniteScroll, 'infinite-scroll' );
 // add noop _init method for jQuery Bridget. #768
 proto._init = function() {};
 
-if ( jQuery && jQuery.bridget ) {
-  jQuery.bridget( 'infiniteScroll', InfiniteScroll );
+let { jQueryBridget } = window;
+if ( jQuery && jQueryBridget ) {
+  jQueryBridget( 'infiniteScroll', InfiniteScroll, jQuery );
 }
 
 // --------------------------  -------------------------- //
