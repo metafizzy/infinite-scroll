@@ -52,11 +52,10 @@ proto.loadNextPage = function() {
   this.isLoading = true;
   if ( typeof fetchOptions == 'function' ) fetchOptions = fetchOptions();
 
-  // TODO add fetch options
   let fetchPromise = fetch( path, fetchOptions ).then( ( response ) => {
     if ( !response.ok ) {
       let error = new Error( response.statusText );
-      this.onPageError( error, path );
+      this.onPageError( error, path, response );
       return { response };
     }
 
@@ -74,7 +73,7 @@ proto.loadNextPage = function() {
     } );
   } );
 
-  this.dispatchEvent( 'request', null, [ path ] );
+  this.dispatchEvent( 'request', null, [ path, fetchPromise ] );
 
   return fetchPromise;
 };
@@ -108,7 +107,7 @@ proto.appendNextPage = function( body, path, response ) {
   let appendReady = () => {
     this.appendItems( items, fragment );
     this.isLoading = false;
-    this.dispatchEvent( 'append', null, [ body, path, items ] );
+    this.dispatchEvent( 'append', null, [ body, path, items, response ] );
     return promiseValue;
   };
 
@@ -215,10 +214,10 @@ proto.lastPageReached = function( body, path ) {
 
 // ----- error ----- //
 
-proto.onPageError = function( error, path ) {
+proto.onPageError = function( error, path, response ) {
   this.isLoading = false;
   this.canLoad = false;
-  this.dispatchEvent( 'error', null, [ error, path ] );
+  this.dispatchEvent( 'error', null, [ error, path, response ] );
   return error;
 };
 
