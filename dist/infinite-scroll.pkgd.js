@@ -1,5 +1,5 @@
 /*!
- * Infinite Scroll PACKAGED v4.0.0
+ * Infinite Scroll PACKAGED v4.0.1
  * Automatically add next page
  *
  * Licensed GPLv3 for open source use
@@ -844,26 +844,30 @@ proto.loadNextPage = function() {
   this.isLoading = true;
   if ( typeof fetchOptions == 'function' ) fetchOptions = fetchOptions();
 
-  let fetchPromise = fetch( path, fetchOptions ).then( ( response ) => {
-    if ( !response.ok ) {
-      let error = new Error( response.statusText );
-      this.onPageError( error, path, response );
-      return { response };
-    }
+  let fetchPromise = fetch( path, fetchOptions )
+    .then( ( response ) => {
+      if ( !response.ok ) {
+        let error = new Error( response.statusText );
+        this.onPageError( error, path, response );
+        return { response };
+      }
 
-    return response[ responseBody ]().then( ( body ) => {
-      let canDomParse = responseBody == 'text' && domParseResponse;
-      if ( canDomParse ) {
-        body = domParser.parseFromString( body, 'text/html' );
-      }
-      if ( response.status == 204 ) {
-        this.lastPageReached( body, path );
-        return { body, response };
-      } else {
-        return this.onPageLoad( body, path, response );
-      }
+      return response[ responseBody ]().then( ( body ) => {
+        let canDomParse = responseBody == 'text' && domParseResponse;
+        if ( canDomParse ) {
+          body = domParser.parseFromString( body, 'text/html' );
+        }
+        if ( response.status == 204 ) {
+          this.lastPageReached( body, path );
+          return { body, response };
+        } else {
+          return this.onPageLoad( body, path, response );
+        }
+      } );
+    } )
+    .catch( ( error ) => {
+      this.onPageError( error, path );
     } );
-  } );
 
   this.dispatchEvent( 'request', null, [ path, fetchPromise ] );
 
