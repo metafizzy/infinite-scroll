@@ -176,7 +176,9 @@ proto.appendOutlayerItems = function( fragment, appendReady ) {
 };
 
 proto.onAppendOutlayer = function( response, path, items ) {
-  this.options.outlayer.appended( items );
+  if (typeof this.options.outlayer.appended === "function") { 
+    this.options.outlayer.appended( items );
+  }
 };
 
 // ----- checkLastPage ----- //
