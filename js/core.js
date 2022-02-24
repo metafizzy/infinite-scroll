@@ -227,6 +227,8 @@ let pathRegexes = [
   /^(.*?\/?page\/?)(\d\d?\d?)(.*?$)/,
   // Drupal - example.com/?page=1
   /^(.*?\/?\?page=)(\d\d?\d?)(.*?$)/,
+  // Rails - example.com/?name=test&page=1
+  /^(.*?\/?\&page=)(\d\d?\d?)(.*?$)/,
   // catch all, last occurence of a number
   /(.*?)(\d\d?\d?)(?!.*\d)(.*?$)/,
 ];
