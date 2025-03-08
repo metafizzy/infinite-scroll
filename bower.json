@@ -16,7 +16,7 @@
     "scroll",
     "plugin"
   ],
-  "license": "GPL-3.0",
+  "license": "MIT",
   "homepage": "https://infinite-scroll.com",
   "ignore": [
     "**/.*",
