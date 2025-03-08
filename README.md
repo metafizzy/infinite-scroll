@@ -8,17 +8,17 @@ See [infinite-scroll.com](https://infinite-scroll.com) for complete docs and dem
 
 ### Download
 
-- [infinite-scroll.pkgd.min.js](https://unpkg.com/infinite-scroll@4/dist/infinite-scroll.pkgd.min.js) minified, or
-- [infinite-scroll.pkgd.js](https://unpkg.com/infinite-scroll@4/dist/infinite-scroll.pkgd.js) un-minified
+- [infinite-scroll.pkgd.min.js](https://unpkg.com/infinite-scroll@5/dist/infinite-scroll.pkgd.min.js) minified, or
+- [infinite-scroll.pkgd.js](https://unpkg.com/infinite-scroll@5/dist/infinite-scroll.pkgd.js) un-minified
 
 ### CDN
 
 Link directly to Infinite Scroll files on [unpkg](https://unpkg.com).
 
 ``` html
-<script src="https://unpkg.com/infinite-scroll@4/dist/infinite-scroll.pkgd.min.js"></script>
+<script src="https://unpkg.com/infinite-scroll@5/dist/infinite-scroll.pkgd.min.js"></script>
 <!-- or -->
-<script src="https://unpkg.com/infinite-scroll@4/dist/infinite-scroll.pkgd.js"></script>
+<script src="https://unpkg.com/infinite-scroll@5/dist/infinite-scroll.pkgd.js"></script>
 ```
 
 ### Package managers
@@ -29,15 +29,9 @@ Yarn: `yarn add infinite-scroll`
 
 ## License
 
-### Commercial license
+Infinite Scroll v5 is licensed under the MIT License.
 
-If you want to use Infinite Scroll to develop commercial sites, themes, projects, and applications, the Commercial license is the appropriate license. With this option, your source code is kept proprietary. Purchase an Infinite Scroll Commercial License at [infinite-scroll.com](https://infinite-scroll.com/#commercial-license)
-
-### Open source license
-
-If you are creating an open source application under a license compatible with the [GNU GPL license v3](https://www.gnu.org/licenses/gpl-3.0.html), you may use Infinite Scroll under the terms of the GPLv3.
-
-[Read more about Infinite Scroll's license](https://infinite-scroll.com/license.html).
+Whereas earlier versions of Infinite Scroll were previously dual licensed for commercial and closed-source usage, Infinite Scroll v5 licensing no longer has this distinction. You are free to use Infinite Scroll v5 in commercial and closed-source applications. 
 
 ## Usage
 

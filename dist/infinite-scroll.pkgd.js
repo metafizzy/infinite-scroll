@@ -1,12 +1,9 @@
 /*!
- * Infinite Scroll PACKAGED v4.0.1
+ * Infinite Scroll PACKAGED v5.0.0
  * Automatically add next page
- *
- * Licensed GPLv3 for open source use
- * or Infinite Scroll Commercial License for commercial use
- *
+ * MIT License
  * https://infinite-scroll.com
- * Copyright 2018-2020 Metafizzy
+ * Copyright 2018-2025 Metafizzy
  */
 
 /**
